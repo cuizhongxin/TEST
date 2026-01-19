@@ -41,7 +41,9 @@ public class GeneralService {
      */
     public List<General> initUserGenerals(String userId) {
         logger.info("初始化用户武将, userId: {}", userId);
-        
+        if("1".equals(userId)) {
+            return new ArrayList<>();
+        }
         // 检查是否已经初始化过
         List<General> existingGenerals = generalRepository.findByUserId(userId);
         if (!existingGenerals.isEmpty()) {

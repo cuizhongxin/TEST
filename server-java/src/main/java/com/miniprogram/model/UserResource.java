@@ -34,6 +34,27 @@ public class UserResource {
     private Long food;          // 粮食
     private Long paper;         // 纸张（学习兵法用）
     
+    // 强化石（1-6级）
+    private Integer enhanceStone1;  // 1级强化石
+    private Integer enhanceStone2;  // 2级强化石
+    private Integer enhanceStone3;  // 3级强化石
+    private Integer enhanceStone4;  // 4级强化石
+    private Integer enhanceStone5;  // 5级强化石
+    private Integer enhanceStone6;  // 6级强化石
+    
+    // 强化符（用于转移强化）
+    private Integer enhanceScrollBasic;     // 初级强化符
+    private Integer enhanceScrollMedium;    // 中级强化符
+    private Integer enhanceScrollAdvanced;  // 高级强化符
+    
+    // 合成符（用于合成高级强化石）
+    private Integer mergeScroll;            // 合成符
+    
+    // 训练用粮食
+    private Integer basicFood;              // 初级粮食
+    private Integer advancedFood;           // 中级粮食
+    private Integer premiumFood;            // 高级粮食
+    
     // 招贤令
     private Integer normalRecruitToken;    // 普通招贤令
     private Integer advancedRecruitToken;  // 高级招贤令
@@ -86,6 +107,19 @@ public class UserResource {
                 .metal(500L)
                 .food(1000L)
                 .paper(500L)
+                .enhanceStone1(20)        // 初始20个1级强化石
+                .enhanceStone2(10)        // 初始10个2级强化石
+                .enhanceStone3(5)         // 初始5个3级强化石
+                .enhanceStone4(0)
+                .enhanceStone5(0)
+                .enhanceStone6(0)
+                .enhanceScrollBasic(5)    // 初始5个初级强化符
+                .enhanceScrollMedium(2)   // 初始2个中级强化符
+                .enhanceScrollAdvanced(0) // 初始0个高级强化符
+                .mergeScroll(10)          // 初始10个合成符
+                .basicFood(50)            // 初始50个初级粮食
+                .advancedFood(20)         // 初始20个中级粮食
+                .premiumFood(5)           // 初始5个高级粮食
                 .normalRecruitToken(10)   // 初始10普通招贤令
                 .advancedRecruitToken(1)  // 初始1高级招贤令
                 .juniorToken(10)          // 初始10初级招贤令

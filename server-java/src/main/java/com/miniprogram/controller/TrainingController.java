@@ -69,7 +69,7 @@ public class TrainingController {
         // 增加主公经验
         if (lordExp > 0) {
             try {
-                var levelResult = levelService.addExp(userId, lordExp.longValue(), "训练");
+                Map<String, Object> levelResult = levelService.addExp(userId, lordExp.longValue(), "训练");
                 if (levelResult != null && levelResult.containsKey("levelUp")) {
                     levelUp = Boolean.TRUE.equals(levelResult.get("levelUp"));
                 }
@@ -81,11 +81,11 @@ public class TrainingController {
         // 武将特训模式下增加武将经验
         if ("general".equals(mode) && generalId != null && generalExp > 0) {
             try {
-                General general = generalService.addGeneralExp(generalId, generalExp.longValue());
+                Map<String, Object> general = generalService.addGeneralExp(generalId, generalExp.longValue());
                 if (general != null) {
-                    result.put("generalLevel", general.getLevel());
-                    result.put("generalExp", general.getExp());
-                    result.put("generalMaxExp", general.getMaxExp());
+                    result.put("generalLevel", general.get("newLevel").toString());
+                    result.put("generalExp", general.get("currentExp").toString());
+                    result.put("generalMaxExp", general.get("maxExp").toString());
                 }
             } catch (Exception e) {
                 logger.warn("增加武将经验失败: {}", e.getMessage());

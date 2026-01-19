@@ -359,64 +359,62 @@ page {
 
 .prep-inner {
   display: flex;
-  gap: 10rpx;
-  padding: 5rpx;
+  flex-direction: column;
+  gap: 12rpx;
+  padding: 8rpx;
 }
 
 .npc-preview {
-  flex: 1;
   display: flex;
-  flex-direction: column;
   align-items: center;
-  justify-content: center;
   background: rgba(0,0,0,0.4);
   border: 2rpx solid #8b4513;
   border-radius: 10rpx;
-  padding: 10rpx;
+  padding: 15rpx;
+  gap: 20rpx;
 }
 
-.npc-icon-large { font-size: 40rpx; margin-bottom: 6rpx; }
-.npc-details { text-align: center; }
-.npc-name { font-size: 20rpx; font-weight: bold; display: block; }
-.npc-quality { font-size: 14rpx; color: #aaa; display: block; margin: 2rpx 0; }
-.npc-power { font-size: 16rpx; color: #ff6b6b; }
+.npc-icon-large { font-size: 50rpx; flex-shrink: 0; }
+.npc-details { flex: 1; }
+.npc-name { font-size: 26rpx; font-weight: bold; display: block; }
+.npc-quality { font-size: 18rpx; color: #aaa; display: block; margin: 4rpx 0; }
+.npc-power { font-size: 20rpx; color: #ff6b6b; }
 
 .drop-info {
-  flex: 1;
   background: rgba(50, 205, 50, 0.1);
   border: 1rpx solid rgba(50, 205, 50, 0.3);
   border-radius: 10rpx;
-  padding: 10rpx;
+  padding: 15rpx;
 }
 
-.drop-title { font-size: 16rpx; color: #32cd32; margin-bottom: 6rpx; display: block; }
-.drop-list { display: flex; flex-direction: column; gap: 4rpx; font-size: 14rpx; }
+.drop-title { font-size: 20rpx; color: #32cd32; margin-bottom: 8rpx; display: block; font-weight: bold; }
+.drop-list { display: flex; flex-wrap: wrap; gap: 15rpx; font-size: 18rpx; }
 
 .my-team-preview {
-  flex: 1;
   background: rgba(0,0,0,0.4);
   border: 2rpx solid #8b4513;
   border-radius: 10rpx;
-  padding: 10rpx;
+  padding: 15rpx;
 }
 
-.team-title { font-size: 14rpx; color: #ffd700; display: block; margin-bottom: 6rpx; }
-.team-list { display: flex; flex-wrap: wrap; gap: 6rpx; justify-content: center; }
-.team-member { display: flex; flex-direction: column; align-items: center; width: 50rpx; }
-.member-icon { font-size: 20rpx; }
-.member-name { font-size: 10rpx; margin-top: 2rpx; text-align: center; }
-.member-mob { font-size: 10rpx; color: #4caf50; }
+.team-title { font-size: 20rpx; color: #ffd700; display: block; margin-bottom: 10rpx; font-weight: bold; }
+.team-list { display: flex; flex-wrap: wrap; gap: 10rpx; justify-content: flex-start; }
+.team-member { display: flex; flex-direction: column; align-items: center; width: 80rpx; background: rgba(255,255,255,0.05); padding: 8rpx; border-radius: 8rpx; }
+.member-icon { font-size: 28rpx; }
+.member-name { font-size: 16rpx; margin-top: 4rpx; text-align: center; }
+.member-mob { font-size: 14rpx; color: #4caf50; }
 
 .start-battle-btn {
   flex-shrink: 0;
-  margin-top: 12rpx;
-  height: 80rpx;
-  line-height: 80rpx;
-  font-size: 28rpx;
+  margin-top: 15rpx;
+  height: 90rpx;
+  line-height: 90rpx;
+  font-size: 32rpx;
   font-weight: bold;
   background: linear-gradient(180deg, #dc143c 0%, #8b0000 100%);
   color: #fff;
   border: none;
+  box-shadow: 0 6rpx 20rpx rgba(220, 20, 60, 0.5);
   border-radius: 40rpx;
   box-shadow: 0 4rpx 12rpx rgba(220, 20, 60, 0.5);
 }

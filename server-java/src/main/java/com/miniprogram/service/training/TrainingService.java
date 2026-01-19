@@ -202,7 +202,7 @@ public class TrainingService {
         Map<String, Object> lordExpResult = levelService.addDungeonExp(userId, lordExp, false);
         
         // 增加武将经验
-        Map<String, Object> generalExpResult = generalService.addGeneralExp(userId, generalId, generalExp);
+        Map<String, Object> generalExpResult = generalService.addGeneralExp(generalId, generalExp);
         
         logger.info("用户 {} 训练武将 {}，类型：{}，粮食等级：{}，数量：{}，主公经验+{}，武将经验+{}",
             userId, general.getName(), trainingType, foodGrade, count, lordExp, generalExp);
