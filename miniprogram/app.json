@@ -1,0 +1,29 @@
+{
+  "pages": [
+    "pages/login/login",
+    "pages/index/index",
+    "pages/character/character",
+    "pages/chat/chat",
+    "pages/recruit/recruit",
+    "pages/equipment/equipment",
+    "pages/secretRealm/secretRealm",
+    "pages/craft/craft",
+    "pages/dungeon/dungeon",
+    "pages/shop/shop",
+    "pages/warehouse/warehouse",
+    "pages/formation/formation",
+    "pages/recharge/recharge",
+    "pages/tactics/tactics",
+    "pages/training/training",
+    "pages/enhance/enhance"
+  ],
+  "window": {
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "#fff",
+    "navigationBarTitleText": "微信授权登录",
+    "navigationBarTextStyle": "black"
+  },
+  "style": "v2",
+  "sitemapLocation": "sitemap.json",
+  "lazyCodeLoading": "requiredComponents"
+}

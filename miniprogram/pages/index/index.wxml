@@ -1,0 +1,144 @@
+<!--pages/index/index.wxml-->
+<view class="page-container">
+  <!-- 顶部状态栏 -->
+  <view class="top-status">
+    <view class="player-section">
+      <!-- 头像区域 -->
+      <view class="avatar-area">
+        <view class="player-avatar">
+          <image src="{{userInfo.avatarUrl || '/images/logo.png'}}" mode="aspectFill" class="avatar-img"></image>
+        </view>
+        <view class="level-badge">{{level}}级</view>
+        <view class="mini-exp-bar">
+          <view class="mini-exp-fill" style="width: {{expPercent}}%"></view>
+        </view>
+      </view>
+      <!-- 资源区域 -->
+      <view class="resource-area">
+        <view class="info-line">
+          <text class="player-name">{{userInfo.nickName || '主公'}}</text>
+          <text class="stat">官位 {{rank}}</text>
+          <text class="stat">声望 {{fame}}</text>
+          <text class="stat">武将 {{generalCount}}/{{maxGeneral}}</text>
+        </view>
+        <view class="resource-row">
+          <view class="resource-item">
+            <text class="res-label">黄金</text>
+            <text class="res-value gold">{{gold}}</text>
+          </view>
+          <view class="resource-item">
+            <text class="res-label">白银</text>
+            <text class="res-value silver">{{silver}}</text>
+          </view>
+          <view class="resource-item">
+            <text class="res-label">精力</text>
+            <text class="res-value">{{stamina}}</text>
+          </view>
+          <view class="resource-item">
+            <text class="res-label">兵符</text>
+            <text class="res-value">{{generalOrder}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 主内容区域 -->
+  <view class="main-content">
+    <!-- 左侧悬浮图标 -->
+    <view class="side-panel left">
+      <view class="side-btn" wx:for="{{leftIcons}}" wx:key="id" bindtap="onLeftIconTap" data-name="{{item.name}}">
+        <text class="side-icon">{{item.icon}}</text>
+        <text class="side-label">{{item.label}}</text>
+      </view>
+    </view>
+
+    <!-- 右侧悬浮图标 -->
+    <view class="side-panel right">
+      <view class="side-btn" wx:for="{{rightIcons}}" wx:key="id" bindtap="onRightIconTap" data-name="{{item.name}}">
+        <text class="side-icon">{{item.icon}}</text>
+        <text class="side-label">{{item.label}}</text>
+      </view>
+    </view>
+
+    <!-- 中间内容区域 -->
+    <view class="center-scroll">
+      <!-- 武将栏 -->
+      <view class="generals-row">
+        <view class="general-slot" wx:for="{{6}}" wx:key="index" bindtap="onGeneralTap" data-index="{{index}}">
+          <block wx:if="{{displayGenerals[index]}}">
+            <view class="general-avatar">
+              <image src="{{displayGenerals[index].avatar || '/images/logo.png'}}" mode="aspectFill"></image>
+            </view>
+          </block>
+          <block wx:else>
+            <view class="general-avatar empty">+</view>
+          </block>
+        </view>
+      </view>
+
+      <!-- 功能按钮区域 -->
+      <view class="function-area">
+        <view class="func-row">
+          <view class="scroll-btn" bindtap="goToEquipment">
+            <text class="scroll-text">装备</text>
+          </view>
+          <view class="scroll-btn" bindtap="goToFormation">
+            <text class="scroll-text">阵型</text>
+          </view>
+          <view class="scroll-btn" bindtap="goToTactics">
+            <text class="scroll-text">兵法</text>
+          </view>
+        </view>
+        <view class="func-row">
+          <view class="scroll-btn" bindtap="goToTraining">
+            <text class="scroll-text">训练</text>
+          </view>
+          <view class="scroll-btn" bindtap="goToEnhance">
+            <text class="scroll-text">强化</text>
+          </view>
+          <view class="scroll-btn" bindtap="goToRecruit">
+            <text class="scroll-text">士兵</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- 底部功能图标 -->
+      <view class="bottom-icons">
+        <view class="bottom-btn" bindtap="goToCharacter">
+          <text class="bottom-icon">👥</text>
+          <text class="bottom-label">将</text>
+        </view>
+        <view class="bottom-btn" bindtap="goToCraft">
+          <text class="bottom-icon">🔨</text>
+          <text class="bottom-label">精练</text>
+        </view>
+        <view class="bottom-btn" bindtap="goToSecretRealm">
+          <text class="bottom-icon">💎</text>
+          <text class="bottom-label">宝物</text>
+        </view>
+        <view class="bottom-btn" bindtap="goToDungeon">
+          <text class="bottom-icon">🏰</text>
+          <text class="bottom-label">战役</text>
+        </view>
+        <view class="bottom-btn" bindtap="goToWarehouse">
+          <text class="bottom-icon">📦</text>
+          <text class="bottom-label">仓库</text>
+        </view>
+        <view class="bottom-btn" bindtap="goToAlliance">
+          <text class="bottom-icon">🏛️</text>
+          <text class="bottom-label">联盟</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 底部聊天栏 -->
+  <view class="chat-bar" bindtap="openChatPage">
+    <text class="chat-label">聊天</text>
+    <view class="chat-content">
+      <text class="chat-msg" wx:if="{{lastMessage}}">【{{lastMessage.user}}】{{lastMessage.text}}</text>
+      <text class="chat-msg" wx:else>【系统】欢迎来到三国志·战役！</text>
+    </view>
+  </view>
+</view>

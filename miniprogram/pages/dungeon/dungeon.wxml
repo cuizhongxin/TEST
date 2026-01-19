@@ -1,0 +1,53 @@
+<!--pages/dungeon/dungeon.wxml-->
+<view class="page-container">
+  <view class="header">
+    <text class="title">战役</text>
+  </view>
+
+  <!-- 章节选择 -->
+  <view class="chapter-section">
+    <scroll-view class="chapter-list" scroll-x="true">
+      <view class="chapter-item {{currentChapter === item.id ? 'active' : ''}}" 
+            wx:for="{{chapters}}" wx:key="id" 
+            bindtap="selectChapter" data-id="{{item.id}}">
+        <text class="chapter-name">{{item.name}}</text>
+      </view>
+    </scroll-view>
+  </view>
+
+  <!-- 关卡列表 -->
+  <view class="stage-section">
+    <view class="stage-list">
+      <view class="stage-card {{item.cleared ? 'cleared' : ''}} {{item.locked ? 'locked' : ''}}" 
+            wx:for="{{stages}}" wx:key="id" 
+            bindtap="selectStage" data-id="{{item.id}}">
+        <text class="stage-name">{{item.name}}</text>
+        <text class="stage-level">推荐等级: {{item.recommendLevel}}</text>
+        <text class="stage-status" wx:if="{{item.cleared}}">已通关</text>
+        <text class="stage-status locked" wx:if="{{item.locked}}">未解锁</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 关卡详情 -->
+  <view class="detail-section" wx:if="{{selectedStage}}">
+    <view class="detail-card">
+      <text class="detail-name">{{selectedStage.name}}</text>
+      <view class="detail-info">
+        <text>消耗精力: {{selectedStage.staminaCost}}</text>
+        <text>敌人等级: {{selectedStage.enemyLevel}}</text>
+      </view>
+      <view class="reward-section">
+        <text class="reward-title">通关奖励:</text>
+        <text class="reward-item">经验 +{{selectedStage.expReward}}</text>
+        <text class="reward-item">银两 +{{selectedStage.silverReward}}</text>
+      </view>
+      <view class="battle-btn" bindtap="startBattle">发动战役</view>
+    </view>
+  </view>
+
+  <!-- 资源显示 -->
+  <view class="resource-bar">
+    <text>精力: {{stamina}}</text>
+  </view>
+</view>

@@ -1,0 +1,36 @@
+<!--pages/shop/shop.wxml-->
+<view class="page-container">
+  <view class="header">
+    <text class="title">商店</text>
+  </view>
+
+  <!-- 商品分类 -->
+  <view class="category-section">
+    <view class="category-item {{currentCategory === 'resource' ? 'active' : ''}}" bindtap="selectCategory" data-cat="resource">资源</view>
+    <view class="category-item {{currentCategory === 'equipment' ? 'active' : ''}}" bindtap="selectCategory" data-cat="equipment">装备</view>
+    <view class="category-item {{currentCategory === 'item' ? 'active' : ''}}" bindtap="selectCategory" data-cat="item">道具</view>
+  </view>
+
+  <!-- 商品列表 -->
+  <view class="goods-section">
+    <view class="goods-list">
+      <view class="goods-card" wx:for="{{goodsList}}" wx:key="id" bindtap="buyGoods" data-id="{{item.id}}">
+        <view class="goods-icon">{{item.icon}}</view>
+        <view class="goods-info">
+          <text class="goods-name">{{item.name}}</text>
+          <text class="goods-desc">{{item.description}}</text>
+        </view>
+        <view class="goods-price">
+          <text class="price-value">{{item.price}}</text>
+          <text class="price-unit">{{item.currency}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 资源显示 -->
+  <view class="resource-bar">
+    <text>黄金: {{gold}}</text>
+    <text>银两: {{silver}}</text>
+  </view>
+</view>

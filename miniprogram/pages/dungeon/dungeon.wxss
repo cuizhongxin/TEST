@@ -1,0 +1,163 @@
+/* pages/dungeon/dungeon.wxss */
+.page-container {
+  min-height: 100vh;
+  background: linear-gradient(180deg, #8b7355 0%, #6b5344 100%);
+  padding: 20rpx;
+  padding-bottom: 100rpx;
+  box-sizing: border-box;
+}
+
+.header {
+  text-align: center;
+  padding: 20rpx 0;
+}
+
+.title {
+  font-size: 36rpx;
+  color: #ffd700;
+  font-weight: bold;
+}
+
+.chapter-section {
+  margin-bottom: 20rpx;
+}
+
+.chapter-list {
+  white-space: nowrap;
+}
+
+.chapter-item {
+  display: inline-block;
+  padding: 16rpx 24rpx;
+  margin-right: 16rpx;
+  background: rgba(0,0,0,0.3);
+  border-radius: 8rpx;
+  border: 2rpx solid transparent;
+}
+
+.chapter-item.active {
+  border-color: #ffd700;
+  background: rgba(255,215,0,0.2);
+}
+
+.chapter-name {
+  font-size: 26rpx;
+  color: #fff;
+}
+
+.stage-section {
+  margin-bottom: 20rpx;
+}
+
+.stage-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12rpx;
+}
+
+.stage-card {
+  padding: 20rpx;
+  background: rgba(0,0,0,0.3);
+  border-radius: 12rpx;
+  border: 2rpx solid #8b6914;
+}
+
+.stage-card.cleared {
+  border-color: #32cd32;
+}
+
+.stage-card.locked {
+  opacity: 0.5;
+}
+
+.stage-name {
+  font-size: 28rpx;
+  color: #fff;
+  display: block;
+  margin-bottom: 8rpx;
+  font-weight: bold;
+}
+
+.stage-level {
+  font-size: 22rpx;
+  color: #aaa;
+  display: block;
+}
+
+.stage-status {
+  font-size: 20rpx;
+  color: #32cd32;
+  float: right;
+  margin-top: -40rpx;
+}
+
+.stage-status.locked {
+  color: #ff6b6b;
+}
+
+.detail-section {
+  margin-top: 20rpx;
+}
+
+.detail-card {
+  padding: 24rpx;
+  background: rgba(0,0,0,0.4);
+  border-radius: 16rpx;
+  border: 2rpx solid #ffd700;
+}
+
+.detail-name {
+  font-size: 32rpx;
+  color: #ffd700;
+  display: block;
+  margin-bottom: 16rpx;
+  font-weight: bold;
+}
+
+.detail-info {
+  display: flex;
+  gap: 24rpx;
+  margin-bottom: 16rpx;
+  font-size: 24rpx;
+  color: #ccc;
+}
+
+.reward-section {
+  margin-bottom: 20rpx;
+}
+
+.reward-title {
+  font-size: 24rpx;
+  color: #ffd700;
+  display: block;
+  margin-bottom: 8rpx;
+}
+
+.reward-item {
+  font-size: 22rpx;
+  color: #7fff00;
+  margin-right: 16rpx;
+}
+
+.battle-btn {
+  text-align: center;
+  padding: 20rpx;
+  background: linear-gradient(180deg, #8b6914 0%, #654321 100%);
+  border-radius: 12rpx;
+  color: #ffd700;
+  font-size: 30rpx;
+  font-weight: bold;
+}
+
+.resource-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  padding: 20rpx;
+  background: rgba(0,0,0,0.8);
+  color: #ffd700;
+  font-size: 26rpx;
+}

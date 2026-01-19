@@ -1,0 +1,66 @@
+<!--pages/formation/formation.wxml-->
+<view class="page-container">
+  <view class="header">
+    <text class="title">阵型配置</text>
+  </view>
+
+  <!-- 阵型选择 -->
+  <view class="formation-section">
+    <text class="section-title">选择阵型</text>
+    <view class="formation-list">
+      <view class="formation-item {{currentFormation === item.id ? 'active' : ''}}" 
+            wx:for="{{formations}}" wx:key="id" 
+            bindtap="selectFormation" data-id="{{item.id}}">
+        <text class="formation-name">{{item.name}}</text>
+        <text class="formation-desc">{{item.description}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 出战武将配置 -->
+  <view class="battle-section">
+    <text class="section-title">出战武将 ({{battleGenerals.length}}/6)</text>
+    <view class="battle-slots">
+      <view class="battle-slot" wx:for="{{6}}" wx:key="index" 
+            bindtap="selectSlot" data-index="{{index}}">
+        <block wx:if="{{battleGenerals[index]}}">
+          <view class="slot-avatar">
+            <image src="{{battleGenerals[index].avatar || '/images/logo.png'}}" mode="aspectFill"></image>
+          </view>
+          <text class="slot-name">{{battleGenerals[index].name}}</text>
+          <view class="remove-btn" catchtap="removeGeneral" data-index="{{index}}">×</view>
+        </block>
+        <block wx:else>
+          <view class="slot-empty">+</view>
+          <text class="slot-label">空位</text>
+        </block>
+      </view>
+    </view>
+  </view>
+
+  <!-- 保存按钮 -->
+  <view class="save-btn" bindtap="saveFormation">保存阵型</view>
+
+  <!-- 武将选择弹窗 -->
+  <view class="modal" wx:if="{{showModal}}" bindtap="hideModal">
+    <view class="modal-content" catchtap="">
+      <text class="modal-title">选择武将</text>
+      <scroll-view class="general-list" scroll-y="true">
+        <view class="general-item" wx:for="{{availableGenerals}}" wx:key="id" 
+              bindtap="addGeneral" data-id="{{item.id}}">
+          <view class="general-avatar">
+            <image src="{{item.avatar || '/images/logo.png'}}" mode="aspectFill"></image>
+          </view>
+          <view class="general-info">
+            <text class="general-name" style="color: {{item.qualityColor}}">{{item.name}}</text>
+            <text class="general-level">Lv.{{item.level}}</text>
+          </view>
+        </view>
+        <view class="empty-tip" wx:if="{{availableGenerals.length === 0}}">
+          <text>暂无可用武将</text>
+        </view>
+      </scroll-view>
+      <view class="modal-btn" bindtap="hideModal">关闭</view>
+    </view>
+  </view>
+</view>

@@ -1,0 +1,85 @@
+<!--pages/character/character.wxml-->
+<view class="page-container">
+  <view class="header">
+    <text class="title">武将详情</text>
+  </view>
+
+  <view class="general-detail" wx:if="{{general}}">
+    <!-- 基础信息 -->
+    <view class="info-section">
+      <view class="avatar-area">
+        <image src="{{general.avatar || '/images/logo.png'}}" mode="aspectFill" class="avatar"></image>
+        <text class="level">Lv.{{general.level}}</text>
+      </view>
+      <view class="info-area">
+        <text class="name" style="color: {{general.qualityColor}}">{{general.name}}</text>
+        <text class="quality">{{general.quality}}</text>
+        <view class="exp-bar">
+          <view class="exp-fill" style="width: {{general.expPercent || 0}}%"></view>
+        </view>
+        <text class="exp-text">{{general.exp || 0}}/{{general.maxExp || 100}}</text>
+      </view>
+    </view>
+
+    <!-- 属性 -->
+    <view class="attr-section">
+      <text class="section-title">属性</text>
+      <view class="attr-grid">
+        <view class="attr-item">
+          <text class="attr-label">武力</text>
+          <text class="attr-value">{{general.force || 0}}</text>
+        </view>
+        <view class="attr-item">
+          <text class="attr-label">智力</text>
+          <text class="attr-value">{{general.intelligence || 0}}</text>
+        </view>
+        <view class="attr-item">
+          <text class="attr-label">统率</text>
+          <text class="attr-value">{{general.command || 0}}</text>
+        </view>
+        <view class="attr-item">
+          <text class="attr-label">速度</text>
+          <text class="attr-value">{{general.speed || 0}}</text>
+        </view>
+        <view class="attr-item">
+          <text class="attr-label">政治</text>
+          <text class="attr-value">{{general.politics || 0}}</text>
+        </view>
+        <view class="attr-item">
+          <text class="attr-label">魅力</text>
+          <text class="attr-value">{{general.charm || 0}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 兵法 -->
+    <view class="tactics-section">
+      <text class="section-title">兵法</text>
+      <view class="tactics-info" wx:if="{{general.tactics && general.tactics.tacticsId}}">
+        <text class="tactics-name">{{general.tactics.tacticsName}}</text>
+        <text class="tactics-type">{{general.tactics.tacticsType === 'formation' ? '阵法' : '兵法'}}</text>
+      </view>
+      <view class="tactics-empty" wx:else>
+        <text>未装备兵法</text>
+      </view>
+    </view>
+
+    <!-- 装备 -->
+    <view class="equip-section">
+      <text class="section-title">装备</text>
+      <view class="equip-list">
+        <view class="equip-item" wx:for="{{equipmentSlots}}" wx:key="type">
+          <text class="equip-label">{{item.label}}</text>
+          <text class="equip-name" wx:if="{{general.equipment[item.type]}}" style="color: {{general.equipment[item.type].qualityColor}}">
+            {{general.equipment[item.type].name}}
+          </text>
+          <text class="equip-empty" wx:else>空</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="loading" wx:else>
+    <text>加载中...</text>
+  </view>
+</view>

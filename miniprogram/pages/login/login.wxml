@@ -1,0 +1,44 @@
+<!--pages/login/login.wxml-->
+<view class="login-container">
+  <view class="login-header">
+    <image class="logo" src="/images/logo.png" mode="aspectFit"></image>
+    <text class="title">三国志·战役</text>
+    <text class="subtitle">重温经典，再战沙场</text>
+  </view>
+
+  <view class="login-content">
+    <view class="feature-list">
+      <view class="feature-item">
+        <text class="feature-icon">⚔️</text>
+        <text class="feature-text">经典三国战役</text>
+      </view>
+      <view class="feature-item">
+        <text class="feature-icon">👥</text>
+        <text class="feature-text">百位名将收集</text>
+      </view>
+      <view class="feature-item">
+        <text class="feature-icon">🏆</text>
+        <text class="feature-text">策略排兵布阵</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="login-footer">
+    <button 
+      class="login-btn" 
+      bindtap="handleLogin"
+      loading="{{isLoading}}"
+      disabled="{{isLoading}}"
+    >
+      <image class="wechat-icon" src="/images/wechat-icon.png" mode="aspectFit"></image>
+      <text>微信授权登录</text>
+    </button>
+    
+    <view class="agreement">
+      <text>登录即表示同意</text>
+      <text class="link">《用户协议》</text>
+      <text>和</text>
+      <text class="link">《隐私政策》</text>
+    </view>
+  </view>
+</view>

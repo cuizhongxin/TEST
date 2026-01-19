@@ -1,0 +1,43 @@
+<!--pages/warehouse/warehouse.wxml-->
+<view class="page-container">
+  <view class="header">
+    <text class="title">仓库</text>
+  </view>
+
+  <!-- 分类标签 -->
+  <view class="tab-section">
+    <view class="tab-item {{currentTab === 'equipment' ? 'active' : ''}}" bindtap="switchTab" data-tab="equipment">装备</view>
+    <view class="tab-item {{currentTab === 'material' ? 'active' : ''}}" bindtap="switchTab" data-tab="material">材料</view>
+    <view class="tab-item {{currentTab === 'consumable' ? 'active' : ''}}" bindtap="switchTab" data-tab="consumable">消耗品</view>
+  </view>
+
+  <!-- 物品列表 -->
+  <view class="item-section">
+    <view class="item-grid">
+      <view class="item-card" wx:for="{{itemList}}" wx:key="id" bindtap="showItemDetail" data-item="{{item}}">
+        <view class="item-icon">{{item.icon}}</view>
+        <text class="item-name" style="color: {{item.qualityColor || '#fff'}}">{{item.name}}</text>
+        <text class="item-count" wx:if="{{item.count > 1}}">×{{item.count}}</text>
+      </view>
+    </view>
+    <view class="empty-tip" wx:if="{{itemList.length === 0}}">
+      <text>暂无物品</text>
+    </view>
+  </view>
+
+  <!-- 物品详情弹窗 -->
+  <view class="modal" wx:if="{{showDetail}}" bindtap="hideDetail">
+    <view class="modal-content" catchtap="">
+      <text class="modal-title" style="color: {{selectedItem.qualityColor || '#fff'}}">{{selectedItem.name}}</text>
+      <text class="item-desc">{{selectedItem.description}}</text>
+      <view class="item-attrs" wx:if="{{selectedItem.attrs}}">
+        <text wx:for="{{selectedItem.attrs}}" wx:key="index">{{item}}</text>
+      </view>
+      <view class="modal-btns">
+        <view class="modal-btn" bindtap="useItem" wx:if="{{selectedItem.usable}}">使用</view>
+        <view class="modal-btn sell" bindtap="sellItem">出售</view>
+        <view class="modal-btn close" bindtap="hideDetail">关闭</view>
+      </view>
+    </view>
+  </view>
+</view>

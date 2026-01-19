@@ -1,0 +1,62 @@
+<!--pages/training/training.wxml-->
+<view class="page-container">
+  <view class="header">
+    <text class="title">训练场</text>
+  </view>
+
+  <!-- 武将选择 -->
+  <view class="general-section">
+    <text class="section-title">选择武将</text>
+    <scroll-view class="general-list" scroll-x="true">
+      <view class="general-item {{currentGeneralId === item.id ? 'active' : ''}}" 
+            wx:for="{{generals}}" wx:key="id" 
+            bindtap="selectGeneral" data-id="{{item.id}}">
+        <view class="general-avatar">
+          <image src="{{item.avatar || '/images/logo.png'}}" mode="aspectFill"></image>
+        </view>
+        <text class="general-name">{{item.name}}</text>
+        <text class="general-level">Lv.{{item.level}}</text>
+      </view>
+    </scroll-view>
+  </view>
+
+  <!-- 训练模式 -->
+  <view class="mode-section">
+    <text class="section-title">训练模式</text>
+    <view class="mode-list">
+      <view class="mode-item {{currentMode === 'lord' ? 'active' : ''}}" bindtap="selectMode" data-mode="lord">
+        <text class="mode-name">主公修炼</text>
+        <text class="mode-desc">获得更多主公经验，少量武将经验</text>
+      </view>
+      <view class="mode-item {{currentMode === 'general' ? 'active' : ''}}" bindtap="selectMode" data-mode="general">
+        <text class="mode-name">武将特训</text>
+        <text class="mode-desc">获得更多武将经验，少量主公经验</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 粮食等级 -->
+  <view class="food-section">
+    <text class="section-title">消耗粮食</text>
+    <view class="food-list">
+      <view class="food-item {{currentFood === 'basic' ? 'active' : ''}}" bindtap="selectFood" data-food="basic">
+        <text class="food-name">初级粮草</text>
+        <text class="food-count">拥有: {{basicFood}}</text>
+        <text class="food-effect">经验×1</text>
+      </view>
+      <view class="food-item {{currentFood === 'advanced' ? 'active' : ''}}" bindtap="selectFood" data-food="advanced">
+        <text class="food-name">中级粮草</text>
+        <text class="food-count">拥有: {{advancedFood}}</text>
+        <text class="food-effect">经验×3</text>
+      </view>
+      <view class="food-item {{currentFood === 'premium' ? 'active' : ''}}" bindtap="selectFood" data-food="premium">
+        <text class="food-name">高级粮草</text>
+        <text class="food-count">拥有: {{premiumFood}}</text>
+        <text class="food-effect">经验×10</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 训练按钮 -->
+  <view class="train-btn" bindtap="startTraining">开始训练</view>
+</view>

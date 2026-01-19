@@ -1,0 +1,59 @@
+<!--pages/equipment/equipment.wxml-->
+<view class="page-container">
+  <view class="header">
+    <text class="title">装备管理</text>
+  </view>
+
+  <!-- 武将选择 -->
+  <view class="general-section">
+    <text class="section-title">选择武将</text>
+    <scroll-view class="general-list" scroll-x="true">
+      <view class="general-item {{currentGeneralId === item.id ? 'active' : ''}}" 
+            wx:for="{{generals}}" wx:key="id" 
+            bindtap="selectGeneral" data-id="{{item.id}}">
+        <view class="general-avatar">
+          <image src="{{item.avatar || '/images/logo.png'}}" mode="aspectFill"></image>
+        </view>
+        <text class="general-name">{{item.name}}</text>
+      </view>
+    </scroll-view>
+  </view>
+
+  <!-- 当前装备 -->
+  <view class="equipment-section" wx:if="{{currentGeneral}}">
+    <text class="section-title">{{currentGeneral.name}}的装备</text>
+    <view class="equipment-slots">
+      <view class="equip-slot" wx:for="{{equipmentSlots}}" wx:key="type" 
+            bindtap="showEquipmentList" data-type="{{item.type}}">
+        <text class="slot-label">{{item.label}}</text>
+        <view class="slot-content" wx:if="{{currentGeneral.equipment[item.type]}}">
+          <text class="equip-name" style="color: {{currentGeneral.equipment[item.type].qualityColor}}">
+            {{currentGeneral.equipment[item.type].name}}
+          </text>
+          <text class="equip-attr">+{{currentGeneral.equipment[item.type].mainAttrValue}} {{currentGeneral.equipment[item.type].mainAttr}}</text>
+        </view>
+        <view class="slot-empty" wx:else>
+          <text>空</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 装备列表弹窗 -->
+  <view class="modal" wx:if="{{showModal}}" bindtap="hideModal">
+    <view class="modal-content" catchtap="">
+      <text class="modal-title">选择{{currentSlotLabel}}</text>
+      <scroll-view class="equip-list" scroll-y="true">
+        <view class="equip-item" wx:for="{{availableEquipments}}" wx:key="id" 
+              bindtap="equipItem" data-id="{{item.id}}">
+          <text class="equip-item-name" style="color: {{item.qualityColor}}">{{item.name}}</text>
+          <text class="equip-item-attr">+{{item.mainAttrValue}} {{item.mainAttr}}</text>
+        </view>
+        <view class="empty-tip" wx:if="{{availableEquipments.length === 0}}">
+          <text>暂无可用装备</text>
+        </view>
+      </scroll-view>
+      <view class="modal-btn" bindtap="hideModal">关闭</view>
+    </view>
+  </view>
+</view>

@@ -1,0 +1,62 @@
+<!--pages/recruit/recruit.wxml-->
+<view class="page-container">
+  <view class="header">
+    <text class="title">招募武将</text>
+  </view>
+
+  <!-- 招募方式 -->
+  <view class="recruit-section">
+    <view class="recruit-card" bindtap="doRecruit" data-type="normal">
+      <text class="recruit-name">普通招募</text>
+      <text class="recruit-desc">消耗1000银两</text>
+      <text class="recruit-tip">可获得绿色~蓝色武将</text>
+    </view>
+    <view class="recruit-card premium" bindtap="doRecruit" data-type="premium">
+      <text class="recruit-name">高级招募</text>
+      <text class="recruit-desc">消耗1兵符</text>
+      <text class="recruit-tip">可获得蓝色~橙色武将</text>
+    </view>
+    <view class="recruit-card ten" bindtap="doRecruit" data-type="ten">
+      <text class="recruit-name">十连招募</text>
+      <text class="recruit-desc">消耗10兵符</text>
+      <text class="recruit-tip">必得紫色以上武将</text>
+    </view>
+  </view>
+
+  <!-- 已拥有武将 -->
+  <view class="owned-section">
+    <text class="section-title">已拥有武将 ({{generals.length}})</text>
+    <view class="general-grid">
+      <view class="general-card" wx:for="{{generals}}" wx:key="id" bindtap="viewGeneral" data-id="{{item.id}}">
+        <view class="general-avatar">
+          <image src="{{item.avatar || '/images/logo.png'}}" mode="aspectFill"></image>
+        </view>
+        <text class="general-name" style="color: {{item.qualityColor}}">{{item.name}}</text>
+        <text class="general-level">Lv.{{item.level}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 招募结果弹窗 -->
+  <view class="modal" wx:if="{{showResult}}" bindtap="hideResult">
+    <view class="modal-content" catchtap="">
+      <text class="modal-title">招募成功！</text>
+      <view class="result-list">
+        <view class="result-item" wx:for="{{recruitResult}}" wx:key="id">
+          <view class="result-avatar">
+            <image src="{{item.avatar || '/images/logo.png'}}" mode="aspectFill"></image>
+          </view>
+          <text class="result-name" style="color: {{item.qualityColor}}">{{item.name}}</text>
+          <text class="result-quality">{{item.quality}}</text>
+        </view>
+      </view>
+      <view class="modal-btn" bindtap="hideResult">确定</view>
+    </view>
+  </view>
+
+  <!-- 资源显示 -->
+  <view class="resource-bar">
+    <text>银两: {{silver}}</text>
+    <text>兵符: {{generalOrder}}</text>
+  </view>
+</view>

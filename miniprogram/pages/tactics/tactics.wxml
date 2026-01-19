@@ -1,0 +1,51 @@
+<!--pages/tactics/tactics.wxml-->
+<view class="page-container">
+  <view class="header">
+    <text class="title">兵法研习</text>
+  </view>
+
+  <!-- 武将选择 -->
+  <view class="general-section">
+    <text class="section-title">选择武将</text>
+    <scroll-view class="general-list" scroll-x="true">
+      <view class="general-item {{currentGeneralId === item.id ? 'active' : ''}}" 
+            wx:for="{{generals}}" wx:key="id" 
+            bindtap="selectGeneral" data-id="{{item.id}}">
+        <view class="general-avatar">
+          <image src="{{item.avatar || '/images/logo.png'}}" mode="aspectFill"></image>
+        </view>
+        <text class="general-name">{{item.name}}</text>
+      </view>
+    </scroll-view>
+  </view>
+
+  <!-- 当前兵法 -->
+  <view class="tactics-section" wx:if="{{currentGeneral}}">
+    <text class="section-title">{{currentGeneral.name}}的兵法</text>
+    <view class="current-tactics" wx:if="{{currentGeneral.tactics && currentGeneral.tactics.tacticsId}}">
+      <text class="tactics-name">{{currentGeneral.tactics.tacticsName}}</text>
+      <text class="tactics-type">{{currentGeneral.tactics.tacticsType === 'formation' ? '阵法' : '兵法'}}</text>
+    </view>
+    <view class="current-tactics empty" wx:else>
+      <text>未装备兵法</text>
+    </view>
+  </view>
+
+  <!-- 可学习兵法列表 -->
+  <view class="learn-section">
+    <text class="section-title">可学习兵法</text>
+    <view class="tactics-list">
+      <view class="tactics-card {{item.quality}}" wx:for="{{tacticsList}}" wx:key="id">
+        <view class="tactics-header">
+          <text class="tactics-name">{{item.name}}</text>
+          <text class="tactics-type-tag">{{item.type === 'formation' ? '阵法' : '兵法'}}</text>
+        </view>
+        <text class="tactics-desc">{{item.description}}</text>
+        <view class="tactics-cost">
+          <text>消耗: 纸张×{{item.paperCost}} 木材×{{item.woodCost}} 银两×{{item.silverCost}}</text>
+        </view>
+        <view class="tactics-btn" bindtap="learnTactics" data-id="{{item.id}}">学习</view>
+      </view>
+    </view>
+  </view>
+</view>
