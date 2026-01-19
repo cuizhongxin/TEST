@@ -32,28 +32,7 @@ public class UserResource {
     private Long wood;          // 木材
     private Long metal;         // 金属
     private Long food;          // 粮食
-    private Long paper;         // 纸张（学习兵法消耗）
-    
-    // 分级粮食（训练武将消耗）
-    private Integer basicFood;      // 初级粮食
-    private Integer advancedFood;   // 中级粮食
-    private Integer premiumFood;    // 高级粮食
-    
-    // 强化石（1-6级）
-    private Integer enhanceStone1;  // 1级强化石
-    private Integer enhanceStone2;  // 2级强化石
-    private Integer enhanceStone3;  // 3级强化石
-    private Integer enhanceStone4;  // 4级强化石
-    private Integer enhanceStone5;  // 5级强化石
-    private Integer enhanceStone6;  // 6级强化石
-    
-    // 强化符（用于转移）
-    private Integer enhanceScrollBasic;    // 初级强化符（4级以下）
-    private Integer enhanceScrollMedium;  // 中级强化符（6-8级）
-    private Integer enhanceScrollAdvanced;// 高级强化符（8级以上）
-    
-    // 合成符（用于合成强化石）
-    private Integer mergeScroll;    // 合成符
+    private Long paper;         // 纸张（学习兵法用）
     
     // 招贤令
     private Integer normalRecruitToken;    // 普通招贤令
@@ -105,21 +84,8 @@ public class UserResource {
                 .maxGeneralOrder(10)
                 .wood(500L)
                 .metal(500L)
-                .food(500L)
-                .paper(200L)              // 初始200纸张
-                .basicFood(50)            // 初始50初级粮食
-                .advancedFood(10)         // 初始10中级粮食
-                .premiumFood(0)           // 初始0高级粮食
-                .enhanceStone1(10)        // 初始10个1级强化石
-                .enhanceStone2(5)         // 初始5个2级强化石
-                .enhanceStone3(0)         // 初始0个3级强化石
-                .enhanceStone4(0)         // 初始0个4级强化石
-                .enhanceStone5(0)         // 初始0个5级强化石
-                .enhanceStone6(0)         // 初始0个6级强化石
-                .enhanceScrollBasic(5)    // 初始5个初级强化符
-                .enhanceScrollMedium(2)   // 初始2个中级强化符
-                .enhanceScrollAdvanced(0) // 初始0个高级强化符
-                .mergeScroll(10)          // 初始10个合成符
+                .food(1000L)
+                .paper(500L)
                 .normalRecruitToken(10)   // 初始10普通招贤令
                 .advancedRecruitToken(1)  // 初始1高级招贤令
                 .juniorToken(10)          // 初始10初级招贤令

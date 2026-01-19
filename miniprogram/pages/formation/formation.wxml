@@ -1,66 +1,219 @@
 <!--pages/formation/formation.wxml-->
 <view class="page-container">
-  <view class="header">
-    <text class="title">阵型配置</text>
+  <!-- 顶部栏 -->
+  <view class="top-bar">
+    <view class="back-btn" bindtap="goBack">◀ 返回</view>
+    <view class="page-title">⚔️ 阵型配置</view>
+    <view class="save-btn" bindtap="saveFormation">保存</view>
   </view>
-
-  <!-- 阵型选择 -->
-  <view class="formation-section">
-    <text class="section-title">选择阵型</text>
-    <view class="formation-list">
-      <view class="formation-item {{currentFormation === item.id ? 'active' : ''}}" 
-            wx:for="{{formations}}" wx:key="id" 
-            bindtap="selectFormation" data-id="{{item.id}}">
-        <text class="formation-name">{{item.name}}</text>
-        <text class="formation-desc">{{item.description}}</text>
-      </view>
-    </view>
-  </view>
-
-  <!-- 出战武将配置 -->
-  <view class="battle-section">
-    <text class="section-title">出战武将 ({{battleGenerals.length}}/6)</text>
-    <view class="battle-slots">
-      <view class="battle-slot" wx:for="{{6}}" wx:key="index" 
-            bindtap="selectSlot" data-index="{{index}}">
-        <block wx:if="{{battleGenerals[index]}}">
-          <view class="slot-avatar">
-            <image src="{{battleGenerals[index].avatar || '/images/logo.png'}}" mode="aspectFill"></image>
+  
+  <!-- 主内容 -->
+  <view class="main-content">
+    <!-- 左侧：阵型展示 -->
+    <view class="formation-panel">
+      <view class="panel-title">战斗阵型</view>
+      
+      <!-- 阵型布局 - 竖着三排，右侧优先级最高 -->
+      <!-- 布局：前排(1,2) - 中排(3,4) - 后排(5,6)，后排优先级最高 -->
+      <view class="formation-grid">
+        <!-- 前排（优先级最低） -->
+        <view class="formation-column">
+          <view class="column-label">前排</view>
+          <view class="formation-slot {{slots[0].empty ? 'empty' : slots[0].qualityClass}}" 
+                bindtap="onSlotTap" data-index="0">
+            <view class="slot-index">1</view>
+            <view class="unit-card">
+              <view class="unit-flag my-flag">🚩</view>
+              <block wx:if="{{!slots[0].empty}}">
+                <view class="unit-avatar">{{slots[0].quality.icon || '👤'}}</view>
+                <text class="unit-name">{{slots[0].generalName}}</text>
+              </block>
+              <block wx:else>
+                <view class="unit-avatar empty-avatar">+</view>
+                <text class="empty-text">空</text>
+              </block>
+            </view>
           </view>
-          <text class="slot-name">{{battleGenerals[index].name}}</text>
-          <view class="remove-btn" catchtap="removeGeneral" data-index="{{index}}">×</view>
-        </block>
-        <block wx:else>
-          <view class="slot-empty">+</view>
-          <text class="slot-label">空位</text>
-        </block>
-      </view>
-    </view>
-  </view>
-
-  <!-- 保存按钮 -->
-  <view class="save-btn" bindtap="saveFormation">保存阵型</view>
-
-  <!-- 武将选择弹窗 -->
-  <view class="modal" wx:if="{{showModal}}" bindtap="hideModal">
-    <view class="modal-content" catchtap="">
-      <text class="modal-title">选择武将</text>
-      <scroll-view class="general-list" scroll-y="true">
-        <view class="general-item" wx:for="{{availableGenerals}}" wx:key="id" 
-              bindtap="addGeneral" data-id="{{item.id}}">
-          <view class="general-avatar">
-            <image src="{{item.avatar || '/images/logo.png'}}" mode="aspectFill"></image>
-          </view>
-          <view class="general-info">
-            <text class="general-name" style="color: {{item.qualityColor}}">{{item.name}}</text>
-            <text class="general-level">Lv.{{item.level}}</text>
+          <view class="formation-slot {{slots[1].empty ? 'empty' : slots[1].qualityClass}}" 
+                bindtap="onSlotTap" data-index="1">
+            <view class="slot-index">2</view>
+            <view class="unit-card">
+              <view class="unit-flag my-flag">🚩</view>
+              <block wx:if="{{!slots[1].empty}}">
+                <view class="unit-avatar">{{slots[1].quality.icon || '👤'}}</view>
+                <text class="unit-name">{{slots[1].generalName}}</text>
+              </block>
+              <block wx:else>
+                <view class="unit-avatar empty-avatar">+</view>
+                <text class="empty-text">空</text>
+              </block>
+            </view>
           </view>
         </view>
-        <view class="empty-tip" wx:if="{{availableGenerals.length === 0}}">
-          <text>暂无可用武将</text>
+        
+        <!-- 中排（中等优先级） -->
+        <view class="formation-column">
+          <view class="column-label">中排</view>
+          <view class="formation-slot {{slots[2].empty ? 'empty' : slots[2].qualityClass}}" 
+                bindtap="onSlotTap" data-index="2">
+            <view class="slot-index">3</view>
+            <view class="unit-card">
+              <view class="unit-flag my-flag">🚩</view>
+              <block wx:if="{{!slots[2].empty}}">
+                <view class="unit-avatar">{{slots[2].quality.icon || '👤'}}</view>
+                <text class="unit-name">{{slots[2].generalName}}</text>
+              </block>
+              <block wx:else>
+                <view class="unit-avatar empty-avatar">+</view>
+                <text class="empty-text">空</text>
+              </block>
+            </view>
+          </view>
+          <view class="formation-slot {{slots[3].empty ? 'empty' : slots[3].qualityClass}}" 
+                bindtap="onSlotTap" data-index="3">
+            <view class="slot-index">4</view>
+            <view class="unit-card">
+              <view class="unit-flag my-flag">🚩</view>
+              <block wx:if="{{!slots[3].empty}}">
+                <view class="unit-avatar">{{slots[3].quality.icon || '👤'}}</view>
+                <text class="unit-name">{{slots[3].generalName}}</text>
+              </block>
+              <block wx:else>
+                <view class="unit-avatar empty-avatar">+</view>
+                <text class="empty-text">空</text>
+              </block>
+            </view>
+          </view>
+        </view>
+        
+        <!-- 后排（优先级最高） -->
+        <view class="formation-column center-column">
+          <view class="column-label center-label">⭐ 后排</view>
+          <view class="formation-slot {{slots[4].empty ? 'empty' : slots[4].qualityClass}}" 
+                bindtap="onSlotTap" data-index="4">
+            <view class="slot-index">5</view>
+            <view class="unit-card">
+              <view class="unit-flag my-flag">🚩</view>
+              <block wx:if="{{!slots[4].empty}}">
+                <view class="unit-avatar">{{slots[4].quality.icon || '👤'}}</view>
+                <text class="unit-name">{{slots[4].generalName}}</text>
+              </block>
+              <block wx:else>
+                <view class="unit-avatar empty-avatar">+</view>
+                <text class="empty-text">空</text>
+              </block>
+            </view>
+          </view>
+          <view class="formation-slot {{slots[5].empty ? 'empty' : slots[5].qualityClass}}" 
+                bindtap="onSlotTap" data-index="5">
+            <view class="slot-index">6</view>
+            <view class="unit-card">
+              <view class="unit-flag my-flag">🚩</view>
+              <block wx:if="{{!slots[5].empty}}">
+                <view class="unit-avatar">{{slots[5].quality.icon || '👤'}}</view>
+                <text class="unit-name">{{slots[5].generalName}}</text>
+              </block>
+              <block wx:else>
+                <view class="unit-avatar empty-avatar">+</view>
+                <text class="empty-text">空</text>
+              </block>
+            </view>
+          </view>
+        </view>
+      </view>
+      
+      <!-- 战斗顺序说明 -->
+      <view class="order-hint">
+        <text class="hint-title">⚡ 出战顺序</text>
+        <text class="hint-text">机动性高优先，相同时右侧(后排)优先</text>
+      </view>
+      
+      <!-- 当前出战顺序预览 -->
+      <view class="battle-order" wx:if="{{battleOrder.length > 0}}">
+        <text class="order-label">行动顺序：</text>
+        <view class="order-list">
+          <view class="order-item" wx:for="{{battleOrder}}" wx:key="index">
+            <text class="order-num">{{index + 1}}</text>
+            <text class="order-name">{{item.name}}</text>
+            <text class="order-mob">({{item.mobility}})</text>
+          </view>
+        </view>
+      </view>
+    </view>
+    
+    <!-- 右侧：武将列表 -->
+    <view class="general-panel">
+      <view class="panel-header">
+        <text class="panel-title">我的武将</text>
+        <text class="panel-count">{{generals.length}}人</text>
+      </view>
+      
+      <!-- 筛选 -->
+      <view class="filter-bar">
+        <view class="filter-item {{filterQuality === 'all' ? 'active' : ''}}" 
+              bindtap="setFilter" data-filter="all">全部</view>
+        <view class="filter-item {{filterQuality === 'orange' ? 'active' : ''}}" 
+              bindtap="setFilter" data-filter="orange">🟠橙</view>
+        <view class="filter-item {{filterQuality === 'purple' ? 'active' : ''}}" 
+              bindtap="setFilter" data-filter="purple">🟣紫</view>
+        <view class="filter-item {{filterQuality === 'red' ? 'active' : ''}}" 
+              bindtap="setFilter" data-filter="red">🔴红</view>
+        <view class="filter-item {{filterQuality === 'blue' ? 'active' : ''}}" 
+              bindtap="setFilter" data-filter="blue">🔵蓝</view>
+      </view>
+      
+      <!-- 武将列表 -->
+      <scroll-view class="general-list" scroll-y>
+        <view class="general-item {{item.inFormation ? 'in-formation' : ''}} {{item.qualityClass}}" 
+              wx:for="{{filteredGenerals}}" wx:key="id"
+              bindtap="onGeneralTap" data-general="{{item}}">
+          <view class="general-icon">{{item.quality.icon || '👤'}}</view>
+          <view class="general-info">
+            <text class="general-name">{{item.name}}</text>
+            <text class="general-detail">Lv.{{item.level}} · {{item.type.name}}</text>
+          </view>
+          <view class="general-stats">
+            <text class="stat-item">攻{{item.attributes.attack}}</text>
+            <text class="stat-item">机{{item.attributes.mobility}}</text>
+          </view>
+          <view class="in-formation-mark" wx:if="{{item.inFormation}}">
+            <text>已上阵</text>
+          </view>
+        </view>
+        
+        <view class="empty-list" wx:if="{{filteredGenerals.length === 0}}">
+          <text>暂无武将</text>
         </view>
       </scroll-view>
-      <view class="modal-btn" bindtap="hideModal">关闭</view>
+    </view>
+  </view>
+  
+  <!-- 选择武将弹窗 -->
+  <view class="modal" wx:if="{{showModal}}">
+    <view class="modal-mask" bindtap="closeModal"></view>
+    <view class="modal-content">
+      <view class="modal-header">
+        <text>选择武将 - 槽位{{selectedSlot + 1}}</text>
+        <view class="modal-close" bindtap="closeModal">✕</view>
+      </view>
+      <view class="modal-body">
+        <view class="modal-option clear" bindtap="clearSlot">
+          <text>🚫 清空此槽位</text>
+        </view>
+        <scroll-view class="modal-list" scroll-y>
+          <view class="modal-general {{item.inFormation ? 'disabled' : ''}} {{item.qualityClass}}" 
+                wx:for="{{availableGenerals}}" wx:key="id"
+                bindtap="selectGeneral" data-general="{{item}}">
+            <view class="mg-icon">{{item.quality.icon || '👤'}}</view>
+            <view class="mg-info">
+              <text class="mg-name">{{item.name}}</text>
+              <text class="mg-stat">机动{{item.attributes.mobility}} · 攻击{{item.attributes.attack}}</text>
+            </view>
+            <view class="mg-status" wx:if="{{item.inFormation}}">已上阵</view>
+          </view>
+        </scroll-view>
+      </view>
     </view>
   </view>
 </view>
+

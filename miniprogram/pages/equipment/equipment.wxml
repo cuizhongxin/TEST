@@ -1,59 +1,262 @@
 <!--pages/equipment/equipment.wxml-->
 <view class="page-container">
-  <view class="header">
-    <text class="title">装备管理</text>
+  <!-- 顶部栏 -->
+  <view class="top-bar">
+    <view class="back-btn" bindtap="goBack">◀ 返回</view>
+    <view class="page-title">⚔️ 装备管理</view>
+    <view class="placeholder"></view>
   </view>
-
-  <!-- 武将选择 -->
-  <view class="general-section">
-    <text class="section-title">选择武将</text>
-    <scroll-view class="general-list" scroll-x="true">
-      <view class="general-item {{currentGeneralId === item.id ? 'active' : ''}}" 
-            wx:for="{{generals}}" wx:key="id" 
-            bindtap="selectGeneral" data-id="{{item.id}}">
-        <view class="general-avatar">
-          <image src="{{item.avatar || '/images/logo.png'}}" mode="aspectFill"></image>
+  
+  <!-- 主内容区 -->
+  <view class="main-content">
+    <!-- 左侧：武将列表 -->
+    <view class="generals-panel">
+      <view class="panel-title">武将列表</view>
+      <scroll-view class="generals-scroll" scroll-y>
+        <view class="general-item {{selectedGeneral && selectedGeneral.id === item.id ? 'selected' : ''}} {{item.qualityClass}} {{item.inFormation ? 'in-formation' : ''}}"
+              wx:for="{{generals}}" wx:key="id"
+              bindtap="selectGeneral" data-general="{{item}}">
+          <view class="general-avatar">👤</view>
+          <view class="general-info">
+            <text class="general-name">{{item.name}}</text>
+            <text class="general-level">Lv.{{item.level || 1}}</text>
+          </view>
+          <view class="formation-badge" wx:if="{{item.inFormation}}">阵</view>
         </view>
-        <text class="general-name">{{item.name}}</text>
+        <view class="empty-tip" wx:if="{{generals.length === 0}}">
+          暂无武将
+        </view>
+      </scroll-view>
+    </view>
+    
+    <!-- 中间：装备槽位 -->
+    <view class="equipment-panel" wx:if="{{selectedGeneral}}">
+      <view class="general-header">
+        <view class="general-portrait {{selectedGeneral.qualityClass}}">
+          <text class="portrait-icon">👤</text>
+        </view>
+        <view class="general-detail">
+          <text class="general-title">{{selectedGeneral.name}}</text>
+          <text class="general-desc">Lv.{{selectedGeneral.level || 1}} {{selectedGeneral.quality.name || ''}}</text>
+        </view>
       </view>
-    </scroll-view>
-  </view>
-
-  <!-- 当前装备 -->
-  <view class="equipment-section" wx:if="{{currentGeneral}}">
-    <text class="section-title">{{currentGeneral.name}}的装备</text>
-    <view class="equipment-slots">
-      <view class="equip-slot" wx:for="{{equipmentSlots}}" wx:key="type" 
-            bindtap="showEquipmentList" data-type="{{item.type}}">
-        <text class="slot-label">{{item.label}}</text>
-        <view class="slot-content" wx:if="{{currentGeneral.equipment[item.type]}}">
-          <text class="equip-name" style="color: {{currentGeneral.equipment[item.type].qualityColor}}">
-            {{currentGeneral.equipment[item.type].name}}
-          </text>
-          <text class="equip-attr">+{{currentGeneral.equipment[item.type].mainAttrValue}} {{currentGeneral.equipment[item.type].mainAttr}}</text>
+      
+      <!-- 装备槽位网格 -->
+      <view class="slots-grid">
+        <view class="equipment-slot {{slot.equipment ? slot.equipment.qualityClass : 'empty'}}"
+              wx:for="{{equipmentSlots}}" wx:key="id" wx:for-item="slot"
+              bindtap="onSlotTap" data-slot="{{slot}}">
+          <view class="slot-bg"></view>
+          <view class="slot-content">
+            <block wx:if="{{slot.equipment}}">
+              <text class="slot-equip-icon">{{slot.equipment.icon || slot.icon}}</text>
+              <text class="slot-enhance" wx:if="{{slot.equipment.enhanceLevel}}">+{{slot.equipment.enhanceLevel}}</text>
+            </block>
+            <block wx:else>
+              <text class="slot-icon">{{slot.icon}}</text>
+              <text class="slot-hint">{{slot.name}}</text>
+            </block>
+          </view>
         </view>
-        <view class="slot-empty" wx:else>
-          <text>空</text>
+      </view>
+      
+      <!-- 套装效果 -->
+      <view class="set-bonus-panel" wx:if="{{setBonus && setBonus.activeCount}}">
+        <view class="set-title">
+          <text class="set-name">{{setBonus.setName}}</text>
+          <text class="set-count">({{setBonus.activeCount}}/6)</text>
+        </view>
+        <view class="set-effect" wx:if="{{setBonus.threeSetActive}}">
+          <text class="effect-label">3件套:</text>
+          <text class="effect-desc">{{setBonus.threeSetEffect}}</text>
+        </view>
+        <view class="set-effect" wx:if="{{setBonus.sixSetActive}}">
+          <text class="effect-label">6件套:</text>
+          <text class="effect-desc">{{setBonus.sixSetEffect}}</text>
         </view>
       </view>
     </view>
-  </view>
-
-  <!-- 装备列表弹窗 -->
-  <view class="modal" wx:if="{{showModal}}" bindtap="hideModal">
-    <view class="modal-content" catchtap="">
-      <text class="modal-title">选择{{currentSlotLabel}}</text>
-      <scroll-view class="equip-list" scroll-y="true">
-        <view class="equip-item" wx:for="{{availableEquipments}}" wx:key="id" 
-              bindtap="equipItem" data-id="{{item.id}}">
-          <text class="equip-item-name" style="color: {{item.qualityColor}}">{{item.name}}</text>
-          <text class="equip-item-attr">+{{item.mainAttrValue}} {{item.mainAttr}}</text>
+    
+    <!-- 右侧：属性面板 -->
+    <view class="attributes-panel" wx:if="{{selectedGeneral}}">
+      <view class="panel-title">装备属性加成</view>
+      <view class="attr-list">
+        <view class="attr-item" wx:if="{{totalAttributes.attack > 0}}">
+          <text class="attr-icon">⚔️</text>
+          <text class="attr-label">攻击力</text>
+          <text class="attr-value">+{{totalAttributes.attack}}</text>
         </view>
-        <view class="empty-tip" wx:if="{{availableEquipments.length === 0}}">
-          <text>暂无可用装备</text>
+        <view class="attr-item" wx:if="{{totalAttributes.defense > 0}}">
+          <text class="attr-icon">🛡️</text>
+          <text class="attr-label">防御力</text>
+          <text class="attr-value">+{{totalAttributes.defense}}</text>
+        </view>
+        <view class="attr-item" wx:if="{{totalAttributes.valor > 0}}">
+          <text class="attr-icon">💪</text>
+          <text class="attr-label">武勇</text>
+          <text class="attr-value">+{{totalAttributes.valor}}</text>
+        </view>
+        <view class="attr-item" wx:if="{{totalAttributes.command > 0}}">
+          <text class="attr-icon">📜</text>
+          <text class="attr-label">统御</text>
+          <text class="attr-value">+{{totalAttributes.command}}</text>
+        </view>
+        <view class="attr-item" wx:if="{{totalAttributes.mobility > 0}}">
+          <text class="attr-icon">🏃</text>
+          <text class="attr-label">机动</text>
+          <text class="attr-value">+{{totalAttributes.mobility}}</text>
+        </view>
+        <view class="attr-item" wx:if="{{totalAttributes.hp > 0}}">
+          <text class="attr-icon">❤️</text>
+          <text class="attr-label">生命</text>
+          <text class="attr-value">+{{totalAttributes.hp}}</text>
+        </view>
+      </view>
+      
+      <view class="empty-attr" wx:if="{{totalAttributes.attack === 0 && totalAttributes.defense === 0 && totalAttributes.valor === 0 && totalAttributes.command === 0 && totalAttributes.mobility === 0 && totalAttributes.hp === 0}}">
+        <text>暂无装备加成</text>
+        <text class="empty-hint">点击槽位装备物品</text>
+      </view>
+    </view>
+    
+    <!-- 未选择武将提示 -->
+    <view class="no-selection" wx:if="{{!selectedGeneral}}">
+      <text class="no-icon">👈</text>
+      <text class="no-text">请选择一名武将</text>
+    </view>
+  </view>
+  
+  <!-- 背包装备弹窗 -->
+  <view class="modal-mask" wx:if="{{showBagModal}}" catchtap="closeBagModal">
+    <view class="modal-content bag-modal" catchtap="">
+      <view class="modal-header">
+        <text class="modal-title">选择装备 - {{selectedSlot.name}}</text>
+        <view class="close-btn" bindtap="closeBagModal">✕</view>
+      </view>
+      <scroll-view class="bag-list" scroll-y>
+        <view class="bag-item {{item.qualityClass}}"
+              wx:for="{{bagEquipments}}" wx:key="id"
+              wx:if="{{!selectedSlot || (item.slotType && item.slotType.id === selectedSlot.id)}}"
+              bindtap="selectBagEquipment" data-equipment="{{item}}">
+          <view class="bag-icon">{{item.icon || '📦'}}</view>
+          <view class="bag-info">
+            <text class="bag-name">{{item.name}}</text>
+            <text class="bag-level">Lv.{{item.level || 1}}</text>
+          </view>
+          <view class="bag-attrs">
+            <text wx:if="{{item.baseAttributes.attack}}">攻+{{item.baseAttributes.attack}}</text>
+            <text wx:if="{{item.baseAttributes.defense}}">防+{{item.baseAttributes.defense}}</text>
+          </view>
+        </view>
+        <view class="empty-bag" wx:if="{{bagEquipments.length === 0}}">
+          <text>背包中没有可用装备</text>
+          <text class="hint">去秘境探索或副本获取</text>
         </view>
       </scroll-view>
-      <view class="modal-btn" bindtap="hideModal">关闭</view>
+    </view>
+  </view>
+  
+  <!-- 装备详情弹窗 -->
+  <view class="modal-mask" wx:if="{{showDetailModal}}" catchtap="closeDetailModal">
+    <view class="modal-content detail-modal" catchtap="">
+      <view class="modal-header">
+        <text class="modal-title {{selectedEquipment.qualityClass}}">{{selectedEquipment.name}}</text>
+        <view class="close-btn" bindtap="closeDetailModal">✕</view>
+      </view>
+      
+      <view class="detail-body">
+        <view class="detail-icon-wrap {{selectedEquipment.qualityClass}}">
+          <text class="detail-icon">{{selectedEquipment.icon || '⚔️'}}</text>
+          <text class="detail-enhance" wx:if="{{selectedEquipment.enhanceLevel}}">+{{selectedEquipment.enhanceLevel}}</text>
+        </view>
+        
+        <view class="detail-meta">
+          <text class="meta-item">等级: Lv.{{selectedEquipment.level || 1}}</text>
+          <text class="meta-item">品质: {{selectedEquipment.quality.name || '普通'}}</text>
+          <text class="meta-item" wx:if="{{selectedEquipment.setInfo}}">套装: {{selectedEquipment.setInfo.setName}}</text>
+        </view>
+        
+        <view class="detail-attrs">
+          <view class="attr-title">属性加成</view>
+          <view class="attr-grid">
+            <text wx:if="{{selectedEquipment.baseAttributes.attack}}">攻击 +{{selectedEquipment.baseAttributes.attack}}</text>
+            <text wx:if="{{selectedEquipment.baseAttributes.defense}}">防御 +{{selectedEquipment.baseAttributes.defense}}</text>
+            <text wx:if="{{selectedEquipment.baseAttributes.valor}}">武勇 +{{selectedEquipment.baseAttributes.valor}}</text>
+            <text wx:if="{{selectedEquipment.baseAttributes.command}}">统御 +{{selectedEquipment.baseAttributes.command}}</text>
+            <text wx:if="{{selectedEquipment.baseAttributes.mobility}}">机动 +{{selectedEquipment.baseAttributes.mobility}}</text>
+            <text wx:if="{{selectedEquipment.baseAttributes.hp}}">生命 +{{selectedEquipment.baseAttributes.hp}}</text>
+          </view>
+        </view>
+        
+        <view class="detail-desc" wx:if="{{selectedEquipment.description}}">
+          <text>{{selectedEquipment.description}}</text>
+        </view>
+      </view>
+      
+      <view class="detail-actions">
+        <view class="action-btn change" bindtap="changeEquipment">更换</view>
+        <view class="action-btn enhance" bindtap="openEnhanceModal">强化</view>
+        <view class="action-btn unequip" bindtap="unequipItem">卸下</view>
+      </view>
+    </view>
+  </view>
+  
+  <!-- 强化弹窗 -->
+  <view class="modal-mask" wx:if="{{showEnhanceModal}}" catchtap="closeEnhanceModal">
+    <view class="modal-content enhance-modal" catchtap="">
+      <view class="modal-header">
+        <text class="modal-title">装备强化</text>
+        <view class="close-btn" bindtap="closeEnhanceModal">✕</view>
+      </view>
+      
+      <view class="enhance-body">
+        <!-- 装备展示 -->
+        <view class="enhance-equip {{enhanceEquipment.qualityClass}}">
+          <text class="equip-icon">{{enhanceEquipment.icon || '⚔️'}}</text>
+          <text class="equip-name">{{enhanceEquipment.name}}</text>
+          <text class="equip-level">+{{enhanceEquipment.enhanceLevel || 0}}</text>
+        </view>
+        
+        <!-- 强化效果预览 -->
+        <view class="enhance-preview">
+          <text class="preview-title">强化后属性提升</text>
+          <view class="preview-grid">
+            <text>攻击 +10%</text>
+            <text>防御 +10%</text>
+          </view>
+          <view class="preview-special" wx:if="{{(enhanceEquipment.enhanceLevel || 0) >= 4}}">
+            <text>机动性 +{{(enhanceEquipment.enhanceLevel || 0) >= 10 ? 8 : ((enhanceEquipment.enhanceLevel || 0) >= 8 ? 4 : ((enhanceEquipment.enhanceLevel || 0) >= 6 ? 2 : 1))}}</text>
+          </view>
+        </view>
+        
+        <!-- 强化石选择 -->
+        <view class="stone-section">
+          <text class="section-title">选择强化石</text>
+          <scroll-view class="stone-list" scroll-x>
+            <view class="stone-item {{selectedStone && selectedStone.itemId === item.itemId ? 'selected' : ''}}"
+                  wx:for="{{enhanceStones}}" wx:key="itemId"
+                  bindtap="selectEnhanceStone" data-stone="{{item}}">
+              <text class="stone-icon">{{item.icon || '💎'}}</text>
+              <text class="stone-name">{{item.name}}</text>
+              <text class="stone-count">x{{item.count}}</text>
+            </view>
+            <view class="no-stones" wx:if="{{enhanceStones.length === 0}}">
+              <text>没有强化石</text>
+            </view>
+          </scroll-view>
+        </view>
+        
+        <!-- 成功率 -->
+        <view class="success-rate">
+          <text>成功率: 70%</text>
+        </view>
+      </view>
+      
+      <view class="enhance-actions">
+        <view class="enhance-btn {{!selectedStone ? 'disabled' : ''}}" bindtap="doEnhance">
+          强化
+        </view>
+      </view>
     </view>
   </view>
 </view>

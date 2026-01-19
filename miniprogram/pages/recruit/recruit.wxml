@@ -1,62 +1,119 @@
 <!--pages/recruit/recruit.wxml-->
 <view class="page-container">
-  <view class="header">
-    <text class="title">招募武将</text>
-  </view>
-
-  <!-- 招募方式 -->
-  <view class="recruit-section">
-    <view class="recruit-card" bindtap="doRecruit" data-type="normal">
-      <text class="recruit-name">普通招募</text>
-      <text class="recruit-desc">消耗1000银两</text>
-      <text class="recruit-tip">可获得绿色~蓝色武将</text>
-    </view>
-    <view class="recruit-card premium" bindtap="doRecruit" data-type="premium">
-      <text class="recruit-name">高级招募</text>
-      <text class="recruit-desc">消耗1兵符</text>
-      <text class="recruit-tip">可获得蓝色~橙色武将</text>
-    </view>
-    <view class="recruit-card ten" bindtap="doRecruit" data-type="ten">
-      <text class="recruit-name">十连招募</text>
-      <text class="recruit-desc">消耗10兵符</text>
-      <text class="recruit-tip">必得紫色以上武将</text>
+  <!-- 顶部栏 -->
+  <view class="top-bar">
+    <view class="back-btn" bindtap="goBack">◀ 返回</view>
+    <view class="page-title">🍺 酒馆招贤</view>
+    <view class="resource-info">
+      <text class="gold">🪙 {{gold}}</text>
+      <text class="silver">🥈 {{silver}}</text>
     </view>
   </view>
-
-  <!-- 已拥有武将 -->
-  <view class="owned-section">
-    <text class="section-title">已拥有武将 ({{generals.length}})</text>
-    <view class="general-grid">
-      <view class="general-card" wx:for="{{generals}}" wx:key="id" bindtap="viewGeneral" data-id="{{item.id}}">
-        <view class="general-avatar">
-          <image src="{{item.avatar || '/images/logo.png'}}" mode="aspectFill"></image>
-        </view>
-        <text class="general-name" style="color: {{item.qualityColor}}">{{item.name}}</text>
-        <text class="general-level">Lv.{{item.level}}</text>
-      </view>
-    </view>
-  </view>
-
-  <!-- 招募结果弹窗 -->
-  <view class="modal" wx:if="{{showResult}}" bindtap="hideResult">
-    <view class="modal-content" catchtap="">
-      <text class="modal-title">招募成功！</text>
-      <view class="result-list">
-        <view class="result-item" wx:for="{{recruitResult}}" wx:key="id">
-          <view class="result-avatar">
-            <image src="{{item.avatar || '/images/logo.png'}}" mode="aspectFill"></image>
+  
+  <!-- 主内容 -->
+  <view class="main-content">
+    <!-- 左侧：招贤令 -->
+    <view class="token-panel">
+      <view class="panel-title">📜 招贤令</view>
+      <view class="token-list">
+        <view class="token-item green">
+          <text class="token-name">初级招贤令</text>
+          <text class="token-count">{{juniorToken}}</text>
+          <view class="token-actions">
+            <view class="btn-small" bindtap="claimDaily" wx:if="{{!dailyClaimed}}">每日领取</view>
+            <view class="btn-small" bindtap="buyToken" data-type="junior">购买(1万银)</view>
           </view>
-          <text class="result-name" style="color: {{item.qualityColor}}">{{item.name}}</text>
-          <text class="result-quality">{{item.quality}}</text>
+        </view>
+        <view class="token-item blue">
+          <text class="token-name">中级招贤令</text>
+          <text class="token-count">{{intermediateToken}}</text>
+          <view class="token-actions">
+            <view class="btn-small" bindtap="buyToken" data-type="intermediate">购买(15金)</view>
+          </view>
+        </view>
+        <view class="token-item purple">
+          <text class="token-name">高级招贤令</text>
+          <text class="token-count">{{seniorToken}}</text>
+          <view class="token-actions">
+            <view class="btn-small" bindtap="buyToken" data-type="senior">购买(200金)</view>
+          </view>
         </view>
       </view>
-      <view class="modal-btn" bindtap="hideResult">确定</view>
+      
+      <!-- 合成 -->
+      <view class="compose-section">
+        <view class="compose-item" bindtap="composeToken" data-from="junior">
+          15初级 + 5000银 → 1高级
+        </view>
+        <view class="compose-item" bindtap="composeToken" data-from="intermediate">
+          15中级 + 5金 → 1高级
+        </view>
+      </view>
     </view>
-  </view>
-
-  <!-- 资源显示 -->
-  <view class="resource-bar">
-    <text>银两: {{silver}}</text>
-    <text>兵符: {{generalOrder}}</text>
+    
+    <!-- 中间：招募区 -->
+    <view class="recruit-panel">
+      <view class="recruit-cards">
+        <view class="recruit-card green" bindtap="recruit" data-type="JUNIOR" data-count="1">
+          <text class="card-icon">📜</text>
+          <text class="card-title">初级招募</text>
+          <text class="card-desc">绿色70% | 白色30%</text>
+          <view class="card-btn">单抽x1</view>
+        </view>
+        
+        <view class="recruit-card blue" bindtap="recruit" data-type="INTERMEDIATE" data-count="1">
+          <text class="card-icon">📜</text>
+          <text class="card-title">中级招募</text>
+          <text class="card-desc">蓝色50% | 红色50%</text>
+          <text class="card-trait">红色将领带1项特征</text>
+          <view class="card-btn">单抽x1</view>
+        </view>
+        
+        <view class="recruit-card purple" bindtap="recruit" data-type="SENIOR" data-count="1">
+          <text class="card-icon">📜</text>
+          <text class="card-title">高级招募</text>
+          <text class="card-desc">紫色90% | 橙色10%</text>
+          <text class="card-trait">橙色将领带2项特征</text>
+          <view class="card-btn">单抽x1</view>
+        </view>
+      </view>
+      
+      <!-- 十连抽 -->
+      <view class="ten-pull">
+        <view class="ten-btn green" bindtap="recruit" data-type="JUNIOR" data-count="10">初级十连</view>
+        <view class="ten-btn blue" bindtap="recruit" data-type="INTERMEDIATE" data-count="10">中级十连</view>
+        <view class="ten-btn purple" bindtap="recruit" data-type="SENIOR" data-count="10">高级十连</view>
+      </view>
+    </view>
+    
+    <!-- 右侧：招募结果 -->
+    <view class="result-panel">
+      <view class="panel-title">🎉 招募结果</view>
+      <scroll-view class="result-list" scroll-y wx:if="{{recruitedGenerals.length > 0}}">
+        <view class="result-item {{item.quality.name === '橙色' ? 'orange' : item.quality.name === '紫色' ? 'purple' : item.quality.name === '红色' ? 'red' : item.quality.name === '蓝色' ? 'blue' : item.quality.name === '绿色' ? 'green' : 'white'}}" 
+              wx:for="{{recruitedGenerals}}" wx:key="id">
+          <view class="general-basic">
+            <text class="general-icon">{{item.quality.icon}}</text>
+            <view class="general-info">
+              <text class="general-name" style="color: {{item.quality.color}}">{{item.name}}</text>
+              <text class="general-faction">{{item.faction}} · {{item.type.name}}</text>
+            </view>
+          </view>
+          <view class="general-traits" wx:if="{{item.traits && item.traits.length > 0}}">
+            <text class="trait-item" wx:for="{{item.traits}}" wx:key="*this" wx:for-item="trait">{{trait}}</text>
+          </view>
+          <view class="general-attrs">
+            <text>攻{{item.attributes.attack}}</text>
+            <text>防{{item.attributes.defense}}</text>
+            <text>勇{{item.attributes.valor}}</text>
+            <text>统{{item.attributes.command}}</text>
+          </view>
+        </view>
+      </scroll-view>
+      <view class="empty-result" wx:else>
+        <text>暂无招募记录</text>
+        <text class="hint">使用招贤令开始招募吧！</text>
+      </view>
+    </view>
   </view>
 </view>

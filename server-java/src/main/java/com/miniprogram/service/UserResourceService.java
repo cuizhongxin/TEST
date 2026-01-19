@@ -392,4 +392,11 @@ public class UserResourceService {
     public void saveUserResource(UserResource resource) {
         resourceRepository.save(resource);
     }
+    
+    /**
+     * 保存资源（别名方法）
+     */
+    public void saveResource(UserResource resource) {
+        resourceRepository.save(resource);
+    }
 }

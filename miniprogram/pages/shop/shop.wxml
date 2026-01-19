@@ -1,36 +1,82 @@
 <!--pages/shop/shop.wxml-->
 <view class="page-container">
-  <view class="header">
-    <text class="title">商店</text>
-  </view>
-
-  <!-- 商品分类 -->
-  <view class="category-section">
-    <view class="category-item {{currentCategory === 'resource' ? 'active' : ''}}" bindtap="selectCategory" data-cat="resource">资源</view>
-    <view class="category-item {{currentCategory === 'equipment' ? 'active' : ''}}" bindtap="selectCategory" data-cat="equipment">装备</view>
-    <view class="category-item {{currentCategory === 'item' ? 'active' : ''}}" bindtap="selectCategory" data-cat="item">道具</view>
+  <!-- 顶部导航 -->
+  <view class="top-nav">
+    <view class="nav-tabs">
+      <view class="tab-item {{currentTab === 'enhance' ? 'active' : ''}}" bindtap="switchTab" data-tab="enhance">强化材料</view>
+      <view class="tab-item {{currentTab === 'recruit' ? 'active' : ''}}" bindtap="switchTab" data-tab="recruit">招贤令</view>
+      <view class="tab-item {{currentTab === 'resource' ? 'active' : ''}}" bindtap="switchTab" data-tab="resource">资源包</view>
+      <view class="tab-item {{currentTab === 'consumable' ? 'active' : ''}}" bindtap="switchTab" data-tab="consumable">消耗品</view>
+      <view class="tab-item {{currentTab === 'special' ? 'active' : ''}}" bindtap="switchTab" data-tab="special">特殊道具</view>
+    </view>
+    <view class="user-gold">
+      <text class="gold-icon">🪙</text>
+      <text class="gold-value">{{userGold}}</text>
+    </view>
+    <view class="back-btn" bindtap="goBack">返回</view>
   </view>
 
   <!-- 商品列表 -->
-  <view class="goods-section">
-    <view class="goods-list">
-      <view class="goods-card" wx:for="{{goodsList}}" wx:key="id" bindtap="buyGoods" data-id="{{item.id}}">
-        <view class="goods-icon">{{item.icon}}</view>
+  <scroll-view class="shop-content" scroll-y>
+    <view class="goods-grid">
+      <view class="goods-item {{item.quality}}" wx:for="{{currentGoods}}" wx:key="id" bindtap="buyItem" data-id="{{item.id}}">
+        <view class="goods-icon-wrap {{item.quality}}">
+          <text class="goods-icon">{{item.icon}}</text>
+        </view>
         <view class="goods-info">
-          <text class="goods-name">{{item.name}}</text>
-          <text class="goods-desc">{{item.description}}</text>
+          <text class="goods-name {{item.quality}}">{{item.name}}</text>
+          <text class="goods-desc">{{item.desc}}</text>
         </view>
         <view class="goods-price">
+          <text class="price-icon">🪙</text>
           <text class="price-value">{{item.price}}</text>
-          <text class="price-unit">{{item.currency}}</text>
+        </view>
+        <view class="goods-stock" wx:if="{{item.dailyLimit}}">
+          <text>今日: {{item.bought || 0}}/{{item.dailyLimit}}</text>
         </view>
       </view>
     </view>
+  </scroll-view>
+
+  <!-- 强化说明（强化材料页显示） -->
+  <view class="enhance-info" wx:if="{{currentTab === 'enhance'}}">
+    <view class="info-title">⚔️ 强化效果说明</view>
+    <view class="info-content">
+      <text>+4: 机动性+1</text>
+      <text>+6: 机动性+2</text>
+      <text>+8: 机动性+4</text>
+      <text>+10: 机动性+8，属性翻倍</text>
+    </view>
   </view>
 
-  <!-- 资源显示 -->
-  <view class="resource-bar">
-    <text>黄金: {{gold}}</text>
-    <text>银两: {{silver}}</text>
+  <!-- 购买弹窗 -->
+  <view class="modal-mask" wx:if="{{showBuyModal}}" catchtap="closeBuyModal">
+    <view class="buy-modal" catchtap="">
+      <view class="modal-header">购买商品</view>
+      <view class="modal-body">
+        <view class="buy-item-info">
+          <text class="buy-icon">{{selectedItem.icon}}</text>
+          <text class="buy-name {{selectedItem.quality}}">{{selectedItem.name}}</text>
+        </view>
+        <view class="buy-count">
+          <text class="count-label">购买数量:</text>
+          <view class="count-control">
+            <view class="count-btn" bindtap="decreaseCount">-</view>
+            <text class="count-value">{{buyCount}}</text>
+            <view class="count-btn" bindtap="increaseCount">+</view>
+          </view>
+        </view>
+        <view class="buy-total">
+          <text>总价: </text>
+          <text class="total-gold">🪙 {{selectedItem.price * buyCount}}</text>
+        </view>
+      </view>
+      <view class="modal-footer">
+        <button class="cancel-btn" bindtap="closeBuyModal">取消</button>
+        <button class="confirm-btn" bindtap="confirmBuy">确认购买</button>
+      </view>
+    </view>
   </view>
 </view>
+
+

@@ -1,0 +1,336 @@
+/* pages/recharge/recharge.wxss */
+page {
+  background: linear-gradient(180deg, #1a1a2e 0%, #16213e 100%);
+  min-height: 100vh;
+}
+
+.page-container {
+  padding: 20rpx;
+  padding-bottom: 150rpx;
+  color: #e8d5b0;
+  font-family: 'STKaiti', 'KaiTi', serif;
+}
+
+/* 用户信息头部 */
+.user-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20rpx;
+  background: linear-gradient(180deg, #2a1a0f 0%, #3d2817 100%);
+  border-radius: 16rpx;
+  border: 2rpx solid #8b6914;
+  margin-bottom: 20rpx;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+}
+
+.avatar {
+  width: 80rpx;
+  height: 80rpx;
+  border-radius: 50%;
+  border: 3rpx solid #ffd700;
+}
+
+.user-detail {
+  display: flex;
+  flex-direction: column;
+  gap: 4rpx;
+}
+
+.nickname {
+  font-size: 28rpx;
+  color: #ffd700;
+  font-weight: bold;
+}
+
+.vip-level {
+  font-size: 22rpx;
+  color: #ff6b6b;
+  background: linear-gradient(90deg, #ff6b6b, #ffd700);
+  -webkit-background-clip: text;
+  padding: 2rpx 10rpx;
+  background: rgba(255,107,107,0.2);
+  border-radius: 8rpx;
+  display: inline-block;
+}
+
+.balance-info {
+  display: flex;
+  gap: 20rpx;
+}
+
+.balance-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4rpx;
+}
+
+.balance-label {
+  font-size: 20rpx;
+  color: #888;
+}
+
+.balance-value {
+  font-size: 26rpx;
+  font-weight: bold;
+}
+
+.balance-value.gold {
+  color: #ffd700;
+}
+
+.balance-value.diamond {
+  color: #00bfff;
+}
+
+/* 区块标题 */
+.section-title {
+  font-size: 28rpx;
+  color: #ffd700;
+  margin-bottom: 16rpx;
+  padding-left: 12rpx;
+  border-left: 4rpx solid #ffd700;
+}
+
+/* 商品列表 */
+.products-section {
+  margin-bottom: 24rpx;
+}
+
+.products-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16rpx;
+}
+
+.product-card {
+  position: relative;
+  padding: 20rpx 10rpx;
+  background: linear-gradient(180deg, #2a2a3e 0%, #1a1a2e 100%);
+  border: 2rpx solid #3a3a5a;
+  border-radius: 12rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8rpx;
+  transition: all 0.3s ease;
+}
+
+.product-card.selected {
+  border-color: #ffd700;
+  background: linear-gradient(180deg, #3a3a4e 0%, #2a2a3e 100%);
+  box-shadow: 0 0 20rpx rgba(255,215,0,0.3);
+}
+
+.product-card.hot {
+  border-color: #ff6b6b;
+}
+
+.hot-tag {
+  position: absolute;
+  top: -10rpx;
+  right: -10rpx;
+  font-size: 18rpx;
+  color: #fff;
+  background: linear-gradient(135deg, #ff6b6b, #ff4444);
+  padding: 4rpx 12rpx;
+  border-radius: 8rpx;
+}
+
+.product-icon {
+  font-size: 48rpx;
+}
+
+.product-name {
+  font-size: 24rpx;
+  color: #fff;
+  font-weight: bold;
+}
+
+.product-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4rpx;
+}
+
+.gold-amount {
+  font-size: 20rpx;
+  color: #ffd700;
+}
+
+.diamond-amount {
+  font-size: 18rpx;
+  color: #00bfff;
+}
+
+.product-price {
+  font-size: 28rpx;
+  color: #ff6b6b;
+  font-weight: bold;
+}
+
+.first-double {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  font-size: 16rpx;
+  color: #fff;
+  background: linear-gradient(90deg, #ff6b6b, #ffd700);
+  padding: 4rpx 0;
+  text-align: center;
+  border-radius: 0 0 10rpx 10rpx;
+}
+
+/* 支付方式 */
+.payment-section {
+  margin-bottom: 24rpx;
+}
+
+.payment-methods {
+  display: flex;
+  flex-direction: column;
+  gap: 12rpx;
+}
+
+.payment-item {
+  display: flex;
+  align-items: center;
+  padding: 20rpx;
+  background: rgba(0,0,0,0.3);
+  border: 2rpx solid #3a3a5a;
+  border-radius: 12rpx;
+  gap: 16rpx;
+}
+
+.payment-item.selected {
+  border-color: #4caf50;
+  background: rgba(76,175,80,0.1);
+}
+
+.payment-icon {
+  width: 50rpx;
+  height: 50rpx;
+  border-radius: 10rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32rpx;
+}
+
+.payment-icon.wechat {
+  background: #07c160;
+}
+
+.payment-icon.alipay {
+  background: #1677ff;
+}
+
+.payment-icon.unionpay {
+  background: #e21e1e;
+}
+
+.payment-name {
+  flex: 1;
+  font-size: 26rpx;
+  color: #fff;
+}
+
+.check-mark {
+  width: 40rpx;
+  height: 40rpx;
+  background: #4caf50;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 24rpx;
+}
+
+/* 充值说明 */
+.notice-section {
+  margin-bottom: 24rpx;
+}
+
+.notice-content {
+  display: flex;
+  flex-direction: column;
+  gap: 8rpx;
+  padding: 16rpx;
+  background: rgba(0,0,0,0.2);
+  border-radius: 12rpx;
+  font-size: 22rpx;
+  color: #888;
+}
+
+/* 底部支付栏 */
+.bottom-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  padding: 16rpx 20rpx;
+  background: linear-gradient(180deg, #2a1a0f 0%, #1a0a00 100%);
+  border-top: 2rpx solid #8b6914;
+  gap: 20rpx;
+}
+
+.order-summary {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+}
+
+.summary-label {
+  font-size: 24rpx;
+  color: #888;
+}
+
+.summary-price {
+  font-size: 36rpx;
+  color: #ff6b6b;
+  font-weight: bold;
+}
+
+.pay-btn {
+  padding: 16rpx 60rpx;
+  background: linear-gradient(180deg, #ffd700 0%, #ff8c00 100%);
+  border: none;
+  border-radius: 40rpx;
+  font-size: 28rpx;
+  color: #3d2817;
+  font-weight: bold;
+}
+
+.pay-btn.disabled {
+  background: #555;
+  color: #888;
+}
+
+/* 充值记录入口 */
+.history-entry {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20rpx;
+  background: rgba(0,0,0,0.2);
+  border-radius: 12rpx;
+  margin-top: 20rpx;
+  font-size: 24rpx;
+  color: #888;
+}
+
+.arrow {
+  font-size: 32rpx;
+}

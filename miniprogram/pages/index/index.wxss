@@ -1,339 +1,333 @@
 /* pages/index/index.wxss */
 page {
-  background: linear-gradient(180deg, #8b7355 0%, #6b5344 50%, #4a3728 100%);
+  background: linear-gradient(180deg, #3d2817 0%, #5a3d2b 50%, #3d2817 100%);
   height: 100vh;
   overflow: hidden;
 }
 
-.page-container {
+.game-container {
   display: flex;
   flex-direction: column;
   height: 100vh;
-  color: #3d2b1f;
+  color: #f0e6d2;
+  font-family: 'STKaiti', 'KaiTi', serif;
 }
 
-/* ========== 顶部状态栏 ========== */
-.top-status {
-  padding: 2rpx 10rpx;
-  background: linear-gradient(180deg, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0.3) 100%);
+/* ==================== 顶部资源栏 ==================== */
+.top-bar {
+  display: flex;
+  padding: 6rpx 10rpx;
+  background: linear-gradient(180deg, #2a1a0f 0%, #3d2817 100%);
+  border-bottom: 2rpx solid #8b6914;
+  gap: 12rpx;
   flex-shrink: 0;
 }
 
-.player-section {
+.user-section {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
+  gap: 6rpx;
+  padding-right: 12rpx;
+  border-right: 1rpx solid #5a4a3a;
 }
 
-/* 头像区域 */
-.avatar-area {
+.avatar {
+  width: 50rpx;
+  height: 50rpx;
+  border-radius: 6rpx;
+  border: 2rpx solid #c9a227;
+}
+
+.user-detail {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  margin-right: 10rpx;
-  flex-shrink: 0;
 }
 
-.player-avatar {
-  width: 44rpx;
-  height: 44rpx;
-}
-
-.avatar-img {
-  width: 100%;
-  height: 100%;
-  border-radius: 4rpx;
-  border: 2rpx solid #ffd700;
-}
-
-.level-badge {
-  background: #8b0000;
-  color: #fff;
-  font-size: 9rpx;
-  padding: 0 5rpx;
-  border-radius: 2rpx;
-  margin-top: 1rpx;
-}
-
-.mini-exp-bar {
-  width: 44rpx;
-  height: 4rpx;
-  background: #2d2d2d;
-  border-radius: 2rpx;
-  margin-top: 1rpx;
-  overflow: hidden;
-}
-
-.mini-exp-fill {
-  height: 100%;
-  background: linear-gradient(90deg, #228b22 0%, #32cd32 100%);
-  border-radius: 2rpx;
-}
-
-/* 资源区域 */
-.resource-area {
-  flex: 1;
-  min-width: 0;
-}
-
-.info-line {
-  display: flex;
-  align-items: center;
-  gap: 8rpx;
-  margin-bottom: 2rpx;
-}
-
-.player-name {
-  font-size: 14rpx;
+.nickname {
+  font-size: 16rpx;
   color: #ffd700;
   font-weight: bold;
 }
 
-.stat {
-  font-size: 10rpx;
-  color: #e8d5b0;
+.level {
+  font-size: 12rpx;
+  color: #c9a227;
 }
 
-.resource-row {
+.exp-bar {
+  width: 90rpx;
+  height: 10rpx;
+  background: #1a1a1a;
+  border: 1rpx solid #5a4a3a;
+  border-radius: 5rpx;
+  position: relative;
+  overflow: hidden;
+}
+
+.exp-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #228b22, #32cd32);
+}
+
+.exp-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 8rpx;
+  color: #fff;
+  text-shadow: 0 0 2rpx #000;
+}
+
+.resource-grid {
+  flex: 1;
   display: flex;
-  gap: 10rpx;
+  flex-wrap: wrap;
+  gap: 3rpx 10rpx;
 }
 
 .resource-item {
   display: flex;
-  align-items: center;
   gap: 3rpx;
+  font-size: 12rpx;
 }
 
-.res-label {
-  font-size: 9rpx;
-  color: #aaa;
-}
+.res-label { color: #a89070; }
+.res-value { color: #f0e6d2; }
+.res-value.gold { color: #ffd700; }
+.res-value.silver { color: #c0c0c0; }
 
-.res-value {
-  font-size: 10rpx;
-  color: #ffd700;
-  font-weight: bold;
-}
-
-.res-value.gold {
-  color: #ffd700;
-}
-
-.res-value.silver {
-  color: #c0c0c0;
-}
-
-/* ========== 主内容区域 ========== */
-.main-content {
-  flex: 1;
-  position: relative;
+/* ==================== 我的武将横栏（在中间区域内） ==================== */
+.generals-bar-inner {
   display: flex;
-  flex-direction: column;
-  overflow: hidden;
-}
-
-/* 左右侧悬浮图标 - 覆盖在内容上 */
-.side-panel {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  width: 44rpx;
-  display: flex;
-  flex-direction: column;
-  gap: 3rpx;
-  padding: 3rpx 2rpx;
-  justify-content: space-evenly;
-  z-index: 10;
-}
-
-.side-panel.left {
-  left: 0;
-  background: linear-gradient(90deg, rgba(60,40,20,0.85) 0%, rgba(60,40,20,0) 100%);
-}
-
-.side-panel.right {
-  right: 0;
-  background: linear-gradient(270deg, rgba(60,40,20,0.85) 0%, rgba(60,40,20,0) 100%);
-}
-
-.side-btn {
-  display: flex;
-  flex-direction: column;
   align-items: center;
-  padding: 3rpx 2rpx;
-  background: rgba(139,69,19,0.8);
-  border: 1rpx solid #8b6914;
-  border-radius: 4rpx;
-}
-
-.side-btn:active {
-  background: rgba(139,69,19,0.95);
-}
-
-.side-icon {
-  font-size: 14rpx;
-}
-
-.side-label {
-  font-size: 8rpx;
-  color: #ffd700;
-  line-height: 1;
-}
-
-/* 中间内容区域 - 不再滚动 */
-.center-scroll {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 44rpx;
-  right: 44rpx;
-  display: flex;
-  flex-direction: column;
-}
-
-/* ========== 武将栏 ========== */
-.generals-row {
-  display: flex;
-  justify-content: center;
-  gap: 10rpx;
-  padding: 6rpx 4rpx;
-  flex-shrink: 0;
-}
-
-.general-slot {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 2rpx;
-}
-
-.general-avatar {
-  width: 48rpx;
-  height: 48rpx;
-  border-radius: 4rpx;
+  padding: 8rpx;
   background: rgba(0,0,0,0.3);
+  border: 1rpx solid #5a4a3a;
+  border-radius: 8rpx;
+  margin-bottom: 10rpx;
+  gap: 8rpx;
+}
+
+.generals-title {
+  font-size: 12rpx;
+  color: #ffd700;
+  white-space: nowrap;
+  padding-right: 8rpx;
+  border-right: 1rpx solid #5a4a3a;
+  writing-mode: vertical-lr;
+  text-orientation: mixed;
+}
+
+.generals-scroll {
+  flex: 1;
+  white-space: nowrap;
+}
+
+.general-card-mini {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  margin-right: 8rpx;
+  padding: 4rpx;
+  background: rgba(0,0,0,0.3);
+  border: 1rpx solid #5a4a3a;
+  border-radius: 4rpx;
+}
+
+.card-avatar-mini {
+  width: 40rpx;
+  height: 40rpx;
+  border-radius: 4rpx;
+  border: 2rpx solid;
+}
+
+.card-name-mini {
+  font-size: 10rpx;
+  color: #c9a227;
+  margin-top: 2rpx;
+  max-width: 45rpx;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.add-card-mini {
+  border-style: dashed;
+  border-color: #8b6914;
+}
+
+.add-icon-mini {
+  width: 40rpx;
+  height: 40rpx;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 24rpx;
-  border: 2rpx solid #8b6914;
+  color: #8b6914;
+}
+
+/* ==================== 主内容区 ==================== */
+.main-content {
+  flex: 1;
+  display: flex;
+  padding: 6rpx;
+  gap: 6rpx;
   overflow: hidden;
 }
 
-.general-avatar image {
-  width: 100%;
+/* ==================== 左右悬浮栏 ==================== */
+.left-sidebar, .right-sidebar {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 10rpx;
+  width: 55rpx;
+  flex-shrink: 0;
+}
+
+.sidebar-icon {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 6rpx 4rpx;
+  background: linear-gradient(180deg, rgba(74, 58, 40, 0.9) 0%, rgba(58, 42, 24, 0.9) 100%);
+  border: 2rpx solid #8b6914;
+  border-radius: 8rpx;
+  box-shadow: 0 2rpx 6rpx rgba(0,0,0,0.5);
+}
+
+.icon-emoji {
+  font-size: 22rpx;
+}
+
+.icon-label {
+  font-size: 10rpx;
+  color: #c9a227;
+  margin-top: 2rpx;
+}
+
+/* ==================== 中间主区域 - 可滚动 ==================== */
+.center-area {
+  flex: 1;
   height: 100%;
 }
 
-.general-avatar.empty {
-  color: #654321;
-  font-size: 20rpx;
-  border-style: dashed;
+/* 功能按钮区 */
+.function-section {
+  display: flex;
+  gap: 10rpx;
+  padding: 8rpx;
+  background: rgba(0,0,0,0.2);
+  border-radius: 8rpx;
+  margin-bottom: 10rpx;
 }
 
-/* ========== 功能按钮区域 ========== */
-.function-area {
+/* 功能按钮网格 */
+.function-grid {
   flex: 1;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  align-items: center;
-  gap: 12rpx;
+  gap: 10rpx;
+}
+
+.function-grid-full {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 10rpx;
 }
 
 .func-row {
   display: flex;
   justify-content: center;
-  gap: 16rpx;
+  gap: 12rpx;
 }
 
-/* 卷轴按钮样式 */
-.scroll-btn {
+.func-btn {
   width: 90rpx;
-  height: 46rpx;
-  background: linear-gradient(180deg, #f5e6c8 0%, #d4c4a8 50%, #c4b498 100%);
-  border: 2rpx solid #8b6914;
-  border-radius: 4rpx;
+  height: 50rpx;
+  background: linear-gradient(180deg, #f5e6c8 0%, #d4c4a0 50%, #c4b490 100%);
+  border: 2rpx solid #8b7355;
+  border-radius: 6rpx;
   display: flex;
   align-items: center;
   justify-content: center;
-  position: relative;
-  box-shadow: 2rpx 2rpx 4rpx rgba(0,0,0,0.4);
-  padding: 0rpx 8rpx;
+  box-shadow: 
+    inset 0 2rpx 3rpx rgba(255,255,255,0.3),
+    0 3rpx 5rpx rgba(0,0,0,0.4);
 }
 
-
-.scroll-text {
-  font-size: 28rpx;
-  color: #3d2b1f;
+.func-text {
+  font-size: 20rpx;
+  color: #3d2817;
   font-weight: bold;
-  text-shadow: 1rpx 1rpx 0 rgba(255,255,255,0.5);
+  text-shadow: 0 1rpx 0 rgba(255,255,255,0.5);
 }
 
-.scroll-btn:active {
-  transform: scale(0.95);
-  background: linear-gradient(180deg, #e8d5b0 0%, #c4b498 50%, #b4a488 100%);
+
+/* ==================== 功能图标栏 ==================== */
+.func-icons-section {
+  background: rgba(0,0,0,0.2);
+  border-radius: 8rpx;
+  padding: 8rpx;
 }
 
-/* ========== 底部功能图标 ========== */
-.bottom-icons {
+.func-icons {
   display: flex;
-  justify-content: center;
-  gap: 20rpx;
-  padding: 6rpx 0;
-  flex-shrink: 0;
+  justify-content: space-around;
 }
 
-.bottom-btn {
+.icon-item {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 2rpx 18rpx;
+  padding: 4rpx 8rpx;
 }
 
-.bottom-icon {
-  font-size: 22rpx;
+.icon-img {
+  width: 45rpx;
+  height: 45rpx;
+  font-size: 28rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(180deg, #4a3a28 0%, #3a2a18 100%);
+  border: 2rpx solid #8b6914;
+  border-radius: 8rpx;
 }
 
-.bottom-label {
-  font-size: 10rpx;
-  color: #ffd700;
-  margin-top: 2rpx;
+.icon-name {
+  font-size: 12rpx;
+  color: #c9a227;
+  margin-top: 3rpx;
 }
 
-.bottom-btn:active {
-  opacity: 0.7;
-}
-
-/* ========== 聊天栏 ========== */
+/* ==================== 聊天栏 ==================== */
 .chat-bar {
   display: flex;
   align-items: center;
-  padding: 4rpx 10rpx;
-  background: rgba(0,0,0,0.7);
-  border-top: 2rpx solid #654321;
+  padding: 6rpx 10rpx;
+  background: linear-gradient(180deg, #2a1a0f 0%, #1a0a00 100%);
+  border-top: 2rpx solid #5a4a3a;
   flex-shrink: 0;
 }
 
 .chat-label {
-  padding: 3rpx 10rpx;
-  background: linear-gradient(180deg, #8b6914 0%, #654321 100%);
-  border-radius: 3rpx;
-  font-size: 12rpx;
-  color: #ffd700;
+  font-size: 14rpx;
+  color: #c9a227;
+  padding: 3rpx 8rpx;
+  background: #3d2817;
+  border: 1rpx solid #5a4a3a;
+  border-radius: 4rpx;
   margin-right: 8rpx;
-  flex-shrink: 0;
 }
 
-.chat-content {
+.chat-text {
   flex: 1;
-  overflow: hidden;
-}
-
-.chat-msg {
-  font-size: 10rpx;
-  color: #7fff00;
-  white-space: nowrap;
+  font-size: 14rpx;
+  color: #90ee90;
   overflow: hidden;
   text-overflow: ellipsis;
+  white-space: nowrap;
 }

@@ -494,8 +494,6 @@ public class EquipmentService {
             .equippedGeneralId(null)
             .icon(icon)
             .description(description)
-            .enhanceLevel(0)
-            .enhanceAttributes(null)
             .createTime(System.currentTimeMillis())
             .updateTime(System.currentTimeMillis())
             .build();

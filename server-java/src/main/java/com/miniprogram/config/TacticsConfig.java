@@ -55,166 +55,168 @@ public class TacticsConfig {
     }
     
     private void initTacticsTemplates() {
-        // ==================== 步兵专属阵法 ====================
+        // ==================== 主动兵法 ====================
         
-        // 方圆阵 - 步兵专属
-        addTacticsWithCost("tactics_f01", "方圆阵", 4, 4, "INFANTRY",
-            "步兵专属阵法：全体防御+10%，形成坚固防线",
+        // 橙色主动兵法
+        addTactics("tactics_001", "落雷", 1, 5, 
+            "对敌方单体造成谋略伤害，并有概率造成眩晕", 
             Arrays.asList(
-                createBuffEffect("ALL_ALLIES", "defense", 0, 10, "全体防御+10%")
-            ), 100, "阵型生效时",
-            50, 30, 500);  // 纸张50，木材30，银两500
+                createDamageEffect("SINGLE_ENEMY", 200, 1.5, "造成{value}点谋略伤害"),
+                createDebuffEffect("SINGLE_ENEMY", "stun", 1, 30, "30%概率眩晕1回合")
+            ), 35, "普通攻击后触发");
         
-        // 却月阵 - 步兵专属
-        addTacticsWithCost("tactics_f02", "却月阵", 4, 5, "INFANTRY",
-            "步兵专属阵法：对弓兵造成30%反伤，但骑兵对此阵伤害增加10%",
+        addTactics("tactics_002", "无当飞军", 1, 5, 
+            "对敌方全体造成伤害", 
             Arrays.asList(
-                createBuffEffect("SELF", "reflect_archer", 0, 30, "对弓兵反伤30%"),
-                createDebuffEffect("SELF", "cavalry_weakness", 0, 10, "受骑兵伤害+10%")
-            ), 100, "阵型生效时",
-            80, 50, 1000);
+                createDamageEffect("ALL_ENEMIES", 150, 1.2, "对敌方全体造成{value}点伤害")
+            ), 40, "每3回合触发");
         
-        // 八门金锁阵 - 步兵专属
-        addTacticsWithCost("tactics_f03", "八门金锁阵", 4, 5, "INFANTRY",
-            "步兵专属阵法：提升己方全体防御15%和闪避5%",
+        addTactics("tactics_003", "虎豹骑", 1, 5, 
+            "对敌方单体造成高额物理伤害，并降低目标防御", 
             Arrays.asList(
-                createBuffEffect("ALL_ALLIES", "defense", 0, 15, "全体防御+15%"),
-                createBuffEffect("ALL_ALLIES", "dodge", 0, 5, "全体闪避+5%")
-            ), 100, "阵型生效时",
-            100, 60, 1500);
+                createDamageEffect("SINGLE_ENEMY", 280, 2.0, "造成{value}点物理伤害"),
+                createDebuffEffect("SINGLE_ENEMY", "defense", 2, -50, "降低目标防御50点，持续2回合")
+            ), 30, "攻击时触发");
         
-        // ==================== 骑兵专属兵法 ====================
-        
-        // 铁骑冲锋 - 骑兵专属
-        addTacticsWithCost("tactics_c01", "铁骑冲锋", 1, 4, "CAVALRY",
-            "骑兵专属兵法：对敌方单体造成150%伤害，对步兵额外+20%",
+        // 紫色主动兵法
+        addTactics("tactics_004", "突击", 1, 4, 
+            "对敌方单体造成物理伤害", 
             Arrays.asList(
-                createDamageEffect("SINGLE_ENEMY", 150, 1.5, "造成150%伤害"),
-                createBuffEffect("SELF", "infantry_bonus", 0, 20, "对步兵伤害+20%")
-            ), 40, "攻击时触发",
-            40, 60, 600);
+                createDamageEffect("SINGLE_ENEMY", 150, 1.3, "造成{value}点物理伤害")
+            ), 45, "攻击时触发");
         
-        // 突袭 - 骑兵专属
-        addTacticsWithCost("tactics_c02", "突袭", 1, 3, "CAVALRY",
-            "骑兵专属兵法：先手攻击，机动性+20",
+        addTactics("tactics_005", "箭雨", 1, 4, 
+            "对敌方全体造成远程伤害", 
             Arrays.asList(
-                createBuffEffect("SELF", "mobility", 0, 20, "机动性+20")
-            ), 100, "战斗开始时",
-            30, 40, 400);
+                createDamageEffect("ALL_ENEMIES", 100, 0.8, "对敌方全体造成{value}点远程伤害")
+            ), 35, "每2回合触发");
         
-        // 虎豹骑 - 骑兵专属
-        addTacticsWithCost("tactics_c03", "虎豹骑", 1, 5, "CAVALRY",
-            "骑兵专属兵法：造成200%伤害并降低目标防御50点",
+        addTactics("tactics_006", "烈火", 1, 4, 
+            "对敌方单体造成持续伤害", 
             Arrays.asList(
-                createDamageEffect("SINGLE_ENEMY", 200, 2.0, "造成200%伤害"),
-                createDebuffEffect("SINGLE_ENEMY", "defense", 2, -50, "降低防御50点")
-            ), 35, "攻击时触发",
-            100, 80, 2000);
+                createDamageEffect("SINGLE_ENEMY", 80, 0.6, "造成{value}点火焰伤害"),
+                createDebuffEffect("SINGLE_ENEMY", "burn", 3, 30, "灼烧3回合，每回合损失30兵力")
+            ), 40, "攻击时触发");
         
-        // ==================== 弓兵专属兵法 ====================
-        
-        // 长虹贯日 - 弓兵专属（核心兵法）
-        addTacticsWithCost("tactics_a01", "长虹贯日", 1, 5, "ARCHER",
-            "弓兵专属兵法：对一排三个敌人造成伤害，比例分别为50%、40%、30%",
+        // 蓝色主动兵法
+        addTactics("tactics_007", "冲锋", 1, 3, 
+            "对敌方单体造成伤害", 
             Arrays.asList(
-                createDamageEffect("ROW_FIRST", 100, 0.5, "第一目标受到50%伤害"),
-                createDamageEffect("ROW_SECOND", 80, 0.4, "第二目标受到40%伤害"),
-                createDamageEffect("ROW_THIRD", 60, 0.3, "第三目标受到30%伤害")
-            ), 35, "攻击时触发",
-            120, 40, 2500);
+                createDamageEffect("SINGLE_ENEMY", 100, 1.0, "造成{value}点物理伤害")
+            ), 50, "攻击时触发");
         
-        // 箭雨 - 弓兵专属
-        addTacticsWithCost("tactics_a02", "箭雨", 1, 4, "ARCHER",
-            "弓兵专属兵法：对敌方全体造成80%伤害",
+        addTactics("tactics_008", "射击", 1, 3, 
+            "对敌方单体造成远程伤害", 
             Arrays.asList(
-                createDamageEffect("ALL_ENEMIES", 80, 0.8, "全体敌人受到80%伤害")
-            ), 30, "每2回合触发",
-            60, 30, 800);
+                createDamageEffect("SINGLE_ENEMY", 90, 0.9, "造成{value}点远程伤害")
+            ), 55, "攻击时触发");
         
-        // 穿云箭 - 弓兵专属
-        addTacticsWithCost("tactics_a03", "穿云箭", 1, 3, "ARCHER",
-            "弓兵专属兵法：对单体造成120%伤害，无视20%防御",
+        // ==================== 被动兵法 ====================
+        
+        // 橙色被动兵法
+        addTactics("tactics_101", "八门金锁", 2, 5, 
+            "战斗开始时，提升己方全体防御和闪避", 
             Arrays.asList(
-                createDamageEffect("SINGLE_ENEMY", 120, 1.2, "造成120%伤害"),
-                createBuffEffect("SELF", "armor_pierce", 0, 20, "无视20%防御")
-            ), 45, "攻击时触发",
-            40, 20, 500);
+                createBuffEffect("ALL_ALLIES", "defense", 3, 100, "提升防御100点"),
+                createBuffEffect("ALL_ALLIES", "dodge", 3, 15, "提升闪避15%")
+            ), 100, "战斗开始时");
         
-        // ==================== 通用兵法 ====================
-        
-        // 铁壁 - 通用
-        addTacticsWithCost("tactics_g01", "铁壁", 2, 3, "ALL",
-            "通用兵法：永久提升防御80点",
+        addTactics("tactics_102", "藤甲兵", 2, 5, 
+            "受到攻击时，有概率反弹伤害", 
             Arrays.asList(
-                createBuffEffect("SELF", "defense", 0, 80, "防御+80")
-            ), 100, "永久生效",
-            30, 20, 300);
+                createDamageEffect("SINGLE_ENEMY", 0, 0.5, "反弹50%受到的伤害")
+            ), 25, "受到攻击时");
         
-        // 猛攻 - 通用
-        addTacticsWithCost("tactics_g02", "猛攻", 2, 3, "ALL",
-            "通用兵法：永久提升攻击100点",
+        // 紫色被动兵法
+        addTactics("tactics_103", "铁壁", 2, 4, 
+            "提升自身防御", 
             Arrays.asList(
-                createBuffEffect("SELF", "attack", 0, 100, "攻击+100")
-            ), 100, "永久生效",
-            30, 20, 300);
+                createBuffEffect("SELF", "defense", 0, 80, "永久提升防御80点")
+            ), 100, "永久生效");
         
-        // 疾行 - 通用
-        addTacticsWithCost("tactics_g03", "疾行", 2, 3, "ALL",
-            "通用兵法：永久提升机动性30点",
+        addTactics("tactics_104", "疾行", 2, 4, 
+            "提升自身机动性", 
             Arrays.asList(
-                createBuffEffect("SELF", "mobility", 0, 30, "机动性+30")
-            ), 100, "永久生效",
-            30, 20, 300);
+                createBuffEffect("SELF", "mobility", 0, 30, "永久提升机动性30点")
+            ), 100, "永久生效");
         
-        // 鼓舞 - 通用指挥
-        addTacticsWithCost("tactics_g04", "鼓舞", 3, 4, "ALL",
-            "通用指挥兵法：战斗开始时全体攻击+50，持续3回合",
+        addTactics("tactics_105", "猛攻", 2, 4, 
+            "提升自身攻击力", 
             Arrays.asList(
-                createBuffEffect("ALL_ALLIES", "attack", 3, 50, "全体攻击+50")
-            ), 100, "战斗开始时",
-            60, 40, 800);
-    }
-    
-    private void addTacticsWithCost(String id, String name, int typeId, int qualityId, 
-                                    String troopRequirement, String description, 
-                                    List<Tactics.TacticsEffect> effects, 
-                                    int triggerRate, String triggerCondition,
-                                    int paperCost, int woodCost, int silverCost) {
-        Map<String, Integer> learnCost = new HashMap<>();
-        learnCost.put("paper", paperCost);
-        learnCost.put("wood", woodCost);
-        learnCost.put("silver", silverCost);
+                createBuffEffect("SELF", "attack", 0, 100, "永久提升攻击力100点")
+            ), 100, "永久生效");
         
-        Tactics tactics = Tactics.builder()
-            .id(id)
-            .name(name)
-            .type(tacticsTypes.get(typeId))
-            .quality(tacticsQualities.get(qualityId))
-            .description(description)
-            .icon(getIconByType(typeId))
-            .effects(effects)
-            .triggerRate(triggerRate)
-            .triggerCondition(triggerCondition)
-            .learnLevel(qualityId * 10)
-            .learnCondition(troopRequirement)  // 兵种要求
-            .level(1)
-            .maxLevel(10)
-            .exp(0)
-            .maxExp(100)
-            .createTime(System.currentTimeMillis())
-            .updateTime(System.currentTimeMillis())
-            .build();
+        // 蓝色被动兵法
+        addTactics("tactics_106", "坚守", 2, 3, 
+            "提升自身防御", 
+            Arrays.asList(
+                createBuffEffect("SELF", "defense", 0, 50, "永久提升防御50点")
+            ), 100, "永久生效");
         
-        // 存储学习消耗
-        tacticsLearnCosts.put(id, learnCost);
-        tacticsTemplates.put(id, tactics);
-    }
-    
-    // 兵法学习消耗
-    private final Map<String, Map<String, Integer>> tacticsLearnCosts = new HashMap<>();
-    
-    public Map<String, Integer> getTacticsLearnCost(String tacticsId) {
-        return tacticsLearnCosts.getOrDefault(tacticsId, new HashMap<>());
+        addTactics("tactics_107", "锐气", 2, 3, 
+            "提升自身攻击力", 
+            Arrays.asList(
+                createBuffEffect("SELF", "attack", 0, 60, "永久提升攻击力60点")
+            ), 100, "永久生效");
+        
+        // ==================== 指挥兵法 ====================
+        
+        // 橙色指挥兵法
+        addTactics("tactics_201", "空城计", 3, 5, 
+            "战斗开始时，降低敌方全体攻击力，并有概率使敌方混乱", 
+            Arrays.asList(
+                createDebuffEffect("ALL_ENEMIES", "attack", 2, -80, "降低敌方攻击80点"),
+                createDebuffEffect("ALL_ENEMIES", "confuse", 1, 20, "20%概率混乱1回合")
+            ), 100, "战斗开始时");
+        
+        addTactics("tactics_202", "草船借箭", 3, 5, 
+            "战斗开始时，为己方全体恢复兵力", 
+            Arrays.asList(
+                createHealEffect("ALL_ALLIES", 200, 0.3, "恢复{value}兵力")
+            ), 100, "战斗开始时");
+        
+        // 紫色指挥兵法
+        addTactics("tactics_203", "鼓舞", 3, 4, 
+            "战斗开始时，提升己方全体攻击力", 
+            Arrays.asList(
+                createBuffEffect("ALL_ALLIES", "attack", 3, 50, "提升攻击50点，持续3回合")
+            ), 100, "战斗开始时");
+        
+        addTactics("tactics_204", "坚阵", 3, 4, 
+            "战斗开始时，提升己方全体防御力", 
+            Arrays.asList(
+                createBuffEffect("ALL_ALLIES", "defense", 3, 60, "提升防御60点，持续3回合")
+            ), 100, "战斗开始时");
+        
+        // ==================== 阵法兵法 ====================
+        
+        // 橙色阵法
+        addTactics("tactics_301", "八阵图", 4, 5, 
+            "阵型加成：前排武将防御+20%，后排武将攻击+15%", 
+            Arrays.asList(
+                createBuffEffect("FRONT_ROW", "defense", 0, 20, "前排防御+20%"),
+                createBuffEffect("BACK_ROW", "attack", 0, 15, "后排攻击+15%")
+            ), 100, "阵型生效时");
+        
+        addTactics("tactics_302", "锥形阵", 4, 5, 
+            "阵型加成：全体攻击+10%，中路武将额外+20%攻击", 
+            Arrays.asList(
+                createBuffEffect("ALL_ALLIES", "attack", 0, 10, "全体攻击+10%"),
+                createBuffEffect("MIDDLE", "attack", 0, 20, "中路额外攻击+20%")
+            ), 100, "阵型生效时");
+        
+        // 紫色阵法
+        addTactics("tactics_303", "鹤翼阵", 4, 4, 
+            "阵型加成：两翼武将机动性+25%", 
+            Arrays.asList(
+                createBuffEffect("WING", "mobility", 0, 25, "两翼机动+25%")
+            ), 100, "阵型生效时");
+        
+        addTactics("tactics_304", "方圆阵", 4, 4, 
+            "阵型加成：全体防御+15%", 
+            Arrays.asList(
+                createBuffEffect("ALL_ALLIES", "defense", 0, 15, "全体防御+15%")
+            ), 100, "阵型生效时");
     }
     
     private void addTactics(String id, String name, int typeId, int qualityId, 

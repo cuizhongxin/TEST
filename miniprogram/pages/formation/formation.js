@@ -4,116 +4,332 @@ var request = require('../../utils/request.js')
 
 Page({
   data: {
-    formations: [
-      { id: 'yizi', name: '一字长蛇阵', description: '攻击+10%' },
-      { id: 'fangyu', name: '方圆阵', description: '防御+10%' },
-      { id: 'queyue', name: '却月阵', description: '对弓兵反伤30%' },
-      { id: 'yanxing', name: '雁行阵', description: '速度+15%' },
-      { id: 'yulin', name: '鱼鳞阵', description: '暴击+10%' }
+    // 阵型槽位
+    slots: [
+      { index: 0, empty: true },
+      { index: 1, empty: true },
+      { index: 2, empty: true },
+      { index: 3, empty: true },
+      { index: 4, empty: true },
+      { index: 5, empty: true }
     ],
-    currentFormation: 'yizi',
-    battleGenerals: [],
-    allGenerals: [],
-    availableGenerals: [],
+    
+    // 所有武将
+    generals: [],
+    filteredGenerals: [],
+    filterQuality: 'all',
+    
+    // 战斗顺序
+    battleOrder: [],
+    
+    // 弹窗
     showModal: false,
-    currentSlotIndex: -1
+    selectedSlot: -1,
+    availableGenerals: []
   },
 
   onLoad: function() {
-    this.fetchGenerals()
-    this.fetchBattleOrder()
+    this.loadData()
   },
 
-  fetchGenerals: function() {
+  onShow: function() {
+    this.loadData()
+  },
+
+  // 按顺序加载数据：先加载阵型，再加载武将
+  loadData: function() {
+    var that = this
+    // 先加载阵型
+    request({ url: '/formation', method: 'GET' }).then(function(res) {
+      if (res.code === 200 && res.data) {
+        var slots = res.data.slots || []
+        // 处理槽位数据
+        slots = slots.map(function(slot) {
+          slot.qualityClass = that.getQualityClass(slot.quality)
+          return slot
+        })
+        that.setData({ slots: slots })
+        that.updateBattleOrder()
+      }
+      // 阵型加载完成后再加载武将
+      that.loadGenerals()
+    }).catch(function(err) {
+      console.error('加载阵型失败:', err)
+      // 即使阵型加载失败，也要加载武将
+      that.loadGenerals()
+    })
+  },
+
+  loadFormation: function() {
+    var that = this
+    request({ url: '/formation', method: 'GET' }).then(function(res) {
+      if (res.code === 200 && res.data) {
+        var slots = res.data.slots || []
+        // 处理槽位数据
+        slots = slots.map(function(slot) {
+          slot.qualityClass = that.getQualityClass(slot.quality)
+          return slot
+        })
+        that.setData({ slots: slots })
+        that.updateBattleOrder()
+        // 更新武将的上阵状态
+        that.refreshGeneralsFormationStatus()
+      }
+    }).catch(function(err) {
+      console.error('加载阵型失败:', err)
+    })
+  },
+
+  // 刷新武将的上阵状态
+  refreshGeneralsFormationStatus: function() {
+    var that = this
+    var formationIds = this.getFormationGeneralIds()
+    var generals = this.data.generals.map(function(g) {
+      g.inFormation = formationIds.indexOf(g.id) > -1
+      return g
+    })
+    this.setData({ 
+      generals: generals,
+      filteredGenerals: this.data.filterQuality === 'all' ? generals : generals.filter(function(g) {
+        return that.getQualityClass(g.quality) === that.data.filterQuality
+      })
+    })
+  },
+
+  loadGenerals: function() {
     var that = this
     request({ url: '/general/list', method: 'GET' }).then(function(res) {
       if (res.code === 200 && res.data) {
-        that.setData({ allGenerals: res.data })
+        var generals = res.data || []
+        
+        // 标记已上阵的武将
+        var formationIds = that.getFormationGeneralIds()
+        generals = generals.map(function(g) {
+          g.inFormation = formationIds.indexOf(g.id) > -1
+          g.qualityClass = that.getQualityClass(g.quality)
+          return g
+        })
+        
+        // 按机动性排序
+        generals.sort(function(a, b) {
+          var mobA = a.attributes ? a.attributes.mobility : 0
+          var mobB = b.attributes ? b.attributes.mobility : 0
+          return mobB - mobA
+        })
+        
+        that.setData({ 
+          generals: generals,
+          filteredGenerals: generals
+        })
+        that.applyFilter()
       }
     }).catch(function(err) {
-      console.error('获取武将列表失败:', err)
+      console.error('加载武将失败:', err)
     })
   },
 
-  fetchBattleOrder: function() {
-    var that = this
-    request({ url: '/formation/battle-order', method: 'GET' }).then(function(res) {
-      if (res.code === 200 && res.data) {
-        that.setData({ battleGenerals: res.data })
+  getFormationGeneralIds: function() {
+    var ids = []
+    this.data.slots.forEach(function(slot) {
+      if (slot.generalId) {
+        ids.push(slot.generalId)
       }
-    }).catch(function(err) {
-      console.error('获取出战阵容失败:', err)
     })
+    return ids
   },
 
-  selectFormation: function(e) {
-    var id = e.currentTarget.dataset.id
-    this.setData({ currentFormation: id })
+  getQualityClass: function(quality) {
+    if (!quality) return ''
+    var name = typeof quality === 'object' ? quality.name : quality
+    switch (name) {
+      case 'orange': case '橙色': return 'orange'
+      case 'purple': case '紫色': return 'purple'
+      case 'red': case '红色': return 'red'
+      case 'blue': case '蓝色': return 'blue'
+      case 'green': case '绿色': return 'green'
+      default: return ''
+    }
   },
 
-  selectSlot: function(e) {
+  setFilter: function(e) {
+    var filter = e.currentTarget.dataset.filter
+    this.setData({ filterQuality: filter })
+    this.applyFilter()
+  },
+
+  applyFilter: function() {
     var that = this
+    var filter = this.data.filterQuality
+    var generals = this.data.generals
+    
+    if (filter === 'all') {
+      this.setData({ filteredGenerals: generals })
+      return
+    }
+    
+    var filtered = generals.filter(function(g) {
+      return that.getQualityClass(g.quality) === filter
+    })
+    this.setData({ filteredGenerals: filtered })
+  },
+
+  onSlotTap: function(e) {
     var index = e.currentTarget.dataset.index
+    var formationIds = this.getFormationGeneralIds()
     
-    // 过滤已出战的武将
-    var battleIds = that.data.battleGenerals.map(function(g) { return g ? g.id : null })
-    var available = that.data.allGenerals.filter(function(g) {
-      return battleIds.indexOf(g.id) === -1
+    // 获取可选武将（排除已上阵的）
+    var available = this.data.generals.map(function(g) {
+      g.inFormation = formationIds.indexOf(g.id) > -1
+      return g
     })
     
-    that.setData({
+    this.setData({
       showModal: true,
-      currentSlotIndex: index,
+      selectedSlot: index,
       availableGenerals: available
     })
   },
 
-  addGeneral: function(e) {
-    var that = this
-    var generalId = e.currentTarget.dataset.id
-    var general = that.data.allGenerals.find(function(g) { return g.id === generalId })
-    var index = that.data.currentSlotIndex
-    
-    if (general) {
-      var battleGenerals = that.data.battleGenerals.slice()
-      battleGenerals[index] = general
-      that.setData({ battleGenerals: battleGenerals })
-    }
-    that.hideModal()
-  },
-
-  removeGeneral: function(e) {
-    var index = e.currentTarget.dataset.index
-    var battleGenerals = this.data.battleGenerals.slice()
-    battleGenerals.splice(index, 1)
-    this.setData({ battleGenerals: battleGenerals })
-  },
-
-  hideModal: function() {
-    this.setData({ showModal: false, currentSlotIndex: -1 })
-  },
-
-  saveFormation: function() {
-    var that = this
-    var generalIds = that.data.battleGenerals.map(function(g) { return g ? g.id : null }).filter(function(id) { return id !== null })
-    
-    if (generalIds.length === 0) {
-      wx.showToast({ title: '请至少选择一个武将', icon: 'none' })
+  onGeneralTap: function(e) {
+    var general = e.currentTarget.dataset.general
+    if (general.inFormation) {
+      wx.showToast({ title: '该武将已上阵', icon: 'none' })
       return
     }
     
+    // 找到第一个空槽位
+    var emptySlot = -1
+    for (var i = 0; i < this.data.slots.length; i++) {
+      if (this.data.slots[i].empty) {
+        emptySlot = i
+        break
+      }
+    }
+    
+    if (emptySlot === -1) {
+      wx.showToast({ title: '阵型已满，请先移除武将', icon: 'none' })
+      return
+    }
+    
+    this.setSlot(emptySlot, general.id)
+  },
+
+  selectGeneral: function(e) {
+    var general = e.currentTarget.dataset.general
+    if (general.inFormation) {
+      wx.showToast({ title: '该武将已上阵', icon: 'none' })
+      return
+    }
+    
+    this.setSlot(this.data.selectedSlot, general.id)
+    this.closeModal()
+  },
+
+  clearSlot: function() {
+    this.setSlot(this.data.selectedSlot, null)
+    this.closeModal()
+  },
+
+  setSlot: function(slotIndex, generalId) {
+    var that = this
+    wx.showLoading({ title: '设置中...' })
+    
     request({
-      url: '/formation/save',
+      url: '/formation/slot',
       method: 'POST',
-      data: { formationType: that.data.currentFormation, generalIds: generalIds }
+      data: { slotIndex: slotIndex, generalId: generalId }
     }).then(function(res) {
+      wx.hideLoading()
       if (res.code === 200) {
-        wx.showToast({ title: '保存成功', icon: 'success' })
+        that.loadFormation()
+        that.loadGenerals()
+        wx.showToast({ title: '设置成功', icon: 'success' })
+      } else {
+        wx.showToast({ title: res.message || '设置失败', icon: 'none' })
+      }
+    }).catch(function(err) {
+      wx.hideLoading()
+      wx.showToast({ title: '设置异常', icon: 'none' })
+    })
+  },
+
+  closeModal: function() {
+    this.setData({ showModal: false, selectedSlot: -1 })
+  },
+
+  updateBattleOrder: function() {
+    var that = this
+    var slots = this.data.slots
+    var order = []
+    
+    // 位置优先级：右侧(后排)最高，左侧(前排)最低
+    // 后排(4,5) > 中排(2,3) > 前排(0,1)
+    // 数值越小优先级越高
+    var positionPriority = {
+      0: 2,  // 前排（最低优先）
+      1: 2,  // 前排（最低优先）
+      2: 1,  // 中排（中等优先）
+      3: 1,  // 中排（中等优先）
+      4: 0,  // 后排（最高优先）
+      5: 0   // 后排（最高优先）
+    }
+    
+    slots.forEach(function(slot, index) {
+      if (!slot.empty && slot.generalId) {
+        order.push({
+          index: index,
+          name: slot.generalName,
+          mobility: slot.mobility || 0,
+          priority: positionPriority[index]
+        })
+      }
+    })
+    
+    // 排序规则：机动性降序 > 位置优先级升序（右侧优先） > 索引升序
+    order.sort(function(a, b) {
+      // 先按机动性降序
+      if (a.mobility !== b.mobility) {
+        return b.mobility - a.mobility
+      }
+      // 机动性相同，按位置优先级（后排/右侧优先）
+      if (a.priority !== b.priority) {
+        return a.priority - b.priority
+      }
+      // 都相同，按索引升序
+      return a.index - b.index
+    })
+    
+    this.setData({ battleOrder: order })
+  },
+
+  saveFormation: function() {
+    var generalIds = []
+    this.data.slots.forEach(function(slot) {
+      generalIds.push(slot.generalId || null)
+    })
+    
+    var that = this
+    wx.showLoading({ title: '保存中...' })
+    
+    request({
+      url: '/formation/batch',
+      method: 'POST',
+      data: { generalIds: generalIds }
+    }).then(function(res) {
+      wx.hideLoading()
+      if (res.code === 200) {
+        wx.showToast({ title: '阵型已保存', icon: 'success' })
       } else {
         wx.showToast({ title: res.message || '保存失败', icon: 'none' })
       }
     }).catch(function(err) {
-      wx.showToast({ title: '保存失败', icon: 'none' })
+      wx.hideLoading()
+      wx.showToast({ title: '保存异常', icon: 'none' })
     })
+  },
+
+  goBack: function() {
+    wx.navigateBack()
   }
 })
+

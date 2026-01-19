@@ -1,205 +1,277 @@
 /* pages/recruit/recruit.wxss */
+page {
+  background: linear-gradient(180deg, #1a1a2e 0%, #16213e 50%, #0f0f23 100%);
+  height: 100vh;
+  overflow: hidden;
+}
+
 .page-container {
-  min-height: 100vh;
-  background: linear-gradient(180deg, #8b7355 0%, #6b5344 100%);
-  padding: 20rpx;
-  padding-bottom: 100rpx;
-  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  color: #e8d5b0;
+  font-family: 'STKaiti', 'KaiTi', serif;
 }
 
-.header {
+/* 顶部栏 */
+.top-bar {
+  display: flex;
+  align-items: center;
+  padding: 8rpx 15rpx;
+  background: linear-gradient(180deg, #2a1a0f 0%, #3d2817 100%);
+  border-bottom: 2rpx solid #8b6914;
+  flex-shrink: 0;
+}
+
+.back-btn {
+  padding: 5rpx 12rpx;
+  background: linear-gradient(180deg, #4a3a28 0%, #3a2a18 100%);
+  border: 1rpx solid #5a4a3a;
+  border-radius: 4rpx;
+  font-size: 14rpx;
+  color: #c9a227;
+}
+
+.page-title {
+  flex: 1;
   text-align: center;
-  padding: 20rpx 0;
+  font-size: 18rpx;
+  color: #ffd700;
 }
 
-.title {
-  font-size: 36rpx;
-  color: #ffd700;
-  font-weight: bold;
+.resource-info {
+  display: flex;
+  gap: 12rpx;
+  font-size: 14rpx;
 }
 
-.section-title {
-  font-size: 28rpx;
+.gold { color: #ffd700; }
+.silver { color: #c0c0c0; }
+
+/* 主内容 */
+.main-content {
+  flex: 1;
+  display: flex;
+  padding: 8rpx;
+  gap: 8rpx;
+  overflow: hidden;
+}
+
+/* 左侧招贤令面板 */
+.token-panel {
+  width: 180rpx;
+  background: rgba(0,0,0,0.4);
+  border: 1rpx solid #3a5a8a;
+  border-radius: 8rpx;
+  padding: 8rpx;
+  display: flex;
+  flex-direction: column;
+}
+
+.panel-title {
+  font-size: 14rpx;
   color: #ffd700;
-  margin-bottom: 16rpx;
+  text-align: center;
+  padding-bottom: 6rpx;
+  border-bottom: 1rpx solid #3a5a8a;
+  margin-bottom: 6rpx;
+}
+
+.token-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6rpx;
+}
+
+.token-item {
+  background: rgba(0,0,0,0.3);
+  border: 1rpx solid #3a5a8a;
+  border-radius: 6rpx;
+  padding: 6rpx;
+}
+
+.token-item.green { border-color: #32cd32; }
+.token-item.blue { border-color: #4169e1; }
+.token-item.purple { border-color: #9932cc; }
+
+.token-name {
+  font-size: 12rpx;
   display: block;
 }
 
-.recruit-section {
+.token-count {
+  font-size: 16rpx;
+  color: #ffd700;
+  display: block;
+  text-align: center;
+  margin: 4rpx 0;
+}
+
+.token-actions {
   display: flex;
-  gap: 16rpx;
-  margin-bottom: 30rpx;
+  gap: 4rpx;
+  flex-wrap: wrap;
+}
+
+.btn-small {
+  flex: 1;
+  font-size: 10rpx;
+  padding: 3rpx 4rpx;
+  background: linear-gradient(180deg, #4a3a28 0%, #3a2a18 100%);
+  border: 1rpx solid #8b6914;
+  border-radius: 4rpx;
+  text-align: center;
+  color: #c9a227;
+}
+
+.compose-section {
+  margin-top: auto;
+  padding-top: 6rpx;
+  border-top: 1rpx solid #3a5a8a;
+}
+
+.compose-item {
+  font-size: 10rpx;
+  padding: 5rpx;
+  background: rgba(139,105,20,0.3);
+  border: 1rpx solid #8b6914;
+  border-radius: 4rpx;
+  margin-bottom: 4rpx;
+  text-align: center;
+  color: #c9a227;
+}
+
+/* 中间招募区 */
+.recruit-panel {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8rpx;
+}
+
+.recruit-cards {
+  display: flex;
+  gap: 8rpx;
+  flex: 1;
 }
 
 .recruit-card {
   flex: 1;
-  padding: 24rpx;
-  background: rgba(0,0,0,0.3);
-  border-radius: 12rpx;
-  text-align: center;
-  border: 2rpx solid #8b6914;
-}
-
-.recruit-card.premium {
-  border-color: #9932cc;
-  background: rgba(153,50,204,0.2);
-}
-
-.recruit-card.ten {
-  border-color: #ff8c00;
-  background: rgba(255,140,0,0.2);
-}
-
-.recruit-name {
-  font-size: 28rpx;
-  color: #fff;
-  display: block;
-  margin-bottom: 8rpx;
-  font-weight: bold;
-}
-
-.recruit-desc {
-  font-size: 22rpx;
-  color: #ff6b6b;
-  display: block;
-  margin-bottom: 4rpx;
-}
-
-.recruit-tip {
-  font-size: 20rpx;
-  color: #aaa;
-}
-
-.owned-section {
-  margin-bottom: 30rpx;
-}
-
-.general-grid {
+  background: rgba(0,0,0,0.4);
+  border: 2rpx solid #3a5a8a;
+  border-radius: 10rpx;
+  padding: 10rpx;
   display: flex;
-  flex-wrap: wrap;
-  gap: 16rpx;
-}
-
-.general-card {
-  width: calc(25% - 12rpx);
-  padding: 16rpx;
-  background: rgba(0,0,0,0.3);
-  border-radius: 12rpx;
-  text-align: center;
-}
-
-.general-avatar {
-  width: 80rpx;
-  height: 80rpx;
-  border-radius: 8rpx;
-  overflow: hidden;
-  margin: 0 auto 8rpx;
-  border: 2rpx solid #8b6914;
-}
-
-.general-avatar image {
-  width: 100%;
-  height: 100%;
-}
-
-.general-name {
-  font-size: 24rpx;
-  display: block;
-  font-weight: bold;
-}
-
-.general-level {
-  font-size: 20rpx;
-  color: #7fff00;
-}
-
-/* 弹窗 */
-.modal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0,0,0,0.7);
-  display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  z-index: 100;
 }
 
-.modal-content {
-  width: 80%;
-  max-height: 70vh;
-  background: #4a3728;
-  border-radius: 16rpx;
-  padding: 30rpx;
-  border: 2rpx solid #8b6914;
-}
+.recruit-card.green { border-color: #32cd32; background: linear-gradient(180deg, rgba(50,205,50,0.1) 0%, rgba(0,0,0,0.4) 100%); }
+.recruit-card.blue { border-color: #4169e1; background: linear-gradient(180deg, rgba(65,105,225,0.1) 0%, rgba(0,0,0,0.4) 100%); }
+.recruit-card.purple { border-color: #9932cc; background: linear-gradient(180deg, rgba(153,50,204,0.1) 0%, rgba(0,0,0,0.4) 100%); }
 
-.modal-title {
-  font-size: 32rpx;
+.card-icon { font-size: 32rpx; margin-bottom: 6rpx; }
+.card-title { font-size: 16rpx; color: #ffd700; margin-bottom: 4rpx; }
+.card-desc { font-size: 11rpx; color: #aaa; margin-bottom: 4rpx; }
+.card-trait { font-size: 10rpx; color: #90ee90; margin-bottom: 6rpx; }
+
+.card-btn {
+  padding: 6rpx 20rpx;
+  background: linear-gradient(180deg, #8b6914 0%, #6b4914 100%);
+  border-radius: 15rpx;
+  font-size: 13rpx;
   color: #ffd700;
+}
+
+.ten-pull {
+  display: flex;
+  gap: 8rpx;
+}
+
+.ten-btn {
+  flex: 1;
+  padding: 8rpx;
+  border-radius: 8rpx;
   text-align: center;
-  display: block;
-  margin-bottom: 20rpx;
+  font-size: 13rpx;
+  color: #fff;
+}
+
+.ten-btn.green { background: linear-gradient(180deg, #228b22 0%, #006400 100%); }
+.ten-btn.blue { background: linear-gradient(180deg, #4169e1 0%, #191970 100%); }
+.ten-btn.purple { background: linear-gradient(180deg, #9932cc 0%, #4b0082 100%); }
+
+/* 右侧结果面板 */
+.result-panel {
+  width: 200rpx;
+  background: rgba(0,0,0,0.4);
+  border: 1rpx solid #3a5a8a;
+  border-radius: 8rpx;
+  padding: 8rpx;
+  display: flex;
+  flex-direction: column;
 }
 
 .result-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 16rpx;
-  justify-content: center;
-  margin-bottom: 20rpx;
+  flex: 1;
 }
 
 .result-item {
-  text-align: center;
-  padding: 16rpx;
+  background: rgba(0,0,0,0.3);
+  border: 1rpx solid #3a5a8a;
+  border-radius: 6rpx;
+  padding: 6rpx;
+  margin-bottom: 6rpx;
 }
 
-.result-avatar {
-  width: 100rpx;
-  height: 100rpx;
-  border-radius: 8rpx;
-  overflow: hidden;
-  margin: 0 auto 8rpx;
-  border: 3rpx solid #ffd700;
+.result-item.orange { border-color: #ff8c00; box-shadow: 0 0 8rpx rgba(255,140,0,0.4); }
+.result-item.purple { border-color: #9932cc; box-shadow: 0 0 6rpx rgba(153,50,204,0.3); }
+.result-item.red { border-color: #dc143c; }
+.result-item.blue { border-color: #4169e1; }
+.result-item.green { border-color: #32cd32; }
+
+.general-basic {
+  display: flex;
+  align-items: center;
+  gap: 6rpx;
 }
 
-.result-avatar image {
-  width: 100%;
-  height: 100%;
+.general-icon { font-size: 18rpx; }
+
+.general-info { flex: 1; }
+.general-name { font-size: 13rpx; display: block; }
+.general-faction { font-size: 10rpx; color: #888; }
+
+.general-traits {
+  margin-top: 4rpx;
+  padding-top: 4rpx;
+  border-top: 1rpx dashed #3a5a8a;
 }
 
-.result-name {
-  font-size: 26rpx;
+.trait-item {
   display: block;
-  font-weight: bold;
+  font-size: 10rpx;
+  color: #90ee90;
+  padding: 1rpx 0;
 }
 
-.result-quality {
-  font-size: 20rpx;
+.general-attrs {
+  display: flex;
+  gap: 6rpx;
+  margin-top: 4rpx;
+  font-size: 10rpx;
   color: #aaa;
 }
 
-.modal-btn {
-  text-align: center;
-  padding: 16rpx;
-  background: linear-gradient(180deg, #8b6914 0%, #654321 100%);
-  border-radius: 8rpx;
-  color: #ffd700;
-  font-size: 28rpx;
+.empty-result {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: 12rpx;
+  color: #666;
 }
 
-.resource-bar {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  display: flex;
-  justify-content: space-around;
-  padding: 20rpx;
-  background: rgba(0,0,0,0.8);
-  color: #ffd700;
-  font-size: 26rpx;
-}
+.hint { font-size: 10rpx; margin-top: 6rpx; }

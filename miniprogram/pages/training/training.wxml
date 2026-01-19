@@ -4,59 +4,115 @@
     <text class="title">训练场</text>
   </view>
 
-  <!-- 武将选择 -->
-  <view class="general-section">
-    <text class="section-title">选择武将</text>
-    <scroll-view class="general-list" scroll-x="true">
-      <view class="general-item {{currentGeneralId === item.id ? 'active' : ''}}" 
-            wx:for="{{generals}}" wx:key="id" 
+  <!-- 资源显示 -->
+  <view class="resource-bar">
+    <view class="resource-item">
+      <text class="res-icon">🍚</text>
+      <text class="res-name">粮食</text>
+      <text class="res-value">{{food}}</text>
+    </view>
+    <view class="resource-item">
+      <text class="res-icon">⭐</text>
+      <text class="res-name">主公经验</text>
+      <text class="res-value">{{lordExp}}/{{lordMaxExp}}</text>
+    </view>
+  </view>
+
+  <!-- 训练模式选择 -->
+  <view class="mode-section">
+    <text class="section-title">选择训练模式</text>
+    <view class="mode-tabs">
+      <view class="mode-tab {{currentMode === 'lord' ? 'active' : ''}}" bindtap="switchMode" data-mode="lord">
+        <text class="mode-icon">👑</text>
+        <text class="mode-name">主公修炼</text>
+        <text class="mode-desc">多主公经验，少武将经验</text>
+      </view>
+      <view class="mode-tab {{currentMode === 'general' ? 'active' : ''}}" bindtap="switchMode" data-mode="general">
+        <text class="mode-icon">⚔️</text>
+        <text class="mode-name">武将特训</text>
+        <text class="mode-desc">多武将经验，少主公经验</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 粮食等级选择 -->
+  <view class="food-section">
+    <text class="section-title">选择粮食等级</text>
+    <view class="food-list">
+      <view class="food-card {{item.level === selectedFood ? 'active' : ''}}" 
+            wx:for="{{foodTypes}}" wx:key="level"
+            bindtap="selectFood" data-level="{{item.level}}">
+        <view class="food-header">
+          <text class="food-icon">{{item.icon}}</text>
+          <text class="food-name">{{item.name}}</text>
+        </view>
+        <view class="food-cost">
+          <text>消耗: {{item.cost}} 粮食</text>
+        </view>
+        <view class="food-reward">
+          <block wx:if="{{currentMode === 'lord'}}">
+            <text class="reward-main">主公 +{{item.lordExpMain}}</text>
+            <text class="reward-sub">武将 +{{item.generalExpSub}}</text>
+          </block>
+          <block wx:else>
+            <text class="reward-main">武将 +{{item.generalExpMain}}</text>
+            <text class="reward-sub">主公 +{{item.lordExpSub}}</text>
+          </block>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 武将选择（仅武将特训模式） -->
+  <view class="general-section" wx:if="{{currentMode === 'general'}}">
+    <text class="section-title">选择训练武将</text>
+    <scroll-view class="general-scroll" scroll-x>
+      <view class="general-item {{currentGeneralId === item.id ? 'active' : ''}}"
+            wx:for="{{generals}}" wx:key="id"
             bindtap="selectGeneral" data-id="{{item.id}}">
         <view class="general-avatar">
           <image src="{{item.avatar || '/images/logo.png'}}" mode="aspectFill"></image>
         </view>
         <text class="general-name">{{item.name}}</text>
-        <text class="general-level">Lv.{{item.level}}</text>
+        <text class="general-level">Lv.{{item.level || 1}}</text>
+        <view class="exp-bar">
+          <view class="exp-fill" style="width: {{(item.exp / item.maxExp) * 100}}%"></view>
+        </view>
       </view>
     </scroll-view>
   </view>
 
-  <!-- 训练模式 -->
-  <view class="mode-section">
-    <text class="section-title">训练模式</text>
-    <view class="mode-list">
-      <view class="mode-item {{currentMode === 'lord' ? 'active' : ''}}" bindtap="selectMode" data-mode="lord">
-        <text class="mode-name">主公修炼</text>
-        <text class="mode-desc">获得更多主公经验，少量武将经验</text>
-      </view>
-      <view class="mode-item {{currentMode === 'general' ? 'active' : ''}}" bindtap="selectMode" data-mode="general">
-        <text class="mode-name">武将特训</text>
-        <text class="mode-desc">获得更多武将经验，少量主公经验</text>
-      </view>
+  <!-- 训练次数 -->
+  <view class="count-section">
+    <text class="section-title">训练次数</text>
+    <view class="count-control">
+      <view class="count-btn" bindtap="decreaseCount">-</view>
+      <text class="count-value">{{trainCount}}</text>
+      <view class="count-btn" bindtap="increaseCount">+</view>
+      <view class="count-btn max" bindtap="maxCount">最大</view>
     </view>
-  </view>
-
-  <!-- 粮食等级 -->
-  <view class="food-section">
-    <text class="section-title">消耗粮食</text>
-    <view class="food-list">
-      <view class="food-item {{currentFood === 'basic' ? 'active' : ''}}" bindtap="selectFood" data-food="basic">
-        <text class="food-name">初级粮草</text>
-        <text class="food-count">拥有: {{basicFood}}</text>
-        <text class="food-effect">经验×1</text>
-      </view>
-      <view class="food-item {{currentFood === 'advanced' ? 'active' : ''}}" bindtap="selectFood" data-food="advanced">
-        <text class="food-name">中级粮草</text>
-        <text class="food-count">拥有: {{advancedFood}}</text>
-        <text class="food-effect">经验×3</text>
-      </view>
-      <view class="food-item {{currentFood === 'premium' ? 'active' : ''}}" bindtap="selectFood" data-food="premium">
-        <text class="food-name">高级粮草</text>
-        <text class="food-count">拥有: {{premiumFood}}</text>
-        <text class="food-effect">经验×10</text>
-      </view>
+    <view class="cost-preview">
+      <text>预计消耗: {{totalCost}} 粮食</text>
     </view>
   </view>
 
   <!-- 训练按钮 -->
-  <view class="train-btn" bindtap="startTraining">开始训练</view>
+  <view class="action-section">
+    <button class="train-btn {{canTrain ? '' : 'disabled'}}" bindtap="startTraining">
+      开始训练
+    </button>
+  </view>
+
+  <!-- 训练结果弹窗 -->
+  <view class="result-modal" wx:if="{{showResult}}">
+    <view class="result-content">
+      <text class="result-title">🎉 训练完成！</text>
+      <view class="result-info">
+        <text class="result-item" wx:if="{{resultLordExp > 0}}">主公经验 +{{resultLordExp}}</text>
+        <text class="result-item" wx:if="{{resultGeneralExp > 0}}">武将经验 +{{resultGeneralExp}}</text>
+        <text class="result-item levelup" wx:if="{{levelUp}}">🆙 等级提升！</text>
+      </view>
+      <button class="result-btn" bindtap="closeResult">确定</button>
+    </view>
+  </view>
 </view>

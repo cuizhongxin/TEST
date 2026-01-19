@@ -1,24 +1,18 @@
 // 网络请求封装
-var config = require('./config.js')
+const config = require('./config.js')
 
 // 请求拦截器
-function request(options) {
-  return new Promise(function(resolve, reject) {
-    var app = getApp()
+const request = (options) => {
+  return new Promise((resolve, reject) => {
+    const app = getApp()
     
     // 获取userId，优先从globalData获取，否则从storage获取
-    var userId = app.globalData.userId
+    let userId = app.globalData.userId
     if (!userId) {
       userId = wx.getStorageSync('userId')
       if (userId) {
         app.globalData.userId = userId
       }
-    }
-    
-    // 获取token
-    var token = app.globalData.token
-    if (!token) {
-      token = wx.getStorageSync('token')
     }
     
     wx.request({
@@ -27,10 +21,10 @@ function request(options) {
       data: options.data || {},
       header: {
         'content-type': 'application/json',
-        'Authorization': token ? ('Bearer ' + token) : '',
+        'Authorization': app.globalData.token ? `Bearer ${app.globalData.token}` : '',
         'X-User-Id': userId ? String(userId) : ''
       },
-      success: function(res) {
+      success: (res) => {
         if (res.statusCode === 200) {
           resolve(res.data)
         } else if (res.statusCode === 401) {
@@ -44,7 +38,7 @@ function request(options) {
           reject(res)
         }
       },
-      fail: function(err) {
+      fail: (err) => {
         wx.showToast({
           title: '网络请求失败',
           icon: 'none'
@@ -56,3 +50,4 @@ function request(options) {
 }
 
 module.exports = request
+

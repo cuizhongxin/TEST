@@ -1,163 +1,837 @@
 /* pages/dungeon/dungeon.wxss */
+page {
+  background: linear-gradient(135deg, #1a0a0a 0%, #2d1515 50%, #1a0a0a 100%);
+  height: 100vh;
+  overflow: hidden;
+}
+
 .page-container {
-  min-height: 100vh;
-  background: linear-gradient(180deg, #8b7355 0%, #6b5344 100%);
-  padding: 20rpx;
-  padding-bottom: 100rpx;
-  box-sizing: border-box;
-}
-
-.header {
-  text-align: center;
-  padding: 20rpx 0;
-}
-
-.title {
-  font-size: 36rpx;
-  color: #ffd700;
-  font-weight: bold;
-}
-
-.chapter-section {
-  margin-bottom: 20rpx;
-}
-
-.chapter-list {
-  white-space: nowrap;
-}
-
-.chapter-item {
-  display: inline-block;
-  padding: 16rpx 24rpx;
-  margin-right: 16rpx;
-  background: rgba(0,0,0,0.3);
-  border-radius: 8rpx;
-  border: 2rpx solid transparent;
-}
-
-.chapter-item.active {
-  border-color: #ffd700;
-  background: rgba(255,215,0,0.2);
-}
-
-.chapter-name {
-  font-size: 26rpx;
-  color: #fff;
-}
-
-.stage-section {
-  margin-bottom: 20rpx;
-}
-
-.stage-list {
   display: flex;
   flex-direction: column;
+  height: 100vh;
+  color: #e8d5b0;
+  font-family: 'STKaiti', 'KaiTi', serif;
+}
+
+/* 顶部栏 */
+.top-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8rpx 20rpx;
+  background: linear-gradient(180deg, rgba(139, 69, 19, 0.9) 0%, rgba(101, 67, 33, 0.85) 100%);
+  border-bottom: 2rpx solid #d4a056;
+}
+
+.back-btn {
+  font-size: 20rpx;
+  color: #e8d5b0;
+  padding: 6rpx 12rpx;
+  background: rgba(0,0,0,0.3);
+  border-radius: 6rpx;
+}
+
+.page-title {
+  font-size: 24rpx;
+  font-weight: bold;
+  color: #ffd700;
+}
+
+.player-info {
+  display: flex;
   gap: 12rpx;
 }
 
-.stage-card {
-  padding: 20rpx;
+.info-item {
+  font-size: 18rpx;
   background: rgba(0,0,0,0.3);
-  border-radius: 12rpx;
-  border: 2rpx solid #8b6914;
+  padding: 4rpx 10rpx;
+  border-radius: 6rpx;
 }
 
-.stage-card.cleared {
-  border-color: #32cd32;
+/* 战役选择 */
+.dungeon-select {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 12rpx;
+  padding-bottom: 0;
+  overflow: hidden;
+  height: 0;
 }
 
-.stage-card.locked {
-  opacity: 0.5;
+.dungeon-list {
+  white-space: nowrap;
+  padding: 8rpx 0;
+  flex-shrink: 0;
+  max-height: 140rpx;
 }
 
-.stage-name {
-  font-size: 28rpx;
-  color: #fff;
-  display: block;
-  margin-bottom: 8rpx;
-  font-weight: bold;
+.dungeon-card {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  width: 120rpx;
+  padding: 12rpx;
+  margin-right: 12rpx;
+  background: rgba(139, 69, 19, 0.4);
+  border: 2rpx solid #654321;
+  border-radius: 8rpx;
+  position: relative;
 }
 
-.stage-level {
-  font-size: 22rpx;
-  color: #aaa;
-  display: block;
+.dungeon-card.selected {
+  border-color: #ffd700;
+  background: rgba(218, 165, 32, 0.3);
 }
 
-.stage-status {
-  font-size: 20rpx;
-  color: #32cd32;
-  float: right;
-  margin-top: -40rpx;
+.dungeon-card.locked { opacity: 0.6; }
+.dungeon-card.locked .dungeon-name { color: #888; }
+.dungeon-icon { font-size: 32rpx; }
+.dungeon-name { font-size: 18rpx; margin-top: 6rpx; color: #ffd700; }
+.dungeon-level { font-size: 14rpx; color: #aaa; }
+.lock-icon { position: absolute; top: 4rpx; right: 4rpx; font-size: 16rpx; }
+.locked-text { color: #ff6666; font-weight: bold; }
+
+/* 战役详情 - 上下布局 */
+.dungeon-detail {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  margin-top: 10rpx;
+  overflow: hidden;
+  min-height: 0;
 }
 
-.stage-status.locked {
-  color: #ff6b6b;
-}
-
-.detail-section {
-  margin-top: 20rpx;
-}
-
-.detail-card {
-  padding: 24rpx;
+.detail-content {
+  flex: 1;
   background: rgba(0,0,0,0.4);
-  border-radius: 16rpx;
+  border: 2rpx solid #8b4513;
+  border-radius: 8rpx;
+  padding: 10rpx;
+  height: 0;
+}
+
+.detail-header { text-align: center; margin-bottom: 8rpx; }
+.detail-name { font-size: 26rpx; font-weight: bold; color: #ffd700; }
+.detail-desc { display: block; font-size: 14rpx; color: #aaa; margin-top: 4rpx; }
+
+.detail-info {
+  background: rgba(139, 69, 19, 0.3);
+  padding: 8rpx 10rpx;
+  border-radius: 8rpx;
+  margin-bottom: 8rpx;
+}
+
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 16rpx;
+  padding: 3rpx 0;
+}
+
+/* 阵型预览行 */
+.formation-row {
+  background: rgba(139, 69, 19, 0.2);
+  padding: 8rpx;
+  border-radius: 8rpx;
+  margin-bottom: 8rpx;
+}
+
+.formation-label {
+  font-size: 14rpx;
+  color: #ffd700;
+  margin-bottom: 6rpx;
+  display: block;
+}
+
+.formation-mini {
+  display: flex;
+  gap: 6rpx;
+  flex-wrap: wrap;
+}
+
+.mini-slot {
+  background: rgba(0,0,0,0.3);
+  border: 2rpx dashed #555;
+  border-radius: 4rpx;
+  padding: 4rpx 8rpx;
+  font-size: 12rpx;
+  color: #666;
+}
+
+.mini-slot.filled {
+  border-style: solid;
+  border-color: #d4a056;
+  color: #ffd700;
+  background: rgba(139, 69, 19, 0.4);
+}
+
+.formation-warning {
+  font-size: 14rpx;
+  color: #ff6b6b;
+  text-align: center;
+  padding: 6rpx;
+  background: rgba(255,0,0,0.1);
+  border-radius: 6rpx;
+  margin-bottom: 6rpx;
+}
+
+.detail-lore {
+  font-size: 14rpx;
+  color: #aaa;
+  font-style: italic;
+  padding: 6rpx;
+  background: rgba(0,0,0,0.3);
+  border-radius: 6rpx;
+  max-height: 60rpx;
+  overflow-y: auto;
+  line-height: 1.6;
+}
+
+/* 底部操作按钮 */
+.action-bar {
+  display: flex;
+  gap: 15rpx;
+  padding: 15rpx 10rpx;
+  flex-shrink: 0;
+  background: rgba(0,0,0,0.6);
+  border-top: 2rpx solid #8b4513;
+  margin-top: 10rpx;
+}
+
+.action-btn {
+  flex: 1;
+  height: 70rpx;
+  line-height: 70rpx;
+  font-size: 24rpx;
+  font-weight: bold;
+  border-radius: 40rpx;
+  text-align: center;
+  box-shadow: 0 6rpx 12rpx rgba(0,0,0,0.4);
+}
+
+.action-btn.config-btn {
+  background: linear-gradient(180deg, #4a4a8a 0%, #2a2a5a 100%);
+  color: #fff;
+  border: 2rpx solid #6a6aba;
+}
+
+.action-btn.enter-btn {
+  background: linear-gradient(180deg, #ff8c00 0%, #cc5500 100%);
+  color: #fff;
+  border: 2rpx solid #ffaa33;
+}
+
+.action-btn.enter-btn.disabled {
+  background: linear-gradient(180deg, #555 0%, #333 100%);
+  color: #999;
+  border-color: #666;
+}
+
+.action-btn:active {
+  transform: scale(0.95);
+  opacity: 0.9;
+}
+
+.action-btn.disabled:active {
+  transform: none;
+  opacity: 1;
+}
+
+/* 武将选择弹窗 */
+.modal-mask {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+
+.modal-content {
+  width: 70%;
+  max-height: 70%;
+  background: linear-gradient(180deg, #2d1515 0%, #1a0a0a 100%);
+  border: 2rpx solid #8b4513;
+  border-radius: 12rpx;
+  display: flex;
+  flex-direction: column;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12rpx 16rpx;
+  border-bottom: 1rpx solid #654321;
+  font-size: 20rpx;
+  color: #ffd700;
+}
+
+.close-btn {
+  font-size: 28rpx;
+  color: #aaa;
+}
+
+.general-list {
+  flex: 1;
+  padding: 10rpx;
+  max-height: 350rpx;
+}
+
+.general-item {
+  display: flex;
+  align-items: center;
+  padding: 10rpx;
+  margin-bottom: 8rpx;
+  background: rgba(50,50,50,0.5);
+  border: 1rpx solid #444;
+  border-radius: 8rpx;
+}
+
+.general-item.disabled { opacity: 0.5; }
+
+.general-avatar-wrap {
+  width: 50rpx;
+  height: 50rpx;
+  border-radius: 50%;
+  border: 2rpx solid;
+  overflow: hidden;
+  margin-right: 10rpx;
+}
+
+.general-avatar-wrap image {
+  width: 100%;
+  height: 100%;
+}
+
+.general-info { flex: 1; }
+.general-info .name { font-size: 18rpx; font-weight: bold; }
+.general-info .quality { font-size: 14rpx; color: #aaa; }
+.power { font-size: 16rpx; color: #ff6b6b; margin-right: 10rpx; }
+.in-formation { font-size: 14rpx; color: #32cd32; background: rgba(50,205,50,0.2); padding: 2rpx 8rpx; border-radius: 4rpx; }
+
+.modal-footer {
+  padding: 12rpx;
+  border-top: 1rpx solid #654321;
+}
+
+.remove-btn {
+  width: 100%;
+  height: 50rpx;
+  line-height: 50rpx;
+  font-size: 20rpx;
+  background: linear-gradient(180deg, #8b0000 0%, #5a0000 100%);
+  color: #fff;
+  border: none;
+  border-radius: 8rpx;
+}
+
+/* 战斗准备界面 */
+.battle-prep {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 12rpx;
+  overflow: hidden;
+}
+
+.prep-header {
+  text-align: center;
+  padding: 8rpx;
+  background: rgba(139, 69, 19, 0.5);
+  flex-shrink: 0;
+  border-radius: 8rpx;
+  margin-bottom: 10rpx;
+}
+
+.prep-progress { font-size: 20rpx; color: #ffd700; }
+
+.prep-content {
+  flex: 1;
+  height: 0;
+}
+
+.prep-inner {
+  display: flex;
+  gap: 10rpx;
+  padding: 5rpx;
+}
+
+.npc-preview {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0,0,0,0.4);
+  border: 2rpx solid #8b4513;
+  border-radius: 10rpx;
+  padding: 10rpx;
+}
+
+.npc-icon-large { font-size: 40rpx; margin-bottom: 6rpx; }
+.npc-details { text-align: center; }
+.npc-name { font-size: 20rpx; font-weight: bold; display: block; }
+.npc-quality { font-size: 14rpx; color: #aaa; display: block; margin: 2rpx 0; }
+.npc-power { font-size: 16rpx; color: #ff6b6b; }
+
+.drop-info {
+  flex: 1;
+  background: rgba(50, 205, 50, 0.1);
+  border: 1rpx solid rgba(50, 205, 50, 0.3);
+  border-radius: 10rpx;
+  padding: 10rpx;
+}
+
+.drop-title { font-size: 16rpx; color: #32cd32; margin-bottom: 6rpx; display: block; }
+.drop-list { display: flex; flex-direction: column; gap: 4rpx; font-size: 14rpx; }
+
+.my-team-preview {
+  flex: 1;
+  background: rgba(0,0,0,0.4);
+  border: 2rpx solid #8b4513;
+  border-radius: 10rpx;
+  padding: 10rpx;
+}
+
+.team-title { font-size: 14rpx; color: #ffd700; display: block; margin-bottom: 6rpx; }
+.team-list { display: flex; flex-wrap: wrap; gap: 6rpx; justify-content: center; }
+.team-member { display: flex; flex-direction: column; align-items: center; width: 50rpx; }
+.member-icon { font-size: 20rpx; }
+.member-name { font-size: 10rpx; margin-top: 2rpx; text-align: center; }
+.member-mob { font-size: 10rpx; color: #4caf50; }
+
+.start-battle-btn {
+  flex-shrink: 0;
+  margin-top: 12rpx;
+  height: 80rpx;
+  line-height: 80rpx;
+  font-size: 28rpx;
+  font-weight: bold;
+  background: linear-gradient(180deg, #dc143c 0%, #8b0000 100%);
+  color: #fff;
+  border: none;
+  border-radius: 40rpx;
+  box-shadow: 0 4rpx 12rpx rgba(220, 20, 60, 0.5);
+}
+
+/* 回合制战斗界面 */
+.combat-arena {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.combat-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8rpx 12rpx;
+  background: linear-gradient(180deg, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.4) 100%);
+}
+
+.player-side, .enemy-side {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+  flex: 1;
+}
+
+.enemy-side { flex-direction: row-reverse; }
+
+.side-avatar {
+  width: 45rpx;
+  height: 45rpx;
+  border-radius: 50%;
   border: 2rpx solid #ffd700;
 }
 
-.detail-name {
-  font-size: 32rpx;
-  color: #ffd700;
-  display: block;
-  margin-bottom: 16rpx;
-  font-weight: bold;
-}
+/* ==================== 新版战斗界面 - 左右对战布局 ==================== */
 
-.detail-info {
+/* 顶部信息栏 */
+.combat-top-bar {
   display: flex;
-  gap: 24rpx;
-  margin-bottom: 16rpx;
-  font-size: 24rpx;
-  color: #ccc;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8rpx 12rpx;
+  background: linear-gradient(180deg, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.4) 100%);
+  border-bottom: 2rpx solid #654321;
 }
 
-.reward-section {
-  margin-bottom: 20rpx;
+.commander-info {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
 }
 
-.reward-title {
-  font-size: 24rpx;
+.commander-avatar {
+  width: 60rpx;
+  height: 60rpx;
+  border-radius: 8rpx;
+  border: 2rpx solid #ffd700;
+  background: rgba(0,0,0,0.5);
+}
+
+.enemy-avatar-img {
+  width: 60rpx;
+  height: 60rpx;
+  border-radius: 8rpx;
+  border: 2rpx solid #dc143c;
+  background: rgba(139,0,0,0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32rpx;
+}
+
+.commander-detail {
+  display: flex;
+  flex-direction: column;
+  gap: 4rpx;
+}
+
+.commander-name {
+  font-size: 18rpx;
+  font-weight: bold;
   color: #ffd700;
-  display: block;
-  margin-bottom: 8rpx;
+}
+
+.commander-hp-bar {
+  width: 150rpx;
+  height: 16rpx;
+  background: rgba(0,0,0,0.6);
+  border-radius: 8rpx;
+  overflow: hidden;
+  border: 1rpx solid #333;
+}
+
+.commander-hp-fill {
+  height: 100%;
+  transition: width 0.3s ease;
+}
+
+.my-hp { background: linear-gradient(90deg, #32cd32, #228b22); }
+.enemy-hp { background: linear-gradient(90deg, #dc143c, #8b0000); }
+
+.round-badge {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 8rpx 20rpx;
+  background: linear-gradient(180deg, #8b4513 0%, #654321 100%);
+  border: 2rpx solid #d4a056;
+  border-radius: 8rpx;
+}
+
+.round-label {
+  font-size: 28rpx;
+  font-weight: bold;
+  color: #ffd700;
+  text-shadow: 2rpx 2rpx 4rpx rgba(0,0,0,0.5);
+}
+
+.round-number {
+  font-size: 14rpx;
+  color: #e8d5b0;
+}
+
+/* 战场主区域 */
+.battlefield-area {
+  flex: 1;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10rpx;
+  background: 
+    linear-gradient(180deg, rgba(101, 67, 33, 0.4) 0%, rgba(139, 69, 19, 0.3) 50%, rgba(101, 67, 33, 0.4) 100%),
+    repeating-linear-gradient(0deg, transparent, transparent 20rpx, rgba(0,0,0,0.1) 20rpx, rgba(0,0,0,0.1) 40rpx);
+  position: relative;
+}
+
+.army-side {
+  width: 45%;
+}
+
+.army-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 10rpx;
+}
+
+.enemy-grid {
+  align-items: flex-end;
+}
+
+.army-row {
+  display: flex;
+  gap: 8rpx;
+  justify-content: flex-start;
+}
+
+.enemy-army-side .army-row {
+  justify-content: flex-end;
+}
+
+/* 部队单位卡片 */
+.troop-unit {
+  width: 100rpx;
+  background: rgba(0, 80, 0, 0.6);
+  border: 2rpx solid #228b22;
+  border-radius: 8rpx;
+  padding: 6rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.troop-unit.enemy-troop {
+  background: rgba(139, 0, 0, 0.6);
+  border-color: #dc143c;
+}
+
+.troop-unit.dead {
+  opacity: 0.3;
+  filter: grayscale(100%);
+}
+
+.troop-unit.attacking {
+  animation: troop-attack 0.5s ease;
+}
+
+.enemy-troop.attacking {
+  animation: troop-attack-enemy 0.5s ease;
+}
+
+.troop-unit.hit {
+  animation: troop-hit 0.3s ease;
+}
+
+@keyframes troop-attack {
+  0%, 100% { transform: translateX(0); }
+  50% { transform: translateX(30rpx); }
+}
+
+@keyframes troop-attack-enemy {
+  0%, 100% { transform: translateX(0); }
+  50% { transform: translateX(-30rpx); }
+}
+
+@keyframes troop-hit {
+  0%, 100% { transform: scale(1); background: inherit; }
+  50% { transform: scale(0.9); background: rgba(255,0,0,0.5); }
+}
+
+.troop-flag {
+  position: absolute;
+  top: -10rpx;
+  font-size: 18rpx;
+}
+
+.my-flag { left: -6rpx; }
+.enemy-flag { right: -6rpx; }
+
+.troop-avatar {
+  width: 40rpx;
+  height: 40rpx;
+  border-radius: 50%;
+  background: rgba(0,0,0,0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24rpx;
+  border: 2rpx solid #ffd700;
+}
+
+.enemy-avatar-icon {
+  border-color: #ff6666;
+}
+
+.troop-soldiers {
+  font-size: 10rpx;
+  color: #aaa;
+  background: rgba(0,0,0,0.4);
+  padding: 1rpx 6rpx;
+  border-radius: 4rpx;
+  margin: 2rpx 0;
+}
+
+.enemy-soldiers {
+  color: #ff9999;
+}
+
+.troop-hp-bar {
+  width: 80rpx;
+  height: 8rpx;
+  background: rgba(0,0,0,0.6);
+  border-radius: 4rpx;
+  overflow: hidden;
+  margin: 2rpx 0;
+}
+
+.troop-hp-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #32cd32, #228b22);
+  transition: width 0.3s ease;
+}
+
+.enemy-hp-fill {
+  background: linear-gradient(90deg, #dc143c, #8b0000);
+}
+
+.troop-name {
+  font-size: 12rpx;
+  color: #ffd700;
+  max-width: 90rpx;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-align: center;
+}
+
+/* 中间战斗效果 */
+.battle-center {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.battle-effect {
+  font-size: 40rpx;
+  font-weight: bold;
+  color: #ffd700;
+  text-shadow: 0 0 15rpx #ff0, 0 0 30rpx #ff0;
+  opacity: 0;
+  transform: scale(0.5);
+  transition: all 0.3s ease;
+}
+
+.battle-effect.show {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.damage-popup {
+  font-size: 36rpx;
+  font-weight: bold;
+  opacity: 0;
+  transform: translateY(0);
+  transition: all 0.5s ease;
+  text-shadow: 2rpx 2rpx 4rpx rgba(0,0,0,0.8);
+}
+
+.damage-popup.show {
+  opacity: 1;
+  transform: translateY(-30rpx);
+}
+
+/* 战斗日志面板 */
+.combat-log-panel {
+  height: 80rpx;
+  background: rgba(0,0,0,0.8);
+  border-top: 2rpx solid #654321;
+  padding: 8rpx 12rpx;
+}
+
+.log-scroll-view {
+  height: 100%;
+}
+
+.log-entry {
+  font-size: 16rpx;
+  padding: 3rpx 0;
+  border-bottom: 1rpx dashed rgba(255,255,255,0.1);
+}
+
+.log-entry.attack { color: #ff6b6b; }
+.log-entry.damage { color: #ffa500; }
+.log-entry.info { color: #87ceeb; }
+
+/* 结果按钮区域 - 使用固定定位确保显示 */
+.result-button-area {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 30rpx 40rpx;
+  padding-bottom: calc(30rpx + env(safe-area-inset-bottom));
+  background: linear-gradient(180deg, rgba(0,0,0,0.9) 0%, rgba(0,0,0,1) 100%);
+  z-index: 999;
+  box-shadow: 0 -4rpx 20rpx rgba(0,0,0,0.5);
+}
+
+.result-btn {
+  width: 100%;
+  height: 100rpx;
+  line-height: 100rpx;
+  font-size: 36rpx;
+  font-weight: bold;
+  border-radius: 50rpx;
+  border: none;
+}
+
+.result-btn.victory {
+  background: linear-gradient(180deg, #ffd700 0%, #ff8c00 100%);
+  color: #333;
+  box-shadow: 0 4rpx 20rpx rgba(255, 215, 0, 0.5);
+}
+
+.result-btn.defeat {
+  background: linear-gradient(180deg, #8b0000 0%, #444 100%);
+  color: #fff;
+  box-shadow: 0 4rpx 20rpx rgba(139, 0, 0, 0.5);
+}
+
+/* 通关弹窗 */
+.clear-modal {
+  width: 65%;
+  background: linear-gradient(180deg, #2d1515 0%, #1a0a0a 100%);
+  border: 2rpx solid #ffd700;
+  border-radius: 15rpx;
+  padding: 20rpx;
+  text-align: center;
+}
+
+.clear-header { margin-bottom: 15rpx; }
+.clear-title { font-size: 32rpx; font-weight: bold; color: #ffd700; }
+.clear-dungeon { display: block; font-size: 20rpx; color: #e8d5b0; margin-top: 8rpx; }
+
+.clear-rewards {
+  background: rgba(139, 69, 19, 0.3);
+  padding: 15rpx;
+  border-radius: 10rpx;
+  margin-bottom: 15rpx;
 }
 
 .reward-item {
-  font-size: 22rpx;
-  color: #7fff00;
-  margin-right: 16rpx;
-}
-
-.battle-btn {
-  text-align: center;
-  padding: 20rpx;
-  background: linear-gradient(180deg, #8b6914 0%, #654321 100%);
-  border-radius: 12rpx;
-  color: #ffd700;
-  font-size: 30rpx;
-  font-weight: bold;
-}
-
-.resource-bar {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
   display: flex;
+  align-items: center;
   justify-content: center;
-  padding: 20rpx;
-  background: rgba(0,0,0,0.8);
-  color: #ffd700;
-  font-size: 26rpx;
+  gap: 8rpx;
+  font-size: 20rpx;
+  padding: 6rpx 0;
+}
+
+.reward-icon { font-size: 22rpx; }
+
+.clear-btn {
+  width: 100%;
+  height: 55rpx;
+  line-height: 55rpx;
+  font-size: 22rpx;
+  background: linear-gradient(180deg, #228b22 0%, #006400 100%);
+  color: #fff;
+  border: none;
+  border-radius: 28rpx;
 }

@@ -1,140 +1,394 @@
 /* pages/formation/formation.wxss */
+page {
+  background: linear-gradient(180deg, #1a1a2e 0%, #16213e 50%, #0f0f23 100%);
+  height: 100vh;
+  overflow: hidden;
+}
+
 .page-container {
-  min-height: 100vh;
-  background: linear-gradient(180deg, #8b7355 0%, #6b5344 100%);
-  padding: 20rpx;
-  box-sizing: border-box;
-}
-
-.header {
-  text-align: center;
-  padding: 20rpx 0;
-}
-
-.title {
-  font-size: 36rpx;
-  color: #ffd700;
-  font-weight: bold;
-}
-
-.section-title {
-  font-size: 28rpx;
-  color: #ffd700;
-  margin-bottom: 16rpx;
-  display: block;
-}
-
-.formation-section {
-  margin-bottom: 30rpx;
-}
-
-.formation-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12rpx;
-}
-
-.formation-item {
-  padding: 16rpx 24rpx;
-  background: rgba(0,0,0,0.3);
-  border-radius: 8rpx;
-  border: 2rpx solid transparent;
-}
-
-.formation-item.active {
-  border-color: #ffd700;
-  background: rgba(255,215,0,0.2);
-}
-
-.formation-name {
-  font-size: 26rpx;
-  color: #fff;
-  display: block;
-}
-
-.formation-desc {
-  font-size: 20rpx;
-  color: #7fff00;
-}
-
-.battle-section {
-  background: rgba(0,0,0,0.3);
-  border-radius: 16rpx;
-  padding: 20rpx;
-  margin-bottom: 30rpx;
-}
-
-.battle-slots {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 16rpx;
-  justify-content: center;
-}
-
-.battle-slot {
-  width: 140rpx;
-  height: 160rpx;
-  background: rgba(0,0,0,0.3);
-  border-radius: 12rpx;
-  border: 2rpx dashed #8b6914;
   display: flex;
   flex-direction: column;
+  height: 100vh;
+  color: #e8d5b0;
+  font-family: 'STKaiti', 'KaiTi', serif;
+}
+
+/* 顶部栏 */
+.top-bar {
+  display: flex;
   align-items: center;
-  justify-content: center;
-  position: relative;
+  padding: 8rpx 15rpx;
+  background: linear-gradient(180deg, #2a1a0f 0%, #3d2817 100%);
+  border-bottom: 2rpx solid #8b6914;
+  flex-shrink: 0;
 }
 
-.slot-avatar {
-  width: 80rpx;
-  height: 80rpx;
-  border-radius: 8rpx;
-  overflow: hidden;
-  border: 2rpx solid #ffd700;
+.back-btn {
+  padding: 5rpx 12rpx;
+  background: linear-gradient(180deg, #4a3a28 0%, #3a2a18 100%);
+  border: 1rpx solid #5a4a3a;
+  border-radius: 4rpx;
+  font-size: 14rpx;
+  color: #c9a227;
 }
 
-.slot-avatar image {
-  width: 100%;
-  height: 100%;
-}
-
-.slot-name {
-  font-size: 22rpx;
-  color: #fff;
-  margin-top: 8rpx;
-}
-
-.slot-empty {
-  font-size: 48rpx;
-  color: #654321;
-}
-
-.slot-label {
-  font-size: 22rpx;
-  color: #888;
-}
-
-.remove-btn {
-  position: absolute;
-  top: 4rpx;
-  right: 4rpx;
-  width: 36rpx;
-  height: 36rpx;
-  background: #ff4444;
-  border-radius: 50%;
-  color: #fff;
-  font-size: 28rpx;
+.page-title {
+  flex: 1;
   text-align: center;
-  line-height: 36rpx;
+  font-size: 18rpx;
+  color: #ffd700;
 }
 
 .save-btn {
+  padding: 5rpx 15rpx;
+  background: linear-gradient(180deg, #4caf50 0%, #2e7d32 100%);
+  border-radius: 4rpx;
+  font-size: 14rpx;
+  color: #fff;
+}
+
+/* 主内容 */
+.main-content {
+  flex: 1;
+  display: flex;
+  padding: 8rpx;
+  gap: 8rpx;
+  overflow: hidden;
+}
+
+/* 阵型面板 */
+.formation-panel {
+  width: 320rpx;
+  background: rgba(0,0,0,0.4);
+  border: 1rpx solid #3a5a8a;
+  border-radius: 8rpx;
+  padding: 10rpx;
+  display: flex;
+  flex-direction: column;
+}
+
+.panel-title {
+  font-size: 14rpx;
+  color: #ffd700;
+  text-align: center;
+  padding-bottom: 8rpx;
+  border-bottom: 1rpx solid #3a5a8a;
+  margin-bottom: 10rpx;
+}
+
+/* 阵型网格 - 竖着三排布局 */
+.formation-grid {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 12rpx;
+  padding: 10rpx 0;
+}
+
+/* 每一列（前排/中排/后排） */
+.formation-column {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8rpx;
+}
+
+.column-label {
+  font-size: 11rpx;
+  color: #888;
+  padding: 2rpx 8rpx;
+  background: rgba(0,0,0,0.3);
+  border-radius: 4rpx;
+  margin-bottom: 4rpx;
+}
+
+.center-column {
+  transform: scale(1.05);
+}
+
+.center-label {
+  color: #ffd700;
+  background: rgba(255,215,0,0.2);
+  border: 1rpx solid #ffd700;
+}
+
+/* 阵型槽位 */
+.formation-slot {
+  position: relative;
+  padding: 4rpx;
+}
+
+.formation-slot.empty {
+  opacity: 0.6;
+}
+
+/* 品质样式 */
+.formation-slot.orange .unit-card { border-color: #ff8c00; box-shadow: 0 0 10rpx rgba(255,140,0,0.4); }
+.formation-slot.purple .unit-card { border-color: #9932cc; box-shadow: 0 0 8rpx rgba(153,50,204,0.3); }
+.formation-slot.red .unit-card { border-color: #dc143c; }
+.formation-slot.blue .unit-card { border-color: #4169e1; }
+.formation-slot.green .unit-card { border-color: #32cd32; }
+
+.slot-index {
+  position: absolute;
+  top: -4rpx;
+  left: -4rpx;
+  font-size: 10rpx;
+  color: #ffd700;
+  background: rgba(0,0,0,0.8);
+  padding: 2rpx 6rpx;
+  border-radius: 4rpx;
+  z-index: 10;
+  border: 1rpx solid #ffd700;
+}
+
+/* 单位卡片 - 竖向布局 */
+.unit-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4rpx;
+  padding: 8rpx;
+  background: rgba(0, 100, 0, 0.3);
+  border: 2rpx solid #228b22;
+  border-radius: 6rpx;
+  position: relative;
+  min-width: 80rpx;
+}
+
+.unit-flag {
+  font-size: 14rpx;
+  position: absolute;
+  top: -6rpx;
+  left: -4rpx;
+  z-index: 5;
+}
+
+.unit-avatar {
+  width: 40rpx;
+  height: 40rpx;
+  border-radius: 50%;
+  border: 2rpx solid #228b22;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22rpx;
+  background: rgba(0,0,0,0.3);
+}
+
+.unit-avatar.empty-avatar {
+  border-color: #555;
+  color: #888;
+  font-size: 24rpx;
+}
+
+.unit-name {
+  font-size: 11rpx;
+  color: #fff;
+  max-width: 70rpx;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-align: center;
+}
+
+.empty-text {
+  font-size: 10rpx;
+  color: #888;
+}
+
+/* 顺序提示 */
+.order-hint {
+  margin-top: 10rpx;
+  padding: 8rpx;
+  background: rgba(255,215,0,0.1);
+  border-radius: 6rpx;
+  text-align: center;
+}
+
+.hint-title {
+  font-size: 11rpx;
+  color: #ffd700;
+  display: block;
+}
+
+.hint-text {
+  font-size: 9rpx;
+  color: #aaa;
+}
+
+/* 战斗顺序预览 */
+.battle-order {
+  margin-top: auto;
+  padding-top: 8rpx;
+  border-top: 1rpx solid #3a5a8a;
+}
+
+.order-label {
+  font-size: 10rpx;
+  color: #888;
+  display: block;
+  margin-bottom: 4rpx;
+}
+
+.order-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4rpx;
+}
+
+.order-item {
+  display: flex;
+  align-items: center;
+  gap: 2rpx;
+  padding: 3rpx 6rpx;
+  background: rgba(0,0,0,0.3);
+  border-radius: 4rpx;
+}
+
+.order-num {
+  font-size: 10rpx;
+  color: #ffd700;
+  width: 14rpx;
+  text-align: center;
+}
+
+.order-name {
+  font-size: 10rpx;
+  color: #fff;
+}
+
+.order-mob {
+  font-size: 9rpx;
+  color: #4caf50;
+}
+
+/* 武将面板 */
+.general-panel {
+  flex: 1;
+  background: rgba(0,0,0,0.4);
+  border: 1rpx solid #3a5a8a;
+  border-radius: 8rpx;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8rpx 10rpx;
+  border-bottom: 1rpx solid #3a5a8a;
+}
+
+.panel-count {
+  font-size: 11rpx;
+  color: #888;
+}
+
+/* 筛选栏 */
+.filter-bar {
+  display: flex;
+  gap: 6rpx;
+  padding: 6rpx 10rpx;
+  border-bottom: 1rpx solid #3a5a8a;
+}
+
+.filter-item {
+  padding: 4rpx 10rpx;
+  background: rgba(0,0,0,0.3);
+  border: 1rpx solid #3a5a8a;
+  border-radius: 4rpx;
+  font-size: 10rpx;
+  color: #888;
+}
+
+.filter-item.active {
+  border-color: #ffd700;
+  color: #ffd700;
+  background: rgba(255,215,0,0.1);
+}
+
+/* 武将列表 */
+.general-list {
+  flex: 1;
+  padding: 6rpx;
+}
+
+.general-item {
+  display: flex;
+  align-items: center;
+  padding: 8rpx;
+  background: rgba(0,0,0,0.3);
+  border: 1rpx solid #3a5a8a;
+  border-radius: 6rpx;
+  margin-bottom: 4rpx;
+  position: relative;
+}
+
+.general-item.in-formation {
+  opacity: 0.6;
+  border-color: #4caf50;
+}
+
+.general-item.orange { border-color: #ff8c00; }
+.general-item.purple { border-color: #9932cc; }
+.general-item.red { border-color: #dc143c; }
+.general-item.blue { border-color: #4169e1; }
+.general-item.green { border-color: #32cd32; }
+
+.general-icon {
+  font-size: 22rpx;
+  margin-right: 8rpx;
+}
+
+.general-info {
+  flex: 1;
+}
+
+.general-name {
+  font-size: 12rpx;
+  color: #fff;
+  display: block;
+}
+
+.general-detail {
+  font-size: 10rpx;
+  color: #888;
+}
+
+.general-stats {
+  display: flex;
+  gap: 6rpx;
+}
+
+.stat-item {
+  font-size: 10rpx;
+  color: #4caf50;
+  padding: 2rpx 6rpx;
+  background: rgba(76,175,80,0.1);
+  border-radius: 3rpx;
+}
+
+.in-formation-mark {
+  position: absolute;
+  right: 6rpx;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 9rpx;
+  color: #4caf50;
+  padding: 2rpx 6rpx;
+  background: rgba(76,175,80,0.2);
+  border-radius: 3rpx;
+}
+
+.empty-list {
   text-align: center;
   padding: 20rpx;
-  background: linear-gradient(180deg, #8b6914 0%, #654321 100%);
-  border-radius: 12rpx;
-  color: #ffd700;
-  font-size: 32rpx;
-  font-weight: bold;
+  font-size: 12rpx;
+  color: #666;
 }
 
 /* 弹窗 */
@@ -144,84 +398,117 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0,0,0,0.7);
+  z-index: 1000;
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 100;
+}
+
+.modal-mask {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.7);
 }
 
 .modal-content {
-  width: 80%;
-  max-height: 70vh;
-  background: #4a3728;
-  border-radius: 16rpx;
-  padding: 30rpx;
-  border: 2rpx solid #8b6914;
+  position: relative;
+  width: 400rpx;
+  max-height: 80%;
+  background: linear-gradient(180deg, #2a2a3e 0%, #1a1a2e 100%);
+  border: 2rpx solid #5a5a8a;
+  border-radius: 10rpx;
+  overflow: hidden;
 }
 
-.modal-title {
-  font-size: 32rpx;
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10rpx 15rpx;
+  background: rgba(0,0,0,0.3);
+  border-bottom: 1rpx solid #3a5a8a;
+  font-size: 14rpx;
   color: #ffd700;
+}
+
+.modal-close {
+  width: 24rpx;
+  height: 24rpx;
+  line-height: 24rpx;
   text-align: center;
-  display: block;
-  margin-bottom: 20rpx;
+  background: rgba(255,0,0,0.3);
+  border-radius: 50%;
+  font-size: 12rpx;
+  color: #fff;
 }
 
-.general-list {
-  max-height: 50vh;
+.modal-body {
+  padding: 10rpx;
 }
 
-.general-item {
+.modal-option.clear {
+  padding: 10rpx;
+  background: rgba(220,20,60,0.2);
+  border: 1rpx solid #dc143c;
+  border-radius: 6rpx;
+  text-align: center;
+  font-size: 12rpx;
+  color: #dc143c;
+  margin-bottom: 10rpx;
+}
+
+.modal-list {
+  max-height: 300rpx;
+}
+
+.modal-general {
   display: flex;
   align-items: center;
-  padding: 16rpx;
+  padding: 8rpx;
   background: rgba(0,0,0,0.3);
-  border-radius: 8rpx;
-  margin-bottom: 12rpx;
+  border: 1rpx solid #3a5a8a;
+  border-radius: 6rpx;
+  margin-bottom: 4rpx;
 }
 
-.general-avatar {
-  width: 70rpx;
-  height: 70rpx;
-  border-radius: 8rpx;
-  overflow: hidden;
-  margin-right: 16rpx;
-  border: 2rpx solid #8b6914;
+.modal-general.disabled {
+  opacity: 0.5;
 }
 
-.general-avatar image {
-  width: 100%;
-  height: 100%;
+.modal-general.orange { border-color: #ff8c00; }
+.modal-general.purple { border-color: #9932cc; }
+.modal-general.red { border-color: #dc143c; }
+.modal-general.blue { border-color: #4169e1; }
+.modal-general.green { border-color: #32cd32; }
+
+.mg-icon {
+  font-size: 20rpx;
+  margin-right: 8rpx;
 }
 
-.general-info {
+.mg-info {
   flex: 1;
 }
 
-.general-name {
-  font-size: 28rpx;
-  font-weight: bold;
+.mg-name {
+  font-size: 12rpx;
+  color: #fff;
   display: block;
 }
 
-.general-level {
-  font-size: 22rpx;
-  color: #aaa;
+.mg-stat {
+  font-size: 10rpx;
+  color: #888;
 }
 
-.empty-tip {
-  text-align: center;
-  color: #aaa;
-  padding: 40rpx;
+.mg-status {
+  font-size: 9rpx;
+  color: #4caf50;
+  padding: 2rpx 6rpx;
+  background: rgba(76,175,80,0.2);
+  border-radius: 3rpx;
 }
 
-.modal-btn {
-  margin-top: 20rpx;
-  text-align: center;
-  padding: 16rpx;
-  background: linear-gradient(180deg, #8b6914 0%, #654321 100%);
-  border-radius: 8rpx;
-  color: #ffd700;
-  font-size: 28rpx;
-}

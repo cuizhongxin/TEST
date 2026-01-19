@@ -1,7 +1,6 @@
 {
   "usingComponents": {},
-  "navigationBarTitleText": "兵法",
-  "navigationBarBackgroundColor": "#2c3e50",
-  "navigationBarTextStyle": "white",
-  "pageOrientation": "landscape"
+  "navigationBarTitleText": "兵法研习",
+  "navigationBarBackgroundColor": "#1a0a0a",
+  "navigationBarTextStyle": "white"
 }

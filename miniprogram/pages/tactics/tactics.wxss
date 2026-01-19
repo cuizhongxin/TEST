@@ -1,59 +1,71 @@
 /* pages/tactics/tactics.wxss */
+page {
+  background: linear-gradient(180deg, #1a0a0a 0%, #2d1515 100%);
+  height: 100vh;
+  overflow: hidden;
+}
+
 .page-container {
-  min-height: 100vh;
-  background: linear-gradient(180deg, #8b7355 0%, #6b5344 100%);
-  padding: 20rpx;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  color: #e8d5b0;
+  padding: 15rpx;
   box-sizing: border-box;
 }
 
 .header {
   text-align: center;
-  padding: 20rpx 0;
+  padding: 15rpx 0;
+  flex-shrink: 0;
 }
 
 .title {
   font-size: 36rpx;
-  color: #ffd700;
   font-weight: bold;
+  color: #ffd700;
+}
+
+/* 武将选择区 */
+.general-section {
+  flex-shrink: 0;
+  margin-bottom: 15rpx;
 }
 
 .section-title {
-  font-size: 28rpx;
-  color: #ffd700;
-  margin-bottom: 16rpx;
+  font-size: 24rpx;
+  color: #d4a056;
+  margin-bottom: 10rpx;
   display: block;
-}
-
-.general-section {
-  margin-bottom: 30rpx;
 }
 
 .general-list {
   white-space: nowrap;
+  height: 130rpx;
 }
 
 .general-item {
   display: inline-flex;
   flex-direction: column;
   align-items: center;
-  padding: 16rpx;
-  margin-right: 16rpx;
-  background: rgba(0,0,0,0.3);
-  border-radius: 12rpx;
+  padding: 10rpx 15rpx;
+  margin-right: 15rpx;
+  background: rgba(0,0,0,0.4);
+  border-radius: 10rpx;
   border: 2rpx solid transparent;
 }
 
 .general-item.active {
   border-color: #ffd700;
-  background: rgba(255,215,0,0.2);
+  background: rgba(255, 215, 0, 0.15);
 }
 
 .general-avatar {
-  width: 80rpx;
-  height: 80rpx;
-  border-radius: 8rpx;
+  width: 60rpx;
+  height: 60rpx;
+  border-radius: 50%;
   overflow: hidden;
-  border: 2rpx solid #8b6914;
+  background: #555;
 }
 
 .general-avatar image {
@@ -62,97 +74,237 @@
 }
 
 .general-name {
-  font-size: 24rpx;
+  font-size: 18rpx;
+  margin-top: 5rpx;
   color: #fff;
-  margin-top: 8rpx;
 }
 
-.tactics-section {
+.troop-type {
+  font-size: 14rpx;
+  color: #4caf50;
+}
+
+/* 已装备区 */
+.equipped-section {
+  flex-shrink: 0;
+  background: rgba(139, 69, 19, 0.3);
+  border: 2rpx solid #8b4513;
+  border-radius: 10rpx;
+  padding: 15rpx;
+  margin-bottom: 15rpx;
+}
+
+.equipped-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10rpx;
   background: rgba(0,0,0,0.3);
-  border-radius: 16rpx;
-  padding: 20rpx;
-  margin-bottom: 30rpx;
+  border-radius: 8rpx;
 }
 
-.current-tactics {
+.equipped-info {
   display: flex;
   align-items: center;
-  gap: 16rpx;
+  gap: 15rpx;
 }
 
-.current-tactics.empty {
-  color: #888;
-}
-
-.tactics-name {
-  font-size: 30rpx;
-  color: #ffd700;
+.equipped-name {
+  font-size: 26rpx;
   font-weight: bold;
+  color: #ffd700;
 }
 
-.tactics-type {
-  font-size: 22rpx;
-  color: #7fff00;
-  padding: 4rpx 12rpx;
-  background: rgba(127,255,0,0.2);
-  border-radius: 4rpx;
+.equipped-type {
+  font-size: 18rpx;
+  padding: 4rpx 10rpx;
+  border-radius: 6rpx;
 }
 
-.learn-section {
-  margin-bottom: 30rpx;
+.equipped-type.formation {
+  background: #2196f3;
+  color: #fff;
+}
+
+.equipped-type.tactics {
+  background: #ff5722;
+  color: #fff;
+}
+
+.unequip-btn {
+  background: #8b0000;
+  color: #fff;
+  padding: 8rpx 20rpx;
+  border-radius: 6rpx;
+  font-size: 20rpx;
+}
+
+.equipped-empty {
+  text-align: center;
+  color: #888;
+  padding: 15rpx;
+}
+
+/* Tab切换 */
+.tab-section {
+  display: flex;
+  flex-shrink: 0;
+  margin-bottom: 15rpx;
+}
+
+.tab-item {
+  flex: 1;
+  text-align: center;
+  padding: 12rpx;
+  background: rgba(0,0,0,0.4);
+  border: 2rpx solid #555;
+  font-size: 24rpx;
+}
+
+.tab-item:first-child {
+  border-radius: 8rpx 0 0 8rpx;
+}
+
+.tab-item:last-child {
+  border-radius: 0 8rpx 8rpx 0;
+}
+
+.tab-item.active {
+  background: linear-gradient(180deg, #8b4513 0%, #654321 100%);
+  border-color: #d4a056;
+  color: #ffd700;
+}
+
+/* 兵法滚动区 */
+.tactics-scroll {
+  flex: 1;
+  height: 0;
 }
 
 .tactics-list {
   display: flex;
   flex-direction: column;
-  gap: 16rpx;
+  gap: 15rpx;
+  padding-bottom: 20rpx;
 }
 
 .tactics-card {
-  background: rgba(0,0,0,0.3);
+  background: rgba(0,0,0,0.5);
+  border: 2rpx solid #555;
   border-radius: 12rpx;
-  padding: 20rpx;
-  border-left: 6rpx solid #888;
+  padding: 15rpx;
 }
 
-.tactics-card.green { border-left-color: #32cd32; }
-.tactics-card.blue { border-left-color: #4169e1; }
-.tactics-card.purple { border-left-color: #9932cc; }
-.tactics-card.orange { border-left-color: #ff8c00; }
+.tactics-card.orange { border-color: #ff8c00; }
+.tactics-card.purple { border-color: #9370db; }
+.tactics-card.blue { border-color: #4169e1; }
+.tactics-card.green { border-color: #32cd32; }
 
 .tactics-header {
   display: flex;
   align-items: center;
-  gap: 12rpx;
+  gap: 10rpx;
   margin-bottom: 8rpx;
 }
 
+.tactics-name {
+  font-size: 26rpx;
+  font-weight: bold;
+  color: #fff;
+}
+
 .tactics-type-tag {
-  font-size: 20rpx;
-  color: #aaa;
-  padding: 2rpx 8rpx;
-  background: rgba(255,255,255,0.1);
-  border-radius: 4rpx;
+  font-size: 16rpx;
+  padding: 3rpx 10rpx;
+  border-radius: 6rpx;
+}
+
+.tactics-type-tag.formation {
+  background: #2196f3;
+  color: #fff;
+}
+
+.tactics-type-tag.tactics {
+  background: #ff5722;
+  color: #fff;
+}
+
+.troop-req {
+  font-size: 16rpx;
+  color: #4caf50;
+  margin-left: auto;
 }
 
 .tactics-desc {
-  font-size: 24rpx;
-  color: #ccc;
+  font-size: 20rpx;
+  color: #aaa;
+  margin-bottom: 8rpx;
   display: block;
-  margin-bottom: 12rpx;
+}
+
+.tactics-effect {
+  background: rgba(255, 215, 0, 0.1);
+  padding: 8rpx 12rpx;
+  border-radius: 6rpx;
+  margin-bottom: 10rpx;
+}
+
+.effect-label {
+  font-size: 18rpx;
+  color: #d4a056;
+}
+
+.effect-text {
+  font-size: 18rpx;
+  color: #ffd700;
+  margin-left: 8rpx;
 }
 
 .tactics-cost {
-  font-size: 22rpx;
-  color: #ff6b6b;
-  margin-bottom: 12rpx;
+  display: flex;
+  gap: 20rpx;
+  margin-bottom: 10rpx;
+}
+
+.cost-item {
+  font-size: 18rpx;
+  color: #e8d5b0;
+}
+
+.tactics-btns {
+  display: flex;
+  gap: 15rpx;
+  justify-content: flex-end;
 }
 
 .tactics-btn {
-  display: inline-block;
-  padding: 8rpx 24rpx;
-  background: linear-gradient(180deg, #8b6914 0%, #654321 100%);
-  border-radius: 6rpx;
-  color: #ffd700;
-  font-size: 24rpx;
+  padding: 10rpx 25rpx;
+  border-radius: 8rpx;
+  font-size: 22rpx;
+}
+
+.tactics-btn.learn {
+  background: linear-gradient(180deg, #4caf50 0%, #2e8b57 100%);
+  color: #fff;
+}
+
+.tactics-btn.learn.disabled {
+  background: #555;
+  color: #888;
+}
+
+.tactics-btn.equip {
+  background: linear-gradient(180deg, #ffd700 0%, #daa520 100%);
+  color: #333;
+}
+
+/* 资源条 */
+.resource-bar {
+  flex-shrink: 0;
+  display: flex;
+  justify-content: space-around;
+  padding: 12rpx;
+  background: rgba(0,0,0,0.6);
+  border-top: 2rpx solid #8b4513;
+  font-size: 22rpx;
 }

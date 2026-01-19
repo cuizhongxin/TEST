@@ -4,9 +4,7 @@ import com.miniprogram.config.TacticsConfig;
 import com.miniprogram.exception.BusinessException;
 import com.miniprogram.model.General;
 import com.miniprogram.model.Tactics;
-import com.miniprogram.model.UserResource;
 import com.miniprogram.repository.GeneralRepository;
-import com.miniprogram.service.UserResourceService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +14,7 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * 兵法服务 - 一个武将只能装备一个兵法/阵法
+ * 兵法服务
  */
 @Service
 public class TacticsService {
@@ -29,34 +27,19 @@ public class TacticsService {
     @Autowired
     private GeneralRepository generalRepository;
     
-    @Autowired
-    private UserResourceService userResourceService;
-    
-    // 用户已学习的兵法 - key: generalId, value: 已学习的兵法列表
+    // 用户已学习的兵法
+    // key: generalId, value: 已学习的兵法列表
     private final Map<String, List<Tactics>> generalLearnedTactics = new ConcurrentHashMap<>();
     
-    // 武将装备的兵法（只有一个）- key: generalId, value: 装备的兵法
-    private final Map<String, Tactics> generalEquippedTactics = new ConcurrentHashMap<>();
+    // 武将装备的兵法
+    // key: generalId, value: {primary: Tactics, secondary: Tactics}
+    private final Map<String, Map<String, Tactics>> generalEquippedTactics = new ConcurrentHashMap<>();
     
     /**
      * 获取所有兵法列表
      */
     public List<Tactics> getAllTactics() {
         return new ArrayList<>(tacticsConfig.getAllTactics().values());
-    }
-    
-    /**
-     * 根据兵种获取可用兵法
-     */
-    public List<Tactics> getTacticsByTroopType(String troopType) {
-        List<Tactics> result = new ArrayList<>();
-        for (Tactics tactics : tacticsConfig.getAllTactics().values()) {
-            String condition = tactics.getLearnCondition();
-            if ("ALL".equals(condition) || condition == null || condition.equalsIgnoreCase(troopType)) {
-                result.add(tactics);
-            }
-        }
-        return result;
     }
     
     /**
@@ -67,13 +50,6 @@ public class TacticsService {
     }
     
     /**
-     * 获取兵法学习消耗
-     */
-    public Map<String, Integer> getTacticsLearnCost(String tacticsId) {
-        return tacticsConfig.getTacticsLearnCost(tacticsId);
-    }
-    
-    /**
      * 获取武将已学习的兵法
      */
     public List<Tactics> getGeneralLearnedTactics(String generalId) {
@@ -81,14 +57,14 @@ public class TacticsService {
     }
     
     /**
-     * 获取武将装备的兵法（只有一个）
+     * 获取武将装备的兵法
      */
-    public Tactics getGeneralEquippedTactics(String generalId) {
-        return generalEquippedTactics.get(generalId);
+    public Map<String, Tactics> getGeneralEquippedTactics(String generalId) {
+        return generalEquippedTactics.getOrDefault(generalId, new HashMap<>());
     }
     
     /**
-     * 学习兵法 - 消耗资源
+     * 学习兵法
      */
     public Map<String, Object> learnTactics(String userId, String generalId, String tacticsId) {
         // 检查武将
@@ -106,16 +82,6 @@ public class TacticsService {
             throw new BusinessException(400, "兵法不存在");
         }
         
-        // 检查兵种限制
-        String troopCondition = tactics.getLearnCondition();
-        if (troopCondition != null && !"ALL".equals(troopCondition)) {
-            String generalTroopType = general.getTroopType() != null ? general.getTroopType().getName() : "步兵";
-            String troopTypeCode = getTroopTypeCode(generalTroopType);
-            if (!troopCondition.equalsIgnoreCase(troopTypeCode)) {
-                throw new BusinessException(400, "此兵法仅限" + getTroopTypeName(troopCondition) + "学习");
-            }
-        }
-        
         // 检查等级要求
         int generalLevel = general.getLevel() != null ? general.getLevel() : 1;
         if (generalLevel < tactics.getLearnLevel()) {
@@ -130,56 +96,30 @@ public class TacticsService {
             }
         }
         
-        // 检查并消耗资源
-        Map<String, Integer> cost = tacticsConfig.getTacticsLearnCost(tacticsId);
-        UserResource resource = userResourceService.getUserResource(userId);
-        
-        int paperCost = cost.getOrDefault("paper", 0);
-        int woodCost = cost.getOrDefault("wood", 0);
-        int silverCost = cost.getOrDefault("silver", 0);
-        
-        if (resource.getPaper() < paperCost) {
-            throw new BusinessException(400, "纸张不足，需要" + paperCost + "张");
-        }
-        if (resource.getWood() < woodCost) {
-            throw new BusinessException(400, "木材不足，需要" + woodCost);
-        }
-        if (resource.getSilver() < silverCost) {
-            throw new BusinessException(400, "银两不足，需要" + silverCost);
-        }
-        
-        // 扣除资源
-        resource.setPaper(resource.getPaper() - paperCost);
-        resource.setWood(resource.getWood() - woodCost);
-        resource.setSilver(resource.getSilver() - silverCost);
-        userResourceService.saveUserResource(resource);
-        
-        // 创建兵法副本并学习
+        // 创建兵法副本
         Tactics learnedTactics = copyTactics(tactics);
         learned.add(learnedTactics);
         
-        logger.info("武将 {} 学习了兵法: {}，消耗纸张{}，木材{}，银两{}", 
-            general.getName(), tactics.getName(), paperCost, woodCost, silverCost);
+        logger.info("武将 {} 学习了兵法: {}", general.getName(), tactics.getName());
         
         Map<String, Object> result = new HashMap<>();
         result.put("generalId", generalId);
         result.put("generalName", general.getName());
         result.put("tactics", learnedTactics);
         result.put("learnedCount", learned.size());
-        result.put("costPaper", paperCost);
-        result.put("costWood", woodCost);
-        result.put("costSilver", silverCost);
-        result.put("remainingPaper", resource.getPaper());
-        result.put("remainingWood", resource.getWood());
-        result.put("remainingSilver", resource.getSilver());
         
         return result;
     }
     
     /**
-     * 装备兵法（只能装备一个）
+     * 装备兵法
      */
-    public Map<String, Object> equipTactics(String userId, String generalId, String tacticsId) {
+    public Map<String, Object> equipTactics(String userId, String generalId, String tacticsId, String slot) {
+        // slot: "primary" 或 "secondary"
+        if (!"primary".equals(slot) && !"secondary".equals(slot)) {
+            throw new BusinessException(400, "无效的兵法槽位");
+        }
+        
         // 检查武将
         General general = generalRepository.findById(generalId);
         if (general == null) {
@@ -205,25 +145,25 @@ public class TacticsService {
             throw new BusinessException(400, "未学习该兵法");
         }
         
-        // 装备兵法（替换原有的）
-        Tactics oldTactics = generalEquippedTactics.put(generalId, tacticsToEquip);
+        // 装备兵法
+        Map<String, Tactics> equipped = generalEquippedTactics.computeIfAbsent(generalId, k -> new HashMap<>());
         
-        // 更新武将的兵法信息
-        if (general.getTactics() == null) {
-            general.setTactics(General.Tactics.builder().build());
+        // 检查是否在另一个槽位
+        String otherSlot = "primary".equals(slot) ? "secondary" : "primary";
+        if (equipped.get(otherSlot) != null && equipped.get(otherSlot).getId().equals(tacticsId)) {
+            equipped.remove(otherSlot);  // 从另一个槽位移除
         }
-        general.getTactics().setTacticsId(tacticsId);
-        general.getTactics().setTacticsName(tacticsToEquip.getName());
-        general.getTactics().setTacticsType(tacticsToEquip.getType().getName());
-        generalRepository.update(general);
         
-        logger.info("武将 {} 装备兵法 {}", general.getName(), tacticsToEquip.getName());
+        equipped.put(slot, tacticsToEquip);
+        
+        logger.info("武将 {} 装备兵法 {} 到 {} 槽位", general.getName(), tacticsToEquip.getName(), slot);
         
         Map<String, Object> result = new HashMap<>();
         result.put("generalId", generalId);
         result.put("generalName", general.getName());
-        result.put("equippedTactics", tacticsToEquip);
-        result.put("previousTactics", oldTactics);
+        result.put("slot", slot);
+        result.put("tactics", tacticsToEquip);
+        result.put("equippedTactics", equipped);
         
         return result;
     }
@@ -231,7 +171,7 @@ public class TacticsService {
     /**
      * 卸下兵法
      */
-    public Map<String, Object> unequipTactics(String userId, String generalId) {
+    public Map<String, Object> unequipTactics(String userId, String generalId, String slot) {
         // 检查武将
         General general = generalRepository.findById(generalId);
         if (general == null) {
@@ -241,49 +181,113 @@ public class TacticsService {
             throw new BusinessException(403, "无权操作此武将");
         }
         
-        Tactics removedTactics = generalEquippedTactics.remove(generalId);
-        if (removedTactics == null) {
-            throw new BusinessException(400, "该武将没有装备兵法");
+        Map<String, Tactics> equipped = generalEquippedTactics.get(generalId);
+        if (equipped == null || !equipped.containsKey(slot)) {
+            throw new BusinessException(400, "该槽位没有装备兵法");
         }
         
-        // 清除武将的兵法信息
-        if (general.getTactics() != null) {
-            general.getTactics().setTacticsId(null);
-            general.getTactics().setTacticsName(null);
-            general.getTactics().setTacticsType(null);
-            generalRepository.update(general);
-        }
+        Tactics removedTactics = equipped.remove(slot);
         
         logger.info("武将 {} 卸下兵法 {}", general.getName(), removedTactics.getName());
         
         Map<String, Object> result = new HashMap<>();
         result.put("generalId", generalId);
         result.put("generalName", general.getName());
+        result.put("slot", slot);
         result.put("removedTactics", removedTactics);
+        result.put("equippedTactics", equipped);
         
         return result;
     }
     
     /**
-     * 初始化武将的固有兵法（根据兵种和品质）
+     * 升级兵法
+     */
+    public Map<String, Object> upgradeTactics(String userId, String generalId, String tacticsId, int expToAdd) {
+        // 检查武将
+        General general = generalRepository.findById(generalId);
+        if (general == null) {
+            throw new BusinessException(400, "武将不存在");
+        }
+        if (!userId.equals(general.getUserId())) {
+            throw new BusinessException(403, "无权操作此武将");
+        }
+        
+        // 找到已学习的兵法
+        List<Tactics> learned = generalLearnedTactics.get(generalId);
+        Tactics tactics = null;
+        if (learned != null) {
+            for (Tactics t : learned) {
+                if (t.getId().equals(tacticsId)) {
+                    tactics = t;
+                    break;
+                }
+            }
+        }
+        
+        if (tactics == null) {
+            throw new BusinessException(400, "未学习该兵法");
+        }
+        
+        if (tactics.getLevel() >= tactics.getMaxLevel()) {
+            throw new BusinessException(400, "兵法已满级");
+        }
+        
+        // 添加经验
+        int currentExp = tactics.getExp() + expToAdd;
+        int currentLevel = tactics.getLevel();
+        int levelsGained = 0;
+        
+        while (currentLevel < tactics.getMaxLevel() && currentExp >= tactics.getMaxExp()) {
+            currentExp -= tactics.getMaxExp();
+            currentLevel++;
+            levelsGained++;
+            tactics.setMaxExp((int)(tactics.getMaxExp() * 1.5));  // 每级需要的经验增加50%
+        }
+        
+        tactics.setExp(currentExp);
+        tactics.setLevel(currentLevel);
+        tactics.setUpdateTime(System.currentTimeMillis());
+        
+        // 更新效果数值（每级增加10%）
+        if (levelsGained > 0) {
+            double multiplier = 1.0 + (currentLevel - 1) * 0.1;
+            for (Tactics.TacticsEffect effect : tactics.getEffects()) {
+                effect.setBaseValue((int)(effect.getBaseValue() * multiplier));
+            }
+        }
+        
+        logger.info("武将 {} 的兵法 {} 升级到 {} 级", general.getName(), tactics.getName(), currentLevel);
+        
+        Map<String, Object> result = new HashMap<>();
+        result.put("generalId", generalId);
+        result.put("generalName", general.getName());
+        result.put("tactics", tactics);
+        result.put("levelUp", levelsGained > 0);
+        result.put("levelsGained", levelsGained);
+        result.put("currentLevel", currentLevel);
+        result.put("currentExp", currentExp);
+        result.put("maxExp", tactics.getMaxExp());
+        
+        return result;
+    }
+    
+    /**
+     * 初始化武将的固有兵法（根据品质）
      */
     public void initGeneralTactics(General general) {
         String generalId = general.getId();
         int qualityId = general.getQuality() != null ? general.getQuality().getId() : 1;
-        String troopType = general.getTroopType() != null ? general.getTroopType().getName() : "步兵";
-        String troopTypeCode = getTroopTypeCode(troopType);
         
-        // 获取该兵种可用的兵法
+        // 根据武将品质分配初始兵法
+        List<Tactics> allTactics = new ArrayList<>(tacticsConfig.getAllTactics().values());
         List<Tactics> availableTactics = new ArrayList<>();
-        for (Tactics t : tacticsConfig.getAllTactics().values()) {
-            String condition = t.getLearnCondition();
+        
+        // 筛选适合品质的兵法（品质相同或低一级）
+        for (Tactics t : allTactics) {
             int tacticsQuality = t.getQuality().getId();
-            
-            // 品质匹配（同级或低一级）且兵种匹配
             if (tacticsQuality <= qualityId && tacticsQuality >= qualityId - 1) {
-                if ("ALL".equals(condition) || condition == null || condition.equalsIgnoreCase(troopTypeCode)) {
-                    availableTactics.add(t);
-                }
+                availableTactics.add(t);
             }
         }
         
@@ -298,21 +302,10 @@ public class TacticsService {
         List<Tactics> learned = generalLearnedTactics.computeIfAbsent(generalId, k -> new ArrayList<>());
         learned.add(primaryTactics);
         
-        // 自动装备
-        generalEquippedTactics.put(generalId, primaryTactics);
+        Map<String, Tactics> equipped = generalEquippedTactics.computeIfAbsent(generalId, k -> new HashMap<>());
+        equipped.put("primary", primaryTactics);
         
-        // 更新武将信息
-        if (general.getTactics() == null) {
-            general.setTactics(General.Tactics.builder().build());
-        }
-        general.getTactics().setTacticsId(primaryTactics.getId());
-        general.getTactics().setTacticsName(primaryTactics.getName());
-        general.getTactics().setTacticsType(primaryTactics.getType().getName());
-        List<String> learnedIds = new ArrayList<>();
-        learnedIds.add(primaryTactics.getId());
-        general.getTactics().setLearnedTacticsIds(learnedIds);
-        
-        logger.info("武将 {} 初始化兵法: {} ({})", general.getName(), primaryTactics.getName(), troopType);
+        logger.info("武将 {} 初始化固有兵法: {}", general.getName(), primaryTactics.getName());
     }
     
     /**
@@ -321,57 +314,42 @@ public class TacticsService {
     public Map<String, Object> calculateTacticsBonus(String generalId) {
         Map<String, Object> result = new HashMap<>();
         Map<String, Integer> attributeBonus = new HashMap<>();
-        Map<String, Object> tacticsInfo = null;
+        List<Map<String, Object>> activeEffects = new ArrayList<>();
         
-        Tactics equipped = generalEquippedTactics.get(generalId);
-        if (equipped == null) {
+        Map<String, Tactics> equipped = generalEquippedTactics.get(generalId);
+        if (equipped == null || equipped.isEmpty()) {
             result.put("attributeBonus", attributeBonus);
-            result.put("equippedTactics", null);
+            result.put("activeEffects", activeEffects);
             return result;
         }
         
-        // 计算被动效果
-        for (Tactics.TacticsEffect effect : equipped.getEffects()) {
-            if ("BUFF".equals(effect.getEffectType()) && effect.getDuration() == 0) {
-                String attr = effect.getAttribute();
-                int value = effect.getBaseValue();
-                attributeBonus.merge(attr, value, Integer::sum);
+        // 计算被动兵法的永久效果
+        for (Tactics tactics : equipped.values()) {
+            if (tactics.getType().getId() == 2) {  // 被动兵法
+                for (Tactics.TacticsEffect effect : tactics.getEffects()) {
+                    if ("BUFF".equals(effect.getEffectType()) && effect.getDuration() == 0) {
+                        // 永久效果
+                        String attr = effect.getAttribute();
+                        int value = effect.getBaseValue();
+                        attributeBonus.merge(attr, value, Integer::sum);
+                    }
+                }
             }
+            
+            // 记录所有装备的兵法信息
+            Map<String, Object> tacticsInfo = new HashMap<>();
+            tacticsInfo.put("id", tactics.getId());
+            tacticsInfo.put("name", tactics.getName());
+            tacticsInfo.put("type", tactics.getType().getName());
+            tacticsInfo.put("triggerRate", tactics.getTriggerRate());
+            tacticsInfo.put("effects", tactics.getEffects());
+            activeEffects.add(tacticsInfo);
         }
-        
-        // 记录兵法信息
-        tacticsInfo = new HashMap<>();
-        tacticsInfo.put("id", equipped.getId());
-        tacticsInfo.put("name", equipped.getName());
-        tacticsInfo.put("type", equipped.getType().getName());
-        tacticsInfo.put("triggerRate", equipped.getTriggerRate());
-        tacticsInfo.put("effects", equipped.getEffects());
-        tacticsInfo.put("description", equipped.getDescription());
         
         result.put("attributeBonus", attributeBonus);
-        result.put("equippedTactics", tacticsInfo);
+        result.put("activeEffects", activeEffects);
         
         return result;
-    }
-    
-    private String getTroopTypeCode(String troopTypeName) {
-        if (troopTypeName == null) return "INFANTRY";
-        switch (troopTypeName) {
-            case "步兵": return "INFANTRY";
-            case "骑兵": return "CAVALRY";
-            case "弓兵": return "ARCHER";
-            default: return "INFANTRY";
-        }
-    }
-    
-    private String getTroopTypeName(String code) {
-        if (code == null) return "步兵";
-        switch (code.toUpperCase()) {
-            case "INFANTRY": return "步兵";
-            case "CAVALRY": return "骑兵";
-            case "ARCHER": return "弓兵";
-            default: return "步兵";
-        }
     }
     
     /**

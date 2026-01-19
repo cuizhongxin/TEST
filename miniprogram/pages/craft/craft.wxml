@@ -1,2 +1,10 @@
 <!--pages/craft/craft.wxml-->
-<text>pages/craft/craft.wxml</text>
+<view class="page-container">
+  <view class="top-bar">
+    <view class="back-btn" bindtap="goBack">◀ 返回</view>
+    <view class="page-title">装备锻造</view>
+  </view>
+  <view class="main-content">
+    <view class="placeholder">锻造系统开发中...</view>
+  </view>
+</view>

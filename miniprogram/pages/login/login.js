@@ -1,30 +1,28 @@
 // pages/login/login.js
-var app = getApp()
-var auth = require('../../utils/auth.js')
+const app = getApp()
+const { login } = require('../../utils/auth.js')
 
 Page({
   data: {
     isLoading: false
   },
 
-  onLoad: function() {
+  onLoad() {
     // 检查是否已登录
-    if (auth.checkLoginStatus()) {
+    if (app.checkLoginStatus()) {
       wx.redirectTo({
         url: '/pages/index/index'
       })
     }
   },
 
-  handleLogin: function() {
-    var that = this
-    
+  async handleLogin() {
     if (this.data.isLoading) return
 
     this.setData({ isLoading: true })
 
-    auth.login().then(function(result) {
-      that.setData({ isLoading: false })
+    try {
+      const result = await login()
       
       if (result.success) {
         wx.showToast({
@@ -33,7 +31,7 @@ Page({
           duration: 1500
         })
 
-        setTimeout(function() {
+        setTimeout(() => {
           wx.redirectTo({
             url: '/pages/index/index'
           })
@@ -45,14 +43,17 @@ Page({
           duration: 2000
         })
       }
-    }).catch(function(error) {
-      that.setData({ isLoading: false })
+    } catch (error) {
       console.error('登录失败:', error)
       wx.showToast({
         title: error.message || '登录失败，请重试',
         icon: 'none',
         duration: 2000
       })
-    })
+    } finally {
+      this.setData({ isLoading: false })
+    }
   }
 })
+
+

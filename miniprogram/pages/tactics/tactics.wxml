@@ -15,37 +15,67 @@
           <image src="{{item.avatar || '/images/logo.png'}}" mode="aspectFill"></image>
         </view>
         <text class="general-name">{{item.name}}</text>
+        <text class="troop-type">{{item.troopType || '步兵'}}</text>
       </view>
     </scroll-view>
   </view>
 
-  <!-- 当前兵法 -->
-  <view class="tactics-section" wx:if="{{currentGeneral}}">
-    <text class="section-title">{{currentGeneral.name}}的兵法</text>
-    <view class="current-tactics" wx:if="{{currentGeneral.tactics && currentGeneral.tactics.tacticsId}}">
-      <text class="tactics-name">{{currentGeneral.tactics.tacticsName}}</text>
-      <text class="tactics-type">{{currentGeneral.tactics.tacticsType === 'formation' ? '阵法' : '兵法'}}</text>
+  <!-- 当前装备的兵法 -->
+  <view class="equipped-section" wx:if="{{currentGeneral}}">
+    <text class="section-title">{{currentGeneral.name}}已装备 (只能装备1个)</text>
+    <view class="equipped-card" wx:if="{{currentGeneral.tactics && currentGeneral.tactics.primary}}">
+      <view class="equipped-info">
+        <text class="equipped-name">{{currentGeneral.tactics.primary.name}}</text>
+        <text class="equipped-type {{currentGeneral.tactics.primary.type}}">
+          {{currentGeneral.tactics.primary.type === 'formation' ? '阵法' : '兵法'}}
+        </text>
+      </view>
+      <view class="unequip-btn" bindtap="unequipTactics">卸下</view>
     </view>
-    <view class="current-tactics empty" wx:else>
-      <text>未装备兵法</text>
+    <view class="equipped-empty" wx:else>
+      <text>未装备兵法或阵法</text>
     </view>
   </view>
 
-  <!-- 可学习兵法列表 -->
-  <view class="learn-section">
-    <text class="section-title">可学习兵法</text>
+  <!-- 兵法分类 -->
+  <view class="tab-section">
+    <view class="tab-item {{currentTab === 'formation' ? 'active' : ''}}" bindtap="switchTab" data-tab="formation">阵法</view>
+    <view class="tab-item {{currentTab === 'tactics' ? 'active' : ''}}" bindtap="switchTab" data-tab="tactics">兵法</view>
+  </view>
+
+  <!-- 可学习列表 -->
+  <scroll-view class="tactics-scroll" scroll-y="true">
     <view class="tactics-list">
-      <view class="tactics-card {{item.quality}}" wx:for="{{tacticsList}}" wx:key="id">
+      <view class="tactics-card {{item.quality}}" wx:for="{{displayList}}" wx:key="id">
         <view class="tactics-header">
           <text class="tactics-name">{{item.name}}</text>
-          <text class="tactics-type-tag">{{item.type === 'formation' ? '阵法' : '兵法'}}</text>
+          <text class="tactics-type-tag {{item.type}}">{{item.type === 'formation' ? '阵法' : '兵法'}}</text>
+          <text class="troop-req" wx:if="{{item.troopRequirement}}">{{item.troopRequirement}}专属</text>
         </view>
         <text class="tactics-desc">{{item.description}}</text>
-        <view class="tactics-cost">
-          <text>消耗: 纸张×{{item.paperCost}} 木材×{{item.woodCost}} 银两×{{item.silverCost}}</text>
+        <view class="tactics-effect">
+          <text class="effect-label">效果:</text>
+          <text class="effect-text">{{item.effectText}}</text>
         </view>
-        <view class="tactics-btn" bindtap="learnTactics" data-id="{{item.id}}">学习</view>
+        <view class="tactics-cost">
+          <text class="cost-item">📄纸张×{{item.paperCost}}</text>
+          <text class="cost-item">🪵木材×{{item.woodCost}}</text>
+          <text class="cost-item">💰银两×{{item.silverCost}}</text>
+        </view>
+        <view class="tactics-btns">
+          <view class="tactics-btn learn {{item.learned ? 'disabled' : ''}}" bindtap="learnTactics" data-id="{{item.id}}">
+            {{item.learned ? '已学习' : '学习'}}
+          </view>
+          <view class="tactics-btn equip" wx:if="{{item.learned}}" bindtap="equipTactics" data-id="{{item.id}}">装备</view>
+        </view>
       </view>
     </view>
+  </scroll-view>
+
+  <!-- 资源显示 -->
+  <view class="resource-bar">
+    <text>📄纸张: {{paper}}</text>
+    <text>🪵木材: {{wood}}</text>
+    <text>💰银两: {{silver}}</text>
   </view>
 </view>

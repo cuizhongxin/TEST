@@ -88,17 +88,6 @@ public class Equipment {
     private String description;
     
     /**
-     * 强化等级 (0-10)
-     */
-    @Builder.Default
-    private Integer enhanceLevel = 0;
-    
-    /**
-     * 强化属性加成（根据强化等级计算）
-     */
-    private Attributes enhanceAttributes;
-    
-    /**
      * 创建时间
      */
     private Long createTime;

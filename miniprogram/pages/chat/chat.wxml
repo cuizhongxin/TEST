@@ -1,2 +1,26 @@
 <!--pages/chat/chat.wxml-->
-<text>pages/chat/chat.wxml</text>
+<wxs module="utils">
+module.exports.formatTime = function(timestamp) {
+  if (!timestamp) return '';
+  var date = getDate(timestamp);
+  var h = date.getHours();
+  var m = date.getMinutes();
+  return (h < 10 ? '0' + h : h) + ':' + (m < 10 ? '0' + m : m);
+}
+</wxs>
+<view class="chat-container">
+  <scroll-view class="message-list" scroll-y scroll-into-view="msg-{{messages.length - 1}}">
+    <view class="message-item" wx:for="{{messages}}" wx:key="id" id="msg-{{index}}">
+      <view class="message-header">
+        <text class="message-user">{{item.user}}</text>
+        <text class="message-time">{{utils.formatTime(item.time)}}</text>
+      </view>
+      <view class="message-content">{{item.text}}</view>
+    </view>
+  </scroll-view>
+  
+  <view class="input-area">
+    <input class="message-input" placeholder="输入消息..." value="{{inputText}}" bindinput="onInput"/>
+    <button class="send-btn" bindtap="sendMessage">发送</button>
+  </view>
+</view>

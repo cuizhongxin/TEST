@@ -1,53 +1,280 @@
 <!--pages/dungeon/dungeon.wxml-->
 <view class="page-container">
-  <view class="header">
-    <text class="title">战役</text>
+  <!-- 顶部栏 -->
+  <view class="top-bar">
+    <view class="back-btn" bindtap="goBack">
+      <text>◀ 返回</text>
+    </view>
+    <view class="page-title">{{inBattle ? selectedDungeon.name : '选择战役'}}</view>
+    <view class="player-info">
+      <text class="info-item">⚡ {{stamina}}/100</text>
+      <text class="info-item">Lv.{{playerLevel}}</text>
+    </view>
   </view>
 
-  <!-- 章节选择 -->
-  <view class="chapter-section">
-    <scroll-view class="chapter-list" scroll-x="true">
-      <view class="chapter-item {{currentChapter === item.id ? 'active' : ''}}" 
-            wx:for="{{chapters}}" wx:key="id" 
-            bindtap="selectChapter" data-id="{{item.id}}">
-        <text class="chapter-name">{{item.name}}</text>
+  <!-- 战役选择界面 -->
+  <view class="dungeon-select" wx:if="{{!inBattle && !inCombat}}">
+    <scroll-view class="dungeon-list" scroll-x>
+      <view class="dungeon-card {{selectedDungeon && selectedDungeon.id === item.id ? 'selected' : ''}} {{playerLevel < item.unlockLevel ? 'locked' : ''}}"
+            wx:for="{{dungeons}}" wx:key="id"
+            data-id="{{item.id}}"
+            bindtap="selectDungeon">
+        <view class="dungeon-icon">{{item.icon}}</view>
+        <view class="dungeon-name">{{item.name}}</view>
+        <view class="dungeon-level">Lv.{{item.unlockLevel}}</view>
+        <view class="lock-icon" wx:if="{{playerLevel < item.unlockLevel}}">🔒</view>
       </view>
     </scroll-view>
-  </view>
 
-  <!-- 关卡列表 -->
-  <view class="stage-section">
-    <view class="stage-list">
-      <view class="stage-card {{item.cleared ? 'cleared' : ''}} {{item.locked ? 'locked' : ''}}" 
-            wx:for="{{stages}}" wx:key="id" 
-            bindtap="selectStage" data-id="{{item.id}}">
-        <text class="stage-name">{{item.name}}</text>
-        <text class="stage-level">推荐等级: {{item.recommendLevel}}</text>
-        <text class="stage-status" wx:if="{{item.cleared}}">已通关</text>
-        <text class="stage-status locked" wx:if="{{item.locked}}">未解锁</text>
+    <view class="dungeon-detail" wx:if="{{selectedDungeon}}">
+      <!-- 副本信息区 - 可滚动 -->
+      <scroll-view class="detail-content" scroll-y>
+        <view class="detail-header">
+          <text class="detail-name">{{selectedDungeon.icon}} {{selectedDungeon.name}}</text>
+          <text class="detail-desc">{{selectedDungeon.description}}</text>
+        </view>
+        
+        <view class="detail-info">
+          <view class="info-row">
+            <text>守关武将：{{selectedDungeon.npcCount}}人</text>
+            <text>消耗体力：{{selectedDungeon.staminaCost}}</text>
+          </view>
+          <view class="info-row">
+            <text>解锁等级：Lv.{{selectedDungeon.unlockLevel}}</text>
+            <text wx:if="{{playerLevel >= selectedDungeon.unlockLevel}}">今日剩余：{{5 - (progress.todayEntries || 0)}}/5次</text>
+            <text wx:else class="locked-text">🔒 未解锁</text>
+          </view>
+          <view class="info-row">
+            <text>推荐战力：{{selectedDungeon.recommendedPower}}</text>
+            <text>我方战力：{{totalPower}}</text>
+          </view>
+        </view>
+        
+        <!-- 阵型预览 -->
+        <view class="formation-row">
+          <text class="formation-label">当前阵型 ({{formationCount}}/6):</text>
+          <view class="formation-mini">
+            <view class="mini-slot {{item.name ? 'filled' : ''}}" wx:for="{{formation}}" wx:key="index">
+              <text wx:if="{{item.name}}">{{item.name}}</text>
+            </view>
+            <view class="mini-slot empty" wx:for="{{6 - formation.length}}" wx:key="*this">
+              <text>空</text>
+            </view>
+          </view>
+        </view>
+        
+        <view class="formation-warning" wx:if="{{formationCount === 0}}">
+          ⚠️ 请先配置阵型才能进入战役
+        </view>
+        
+        <view class="detail-lore" wx:if="{{selectedDungeon.lore}}">{{selectedDungeon.lore}}</view>
+      </scroll-view>
+      
+      <!-- 底部操作按钮 - 始终固定显示 -->
+      <view class="action-bar">
+        <view class="action-btn config-btn" bindtap="goToFormation">⚔️ 配置阵型</view>
+        <view class="action-btn enter-btn {{formationCount === 0 || playerLevel < selectedDungeon.unlockLevel || stamina < selectedDungeon.staminaCost ? 'disabled' : ''}}" 
+              bindtap="enterDungeon">
+          <block wx:if="{{playerLevel < selectedDungeon.unlockLevel}}">🔒 需要Lv.{{selectedDungeon.unlockLevel}}</block>
+          <block wx:elif="{{formationCount === 0}}">⚠️ 请先配置阵型</block>
+          <block wx:elif="{{stamina < selectedDungeon.staminaCost}}">⚡ 体力不足</block>
+          <block wx:else>🚀 进入战役</block>
+        </view>
       </view>
     </view>
   </view>
 
-  <!-- 关卡详情 -->
-  <view class="detail-section" wx:if="{{selectedStage}}">
-    <view class="detail-card">
-      <text class="detail-name">{{selectedStage.name}}</text>
-      <view class="detail-info">
-        <text>消耗精力: {{selectedStage.staminaCost}}</text>
-        <text>敌人等级: {{selectedStage.enemyLevel}}</text>
+  <!-- 战斗准备界面 -->
+  <view class="battle-prep" wx:if="{{inBattle && !inCombat}}">
+    <view class="prep-header">
+      <text class="prep-progress">第 {{currentNpcIndex + 1}} / {{selectedDungeon.npcCount}} 关</text>
+    </view>
+    
+    <scroll-view class="prep-content" scroll-y>
+      <view class="prep-inner">
+        <view class="npc-preview">
+          <view class="npc-icon-large">{{currentNpc.isBoss ? '👹' : '👤'}}</view>
+          <view class="npc-details">
+            <text class="npc-name" style="color: {{currentNpc.qualityColor}}">{{currentNpc.name}}</text>
+            <text class="npc-quality">{{currentNpc.qualityName}}品质</text>
+            <text class="npc-power">战力 {{currentNpc.power}}</text>
+          </view>
+        </view>
+        
+        <view class="drop-info">
+          <text class="drop-title">通关奖励</text>
+          <view class="drop-list">
+            <text>📈 经验 +{{currentNpc.expReward || 100}}</text>
+            <text wx:if="{{currentNpc.dropEquipment}}">🎁 {{currentNpc.dropRate}}%掉落装备</text>
+          </view>
+        </view>
+        
+        <view class="my-team-preview">
+          <text class="team-title">我方阵容 (战力: {{totalPower}})</text>
+          <view class="team-list">
+            <view class="team-member" wx:for="{{formation}}" wx:key="index">
+              <view class="member-icon">{{item.troopIcon || '🛡️'}}</view>
+              <text class="member-name">{{item.name}}</text>
+              <text class="member-mob">机{{item.mobility}}</text>
+            </view>
+          </view>
+        </view>
       </view>
-      <view class="reward-section">
-        <text class="reward-title">通关奖励:</text>
-        <text class="reward-item">经验 +{{selectedStage.expReward}}</text>
-        <text class="reward-item">银两 +{{selectedStage.silverReward}}</text>
+    </scroll-view>
+    
+    <button class="start-battle-btn" bindtap="startCombat">⚔️ 开始战斗</button>
+  </view>
+
+  <!-- 回合制战斗界面 - 左右对战布局 -->
+  <view class="combat-arena" wx:if="{{inCombat}}">
+    <!-- 顶部信息栏 -->
+    <view class="combat-top-bar">
+      <!-- 我方信息 -->
+      <view class="commander-info my-commander">
+        <image class="commander-avatar" src="/images/logo.png" mode="aspectFill"></image>
+        <view class="commander-detail">
+          <text class="commander-name">主公 Lv.{{playerLevel}}</text>
+          <view class="commander-hp-bar">
+            <view class="commander-hp-fill my-hp" style="width: {{myTotalHp / myMaxHp * 100}}%"></view>
+          </view>
+        </view>
       </view>
-      <view class="battle-btn" bindtap="startBattle">发动战役</view>
+      
+      <!-- 回合指示 -->
+      <view class="round-badge">
+        <text class="round-label">战</text>
+        <text class="round-number">第{{currentRound}}回合</text>
+      </view>
+      
+      <!-- 敌方信息 -->
+      <view class="commander-info enemy-commander">
+        <view class="commander-detail">
+          <text class="commander-name" style="color: {{currentNpc.qualityColor}}">{{currentNpc.name}} Lv.{{currentNpc.level}}</text>
+          <view class="commander-hp-bar">
+            <view class="commander-hp-fill enemy-hp" style="width: {{enemyTotalHp / enemyMaxHp * 100}}%"></view>
+          </view>
+        </view>
+        <view class="commander-avatar enemy-avatar-img">{{currentNpc.isBoss ? '👹' : '👤'}}</view>
+      </view>
+    </view>
+
+    <!-- 战场主区域 - 左右对战 -->
+    <view class="battlefield-area">
+      <!-- 我方阵型 (左侧) - 3行2列 -->
+      <view class="army-side my-army-side">
+        <view class="army-grid">
+          <!-- 后排 -->
+          <view class="army-row back-row">
+            <view class="troop-unit {{myUnits[4] && myUnits[4].isDead ? 'dead' : ''}} {{myUnits[4] && myUnits[4].isAttacking ? 'attacking' : ''}} {{myUnits[4] && myUnits[4].isHit ? 'hit' : ''}}" wx:if="{{myUnits[4]}}">
+              <view class="troop-flag my-flag">🚩</view>
+              <view class="troop-avatar">{{myUnits[4].troopIcon || '🛡️'}}</view>
+              <view class="troop-soldiers">{{myUnits[4].currentHp}}</view>
+              <view class="troop-hp-bar"><view class="troop-hp-fill" style="width: {{myUnits[4].currentHp / myUnits[4].maxHp * 100}}%"></view></view>
+              <text class="troop-name">{{myUnits[4].name}}</text>
+            </view>
+            <view class="troop-unit {{myUnits[5] && myUnits[5].isDead ? 'dead' : ''}} {{myUnits[5] && myUnits[5].isAttacking ? 'attacking' : ''}} {{myUnits[5] && myUnits[5].isHit ? 'hit' : ''}}" wx:if="{{myUnits[5]}}">
+              <view class="troop-flag my-flag">🚩</view>
+              <view class="troop-avatar">{{myUnits[5].troopIcon || '🛡️'}}</view>
+              <view class="troop-soldiers">{{myUnits[5].currentHp}}</view>
+              <view class="troop-hp-bar"><view class="troop-hp-fill" style="width: {{myUnits[5].currentHp / myUnits[5].maxHp * 100}}%"></view></view>
+              <text class="troop-name">{{myUnits[5].name}}</text>
+            </view>
+          </view>
+          <!-- 中排 -->
+          <view class="army-row mid-row">
+            <view class="troop-unit {{myUnits[2] && myUnits[2].isDead ? 'dead' : ''}} {{myUnits[2] && myUnits[2].isAttacking ? 'attacking' : ''}} {{myUnits[2] && myUnits[2].isHit ? 'hit' : ''}}" wx:if="{{myUnits[2]}}">
+              <view class="troop-flag my-flag">🚩</view>
+              <view class="troop-avatar">{{myUnits[2].troopIcon || '🛡️'}}</view>
+              <view class="troop-soldiers">{{myUnits[2].currentHp}}</view>
+              <view class="troop-hp-bar"><view class="troop-hp-fill" style="width: {{myUnits[2].currentHp / myUnits[2].maxHp * 100}}%"></view></view>
+              <text class="troop-name">{{myUnits[2].name}}</text>
+            </view>
+            <view class="troop-unit {{myUnits[3] && myUnits[3].isDead ? 'dead' : ''}} {{myUnits[3] && myUnits[3].isAttacking ? 'attacking' : ''}} {{myUnits[3] && myUnits[3].isHit ? 'hit' : ''}}" wx:if="{{myUnits[3]}}">
+              <view class="troop-flag my-flag">🚩</view>
+              <view class="troop-avatar">{{myUnits[3].troopIcon || '🛡️'}}</view>
+              <view class="troop-soldiers">{{myUnits[3].currentHp}}</view>
+              <view class="troop-hp-bar"><view class="troop-hp-fill" style="width: {{myUnits[3].currentHp / myUnits[3].maxHp * 100}}%"></view></view>
+              <text class="troop-name">{{myUnits[3].name}}</text>
+            </view>
+          </view>
+          <!-- 前排 -->
+          <view class="army-row front-row">
+            <view class="troop-unit {{myUnits[0] && myUnits[0].isDead ? 'dead' : ''}} {{myUnits[0] && myUnits[0].isAttacking ? 'attacking' : ''}} {{myUnits[0] && myUnits[0].isHit ? 'hit' : ''}}" wx:if="{{myUnits[0]}}">
+              <view class="troop-flag my-flag">🚩</view>
+              <view class="troop-avatar">{{myUnits[0].troopIcon || '🛡️'}}</view>
+              <view class="troop-soldiers">{{myUnits[0].currentHp}}</view>
+              <view class="troop-hp-bar"><view class="troop-hp-fill" style="width: {{myUnits[0].currentHp / myUnits[0].maxHp * 100}}%"></view></view>
+              <text class="troop-name">{{myUnits[0].name}}</text>
+            </view>
+            <view class="troop-unit {{myUnits[1] && myUnits[1].isDead ? 'dead' : ''}} {{myUnits[1] && myUnits[1].isAttacking ? 'attacking' : ''}} {{myUnits[1] && myUnits[1].isHit ? 'hit' : ''}}" wx:if="{{myUnits[1]}}">
+              <view class="troop-flag my-flag">🚩</view>
+              <view class="troop-avatar">{{myUnits[1].troopIcon || '🛡️'}}</view>
+              <view class="troop-soldiers">{{myUnits[1].currentHp}}</view>
+              <view class="troop-hp-bar"><view class="troop-hp-fill" style="width: {{myUnits[1].currentHp / myUnits[1].maxHp * 100}}%"></view></view>
+              <text class="troop-name">{{myUnits[1].name}}</text>
+            </view>
+          </view>
+        </view>
+      </view>
+      
+      <!-- 中间战斗效果 -->
+      <view class="battle-center">
+        <view class="battle-effect {{showEffect ? 'show' : ''}}">{{effectText}}</view>
+        <view class="damage-popup {{showDamage ? 'show' : ''}}" style="color: {{damageColor}}">{{damageText}}</view>
+      </view>
+      
+      <!-- 敌方阵型 (右侧) - 3行2列 -->
+      <view class="army-side enemy-army-side">
+        <view class="army-grid enemy-grid">
+          <!-- 前排（对于敌方来说靠近中间） -->
+          <view class="army-row front-row">
+            <view class="troop-unit enemy-troop {{enemyUnits[0] && enemyUnits[0].isDead ? 'dead' : ''}} {{enemyUnits[0] && enemyUnits[0].isAttacking ? 'attacking' : ''}} {{enemyUnits[0] && enemyUnits[0].isHit ? 'hit' : ''}}" wx:if="{{enemyUnits[0]}}">
+              <view class="troop-flag enemy-flag">🏴</view>
+              <view class="troop-avatar enemy-avatar-icon">{{enemyUnits[0].troopIcon || (enemyUnits[0].isBoss ? '👹' : '🛡️')}}</view>
+              <view class="troop-soldiers enemy-soldiers">{{enemyUnits[0].currentHp}}</view>
+              <view class="troop-hp-bar"><view class="troop-hp-fill enemy-hp-fill" style="width: {{enemyUnits[0].currentHp / enemyUnits[0].maxHp * 100}}%"></view></view>
+              <text class="troop-name" style="color: {{enemyUnits[0].qualityColor}}">{{enemyUnits[0].name}}</text>
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 战斗日志 -->
+    <view class="combat-log-panel">
+      <scroll-view class="log-scroll-view" scroll-y scroll-into-view="log-{{combatLogs.length - 1}}">
+        <view class="log-entry {{item.type}}" wx:for="{{combatLogs}}" wx:key="index" id="log-{{index}}">
+          {{item.text}}
+        </view>
+      </scroll-view>
+    </view>
+
+    <!-- 结果按钮 -->
+    <view class="result-button-area" wx:if="{{combatEnded}}">
+      <button class="result-btn {{combatVictory ? 'victory' : 'defeat'}}" bindtap="handleCombatEnd">
+        {{combatVictory ? '🎉 胜利 - 继续' : '💔 失败 - 返回'}}
+      </button>
     </view>
   </view>
 
-  <!-- 资源显示 -->
-  <view class="resource-bar">
-    <text>精力: {{stamina}}</text>
+  <!-- 战役通关弹窗 -->
+  <view class="modal-mask" wx:if="{{showClearModal}}" catchtap="">
+    <view class="clear-modal">
+      <view class="clear-header">
+        <text class="clear-title">🏆 战役通关!</text>
+        <text class="clear-dungeon">{{selectedDungeon.name}}</text>
+      </view>
+      <view class="clear-rewards">
+        <view class="reward-item">
+          <text class="reward-icon">📈</text>
+          <text>经验 +{{selectedDungeon.clearReward.exp}}</text>
+        </view>
+        <view class="reward-item">
+          <text class="reward-icon">💰</text>
+          <text>银两 +{{selectedDungeon.clearReward.silver}}</text>
+        </view>
+      </view>
+      <button class="clear-btn" bindtap="exitBattle">返回</button>
+    </view>
   </view>
 </view>

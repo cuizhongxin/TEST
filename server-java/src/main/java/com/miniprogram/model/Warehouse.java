@@ -74,6 +74,7 @@ public class Warehouse {
         private Integer count;              // 数量
         private Integer maxStack;           // 最大堆叠数
         private String description;         // 描述
+        private Boolean usable;             // 是否可使用
     }
 }
 

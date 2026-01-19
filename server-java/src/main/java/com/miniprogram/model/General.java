@@ -193,17 +193,15 @@ public class General {
     }
     
     /**
-     * 兵法（只能装备一个）
+     * 兵法
      */
     @Data
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
     public static class Tactics {
-        private String tacticsId;           // 装备的兵法/阵法ID
-        private String tacticsName;         // 兵法/阵法名称
-        private String tacticsType;         // 类型：ACTIVE/PASSIVE/COMMAND/FORMATION
-        private List<String> learnedTacticsIds;  // 已学习的兵法ID列表
+        private Map<String, Object> primary;
+        private Map<String, Object> secondary;
     }
     
     /**

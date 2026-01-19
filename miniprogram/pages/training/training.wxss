@@ -1,59 +1,215 @@
 /* pages/training/training.wxss */
+page {
+  background: linear-gradient(180deg, #0a1a0a 0%, #152515 100%);
+  height: 100vh;
+  overflow: hidden;
+}
+
 .page-container {
-  min-height: 100vh;
-  background: linear-gradient(180deg, #8b7355 0%, #6b5344 100%);
-  padding: 20rpx;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  color: #e8d5b0;
+  padding: 15rpx;
   box-sizing: border-box;
 }
 
 .header {
   text-align: center;
-  padding: 20rpx 0;
+  padding: 15rpx 0;
+  flex-shrink: 0;
 }
 
 .title {
   font-size: 36rpx;
-  color: #ffd700;
   font-weight: bold;
+  color: #7cfc00;
 }
 
-.section-title {
+/* 资源条 */
+.resource-bar {
+  display: flex;
+  justify-content: space-around;
+  padding: 15rpx;
+  background: rgba(0,0,0,0.4);
+  border-radius: 10rpx;
+  margin-bottom: 15rpx;
+  flex-shrink: 0;
+}
+
+.resource-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.res-icon {
   font-size: 28rpx;
-  color: #ffd700;
-  margin-bottom: 16rpx;
+}
+
+.res-name {
+  font-size: 18rpx;
+  color: #aaa;
+}
+
+.res-value {
+  font-size: 24rpx;
+  font-weight: bold;
+  color: #7cfc00;
+}
+
+/* 通用标题 */
+.section-title {
+  font-size: 24rpx;
+  color: #7cfc00;
+  margin-bottom: 10rpx;
   display: block;
 }
 
-.general-section {
-  margin-bottom: 30rpx;
+/* 模式选择 */
+.mode-section {
+  flex-shrink: 0;
+  margin-bottom: 15rpx;
 }
 
-.general-list {
+.mode-tabs {
+  display: flex;
+  gap: 15rpx;
+}
+
+.mode-tab {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 15rpx;
+  background: rgba(0,0,0,0.4);
+  border: 2rpx solid #555;
+  border-radius: 12rpx;
+}
+
+.mode-tab.active {
+  border-color: #7cfc00;
+  background: rgba(124, 252, 0, 0.1);
+}
+
+.mode-icon {
+  font-size: 40rpx;
+  margin-bottom: 8rpx;
+}
+
+.mode-name {
+  font-size: 24rpx;
+  font-weight: bold;
+  color: #fff;
+}
+
+.mode-desc {
+  font-size: 16rpx;
+  color: #aaa;
+  margin-top: 5rpx;
+}
+
+/* 粮食选择 */
+.food-section {
+  flex-shrink: 0;
+  margin-bottom: 15rpx;
+}
+
+.food-list {
+  display: flex;
+  gap: 10rpx;
+}
+
+.food-card {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 12rpx;
+  background: rgba(0,0,0,0.4);
+  border: 2rpx solid #555;
+  border-radius: 10rpx;
+}
+
+.food-card.active {
+  border-color: #ffd700;
+  background: rgba(255, 215, 0, 0.1);
+}
+
+.food-header {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+}
+
+.food-icon {
+  font-size: 28rpx;
+}
+
+.food-name {
+  font-size: 22rpx;
+  font-weight: bold;
+  color: #fff;
+}
+
+.food-cost {
+  font-size: 16rpx;
+  color: #ff6b6b;
+  margin: 6rpx 0;
+}
+
+.food-reward {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.reward-main {
+  font-size: 18rpx;
+  color: #7cfc00;
+  font-weight: bold;
+}
+
+.reward-sub {
+  font-size: 14rpx;
+  color: #aaa;
+}
+
+/* 武将选择 */
+.general-section {
+  flex-shrink: 0;
+  margin-bottom: 15rpx;
+}
+
+.general-scroll {
   white-space: nowrap;
+  height: 140rpx;
 }
 
 .general-item {
   display: inline-flex;
   flex-direction: column;
   align-items: center;
-  padding: 16rpx;
-  margin-right: 16rpx;
-  background: rgba(0,0,0,0.3);
-  border-radius: 12rpx;
+  padding: 10rpx;
+  margin-right: 12rpx;
+  background: rgba(0,0,0,0.4);
   border: 2rpx solid transparent;
+  border-radius: 10rpx;
+  width: 100rpx;
 }
 
 .general-item.active {
-  border-color: #ffd700;
-  background: rgba(255,215,0,0.2);
+  border-color: #7cfc00;
+  background: rgba(124, 252, 0, 0.1);
 }
 
 .general-avatar {
-  width: 80rpx;
-  height: 80rpx;
-  border-radius: 8rpx;
+  width: 50rpx;
+  height: 50rpx;
+  border-radius: 50%;
   overflow: hidden;
-  border: 2rpx solid #8b6914;
+  background: #555;
 }
 
 .general-avatar image {
@@ -62,70 +218,158 @@
 }
 
 .general-name {
-  font-size: 24rpx;
+  font-size: 16rpx;
+  margin-top: 4rpx;
   color: #fff;
-  margin-top: 8rpx;
 }
 
 .general-level {
-  font-size: 20rpx;
-  color: #7fff00;
+  font-size: 14rpx;
+  color: #7cfc00;
 }
 
-.mode-section, .food-section {
-  margin-bottom: 30rpx;
+.exp-bar {
+  width: 80%;
+  height: 6rpx;
+  background: #333;
+  border-radius: 3rpx;
+  margin-top: 4rpx;
+  overflow: hidden;
 }
 
-.mode-list, .food-list {
+.exp-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #7cfc00, #32cd32);
+  transition: width 0.3s;
+}
+
+/* 次数控制 */
+.count-section {
+  flex-shrink: 0;
+  background: rgba(0,0,0,0.4);
+  border-radius: 10rpx;
+  padding: 15rpx;
+  margin-bottom: 15rpx;
+}
+
+.count-control {
   display: flex;
-  gap: 16rpx;
+  align-items: center;
+  justify-content: center;
+  gap: 20rpx;
+  margin-bottom: 10rpx;
 }
 
-.mode-item, .food-item {
-  flex: 1;
-  padding: 20rpx;
-  background: rgba(0,0,0,0.3);
-  border-radius: 12rpx;
-  border: 2rpx solid transparent;
+.count-btn {
+  width: 60rpx;
+  height: 60rpx;
+  line-height: 60rpx;
+  text-align: center;
+  background: #555;
+  border-radius: 8rpx;
+  font-size: 32rpx;
+  color: #fff;
+}
+
+.count-btn.max {
+  width: auto;
+  padding: 0 20rpx;
+  font-size: 22rpx;
+  background: #7cfc00;
+  color: #000;
+}
+
+.count-value {
+  font-size: 40rpx;
+  font-weight: bold;
+  color: #ffd700;
+  min-width: 100rpx;
   text-align: center;
 }
 
-.mode-item.active, .food-item.active {
-  border-color: #ffd700;
-  background: rgba(255,215,0,0.2);
-}
-
-.mode-name, .food-name {
-  font-size: 28rpx;
-  color: #fff;
-  display: block;
-  margin-bottom: 8rpx;
-}
-
-.mode-desc {
-  font-size: 20rpx;
-  color: #aaa;
-}
-
-.food-count {
+.cost-preview {
+  text-align: center;
   font-size: 22rpx;
-  color: #7fff00;
-  display: block;
-  margin-bottom: 4rpx;
+  color: #ff6b6b;
 }
 
-.food-effect {
-  font-size: 20rpx;
-  color: #ffd700;
+/* 训练按钮 */
+.action-section {
+  flex-shrink: 0;
+  padding: 15rpx 0;
 }
 
 .train-btn {
-  text-align: center;
-  padding: 24rpx;
-  background: linear-gradient(180deg, #8b6914 0%, #654321 100%);
-  border-radius: 12rpx;
-  color: #ffd700;
-  font-size: 32rpx;
+  width: 100%;
+  height: 80rpx;
+  line-height: 80rpx;
+  background: linear-gradient(180deg, #7cfc00 0%, #32cd32 100%);
+  color: #000;
+  font-size: 30rpx;
   font-weight: bold;
-  margin-top: 40rpx;
+  border-radius: 40rpx;
+  border: none;
+}
+
+.train-btn.disabled {
+  background: #555;
+  color: #888;
+}
+
+/* 结果弹窗 */
+.result-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
+
+.result-content {
+  background: linear-gradient(180deg, #1a2a1a 0%, #0a1a0a 100%);
+  border: 2rpx solid #7cfc00;
+  border-radius: 20rpx;
+  padding: 40rpx;
+  width: 80%;
+  text-align: center;
+}
+
+.result-title {
+  font-size: 36rpx;
+  font-weight: bold;
+  color: #7cfc00;
+  display: block;
+  margin-bottom: 20rpx;
+}
+
+.result-info {
+  display: flex;
+  flex-direction: column;
+  gap: 10rpx;
+  margin-bottom: 30rpx;
+}
+
+.result-item {
+  font-size: 28rpx;
+  color: #fff;
+}
+
+.result-item.levelup {
+  color: #ffd700;
+  font-weight: bold;
+}
+
+.result-btn {
+  background: #7cfc00;
+  color: #000;
+  border: none;
+  border-radius: 8rpx;
+  height: 70rpx;
+  line-height: 70rpx;
+  font-size: 28rpx;
 }

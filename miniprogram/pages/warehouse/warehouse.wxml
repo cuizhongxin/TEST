@@ -1,43 +1,193 @@
 <!--pages/warehouse/warehouse.wxml-->
 <view class="page-container">
-  <view class="header">
-    <text class="title">仓库</text>
-  </view>
-
-  <!-- 分类标签 -->
-  <view class="tab-section">
-    <view class="tab-item {{currentTab === 'equipment' ? 'active' : ''}}" bindtap="switchTab" data-tab="equipment">装备</view>
-    <view class="tab-item {{currentTab === 'material' ? 'active' : ''}}" bindtap="switchTab" data-tab="material">材料</view>
-    <view class="tab-item {{currentTab === 'consumable' ? 'active' : ''}}" bindtap="switchTab" data-tab="consumable">消耗品</view>
-  </view>
-
-  <!-- 物品列表 -->
-  <view class="item-section">
-    <view class="item-grid">
-      <view class="item-card" wx:for="{{itemList}}" wx:key="id" bindtap="showItemDetail" data-item="{{item}}">
-        <view class="item-icon">{{item.icon}}</view>
-        <text class="item-name" style="color: {{item.qualityColor || '#fff'}}">{{item.name}}</text>
-        <text class="item-count" wx:if="{{item.count > 1}}">×{{item.count}}</text>
-      </view>
-    </view>
-    <view class="empty-tip" wx:if="{{itemList.length === 0}}">
-      <text>暂无物品</text>
+  <!-- 顶部栏 -->
+  <view class="top-bar">
+    <view class="back-btn" bindtap="goBack">◀ 返回</view>
+    <view class="page-title">📦 仓库</view>
+    <view class="resource-info">
+      <text class="gold">🪙 {{gold}}</text>
+      <text class="silver">🥈 {{silver}}</text>
     </view>
   </view>
-
-  <!-- 物品详情弹窗 -->
-  <view class="modal" wx:if="{{showDetail}}" bindtap="hideDetail">
-    <view class="modal-content" catchtap="">
-      <text class="modal-title" style="color: {{selectedItem.qualityColor || '#fff'}}">{{selectedItem.name}}</text>
-      <text class="item-desc">{{selectedItem.description}}</text>
-      <view class="item-attrs" wx:if="{{selectedItem.attrs}}">
-        <text wx:for="{{selectedItem.attrs}}" wx:key="index">{{item}}</text>
+  
+  <!-- 主内容 -->
+  <view class="main-content">
+    <!-- 左侧：标签和操作 -->
+    <view class="left-panel">
+      <!-- 标签切换 -->
+      <view class="tab-list">
+        <view class="tab-item {{activeTab === 'equipment' ? 'active' : ''}}" bindtap="switchTab" data-tab="equipment">
+          <text class="tab-icon">⚔️</text>
+          <text class="tab-name">装备</text>
+        </view>
+        <view class="tab-item {{activeTab === 'item' ? 'active' : ''}}" bindtap="switchTab" data-tab="item">
+          <text class="tab-icon">🎒</text>
+          <text class="tab-name">物品</text>
+        </view>
       </view>
-      <view class="modal-btns">
-        <view class="modal-btn" bindtap="useItem" wx:if="{{selectedItem.usable}}">使用</view>
-        <view class="modal-btn sell" bindtap="sellItem">出售</view>
-        <view class="modal-btn close" bindtap="hideDetail">关闭</view>
+      
+      <!-- 容量信息 -->
+      <view class="capacity-info">
+        <text class="capacity-label">容量</text>
+        <view class="capacity-bar">
+          <view class="capacity-fill" style="width: {{activeTab === 'equipment' ? (equipmentInfo.used / equipmentInfo.capacity) * 100 : (itemInfo.used / itemInfo.capacity) * 100}}%"></view>
+        </view>
+        <text class="capacity-text">{{activeTab === 'equipment' ? equipmentInfo.used : itemInfo.used}}/{{activeTab === 'equipment' ? equipmentInfo.capacity : itemInfo.capacity}}</text>
       </view>
+      
+      <!-- 操作按钮 -->
+      <view class="action-list">
+        <view class="action-btn expand" bindtap="expandStorage" data-type="{{activeTab}}" 
+              wx:if="{{(activeTab === 'equipment' ? equipmentInfo.expandTimes : itemInfo.expandTimes) < 4}}">
+          <text>扩充+100</text>
+          <text class="cost">💰{{activeTab === 'equipment' ? equipmentInfo.nextExpandCost : itemInfo.nextExpandCost}}</text>
+        </view>
+        <view class="action-btn disabled" wx:else>
+          <text>已满</text>
+        </view>
+        
+        <view class="action-btn {{batchMode ? 'active' : ''}}" bindtap="toggleBatchMode" wx:if="{{activeTab === 'equipment'}}">
+          {{batchMode ? '取消' : '批量'}}
+        </view>
+        
+        <view class="action-btn sell" wx:if="{{batchMode && selectedEquipments.length > 0}}" bindtap="batchSell">
+          出售({{selectedEquipments.length}})
+        </view>
+      </view>
+      
+      <!-- 物品筛选 -->
+      <view class="filter-list" wx:if="{{activeTab === 'item'}}">
+        <view class="filter-item {{itemFilter === 'all' ? 'active' : ''}}" bindtap="setItemFilter" data-filter="all">全部</view>
+        <view class="filter-item {{itemFilter === 'material' ? 'active' : ''}}" bindtap="setItemFilter" data-filter="material">材料</view>
+        <view class="filter-item {{itemFilter === 'consumable' ? 'active' : ''}}" bindtap="setItemFilter" data-filter="consumable">消耗</view>
+        <view class="filter-item {{itemFilter === 'resource' ? 'active' : ''}}" bindtap="setItemFilter" data-filter="resource">资源</view>
+      </view>
+    </view>
+    
+    <!-- 中间：仓库网格 -->
+    <view class="grid-panel">
+      <scroll-view class="grid-scroll" scroll-y>
+        <!-- 装备网格 -->
+        <view class="storage-grid" wx:if="{{activeTab === 'equipment'}}">
+          <!-- 已有装备 -->
+          <view class="grid-slot {{item.qualityClass}} {{selectedEquipments.indexOf(item.id) > -1 ? 'selected' : ''}}" 
+                wx:for="{{equipments}}" wx:key="id"
+                bindtap="onEquipmentTap" data-id="{{item.id}}" data-index="{{index}}">
+            <view class="slot-bg"></view>
+            <view class="slot-content">
+              <text class="slot-icon">{{item.icon || '🗡️'}}</text>
+              <text class="slot-level" wx:if="{{item.enhanceLevel > 0}}">+{{item.enhanceLevel}}</text>
+              <view class="select-mark" wx:if="{{batchMode && selectedEquipments.indexOf(item.id) > -1}}">✓</view>
+            </view>
+            <text class="slot-name">{{item.name}}</text>
+          </view>
+          <!-- 空格子 -->
+          <view class="grid-slot empty" wx:for="{{emptyEquipmentSlots}}" wx:key="*this">
+            <view class="slot-bg"></view>
+            <view class="slot-content">
+              <text class="empty-icon">+</text>
+            </view>
+          </view>
+        </view>
+        
+        <!-- 物品网格 -->
+        <view class="storage-grid" wx:if="{{activeTab === 'item'}}">
+          <!-- 已有物品 -->
+          <view class="grid-slot {{item.qualityClass}}" 
+                wx:for="{{items}}" wx:key="itemId"
+                bindtap="onItemTap" data-item="{{item}}">
+            <view class="slot-bg"></view>
+            <view class="slot-content">
+              <text class="slot-icon">{{item.icon || '📦'}}</text>
+              <text class="slot-count">{{item.count}}</text>
+            </view>
+            <text class="slot-name">{{item.name}}</text>
+          </view>
+          <!-- 空格子 -->
+          <view class="grid-slot empty" wx:for="{{emptyItemSlots}}" wx:key="*this">
+            <view class="slot-bg"></view>
+            <view class="slot-content">
+              <text class="empty-icon">+</text>
+            </view>
+          </view>
+        </view>
+      </scroll-view>
+    </view>
+    
+    <!-- 右侧：详情面板 -->
+    <view class="detail-panel" wx:if="{{selectedItem}}">
+      <view class="detail-header">
+        <view class="detail-icon-wrap {{selectedItem.qualityClass}}">
+          <text class="detail-icon">{{selectedItem.icon || '📦'}}</text>
+        </view>
+        <view class="detail-title">
+          <text class="detail-name">{{selectedItem.name}}</text>
+          <text class="detail-quality">{{selectedItem.qualityName || '普通'}}</text>
+        </view>
+        <view class="close-btn" bindtap="closeDetail">✕</view>
+      </view>
+      
+      <view class="detail-body">
+        <!-- 装备详情 -->
+        <block wx:if="{{selectedItem.isEquipment}}">
+          <view class="attr-section">
+            <view class="attr-title">属性加成</view>
+            <view class="attr-grid">
+              <view class="attr-item" wx:if="{{selectedItem.attack}}">
+                <text class="attr-label">攻击</text>
+                <text class="attr-value">+{{selectedItem.attack}}</text>
+              </view>
+              <view class="attr-item" wx:if="{{selectedItem.defense}}">
+                <text class="attr-label">防御</text>
+                <text class="attr-value">+{{selectedItem.defense}}</text>
+              </view>
+              <view class="attr-item" wx:if="{{selectedItem.valor}}">
+                <text class="attr-label">武勇</text>
+                <text class="attr-value">+{{selectedItem.valor}}</text>
+              </view>
+              <view class="attr-item" wx:if="{{selectedItem.command}}">
+                <text class="attr-label">统御</text>
+                <text class="attr-value">+{{selectedItem.command}}</text>
+              </view>
+              <view class="attr-item" wx:if="{{selectedItem.mobility}}">
+                <text class="attr-label">机动</text>
+                <text class="attr-value">+{{selectedItem.mobility}}</text>
+              </view>
+            </view>
+          </view>
+          
+          <view class="desc-section">
+            <text>{{selectedItem.description || '一件装备'}}</text>
+          </view>
+          
+          <view class="btn-section">
+            <view class="detail-btn equip" bindtap="equipItem">装备</view>
+            <view class="detail-btn sell" bindtap="sellEquipment">出售 {{selectedItem.sellPrice}}银</view>
+          </view>
+        </block>
+        
+        <!-- 物品详情 -->
+        <block wx:else>
+          <view class="count-section">
+            <text>数量: {{selectedItem.count}} / {{selectedItem.maxStack || 99}}</text>
+          </view>
+          
+          <view class="desc-section">
+            <text>{{selectedItem.description || '一件物品'}}</text>
+          </view>
+          
+          <view class="btn-section">
+            <view class="detail-btn use" bindtap="useItem" wx:if="{{selectedItem.usable}}">使用</view>
+            <view class="detail-btn discard" bindtap="discardItem">丢弃</view>
+          </view>
+        </block>
+      </view>
+    </view>
+    
+    <!-- 无选中时的提示 -->
+    <view class="hint-panel" wx:if="{{!selectedItem}}">
+      <text class="hint-icon">👆</text>
+      <text class="hint-text">点击物品查看详情</text>
     </view>
   </view>
 </view>
