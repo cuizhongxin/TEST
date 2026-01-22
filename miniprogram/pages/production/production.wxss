@@ -1,0 +1,499 @@
+/* pages/production/production.wxss */
+
+.production-page {
+  width: 100%;
+  height: 100vh;
+  background: linear-gradient(180deg, #2c1810 0%, #1a0f0a 100%);
+  display: flex;
+  flex-direction: column;
+  font-family: "STKaiti", "KaiTi", serif;
+}
+
+/* 标签栏 */
+.tab-bar {
+  display: flex;
+  background: linear-gradient(180deg, #4a3228 0%, #2c1810 100%);
+  border-bottom: 4rpx solid #8b6914;
+}
+
+.tab-item {
+  flex: 1;
+  padding: 30rpx 20rpx;
+  text-align: center;
+  font-size: 32rpx;
+  color: #c9a96e;
+  font-weight: bold;
+  border-bottom: 4rpx solid transparent;
+  margin-bottom: -4rpx;
+}
+
+.tab-item.active {
+  color: #ffd700;
+  border-bottom-color: #ffd700;
+  background: rgba(255, 215, 0, 0.1);
+}
+
+.tab-close {
+  padding: 30rpx 30rpx;
+  font-size: 28rpx;
+  color: #ffd700;
+}
+
+/* 内容区 */
+.tab-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* ========== 生产页面 ========== */
+.facility-grid {
+  flex: 1;
+  padding: 20rpx;
+}
+
+.facility-card {
+  display: flex;
+  background: rgba(60, 40, 30, 0.8);
+  border: 2rpx solid #5a4030;
+  border-radius: 12rpx;
+  margin-bottom: 20rpx;
+  overflow: hidden;
+}
+
+.facility-image {
+  width: 180rpx;
+  height: 180rpx;
+  background: linear-gradient(135deg, #3d2a1f 0%, #2c1810 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-right: 2rpx solid #5a4030;
+}
+
+.facility-icon {
+  font-size: 64rpx;
+}
+
+.facility-info {
+  flex: 1;
+  padding: 15rpx 20rpx;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.facility-name {
+  font-size: 30rpx;
+  color: #ffd700;
+  font-weight: bold;
+  margin-bottom: 10rpx;
+}
+
+.facility-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 6rpx;
+}
+
+.facility-stats text {
+  font-size: 24rpx;
+  color: #c9a96e;
+}
+
+.facility-actions {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 15rpx;
+  gap: 10rpx;
+}
+
+.btn-produce {
+  padding: 15rpx 25rpx;
+  background: linear-gradient(180deg, #27ae60 0%, #1e8449 100%);
+  color: #fff;
+  font-size: 24rpx;
+  text-align: center;
+  border-radius: 8rpx;
+  white-space: nowrap;
+}
+
+.btn-produce.disabled {
+  background: #555;
+  color: #999;
+}
+
+.btn-upgrade {
+  padding: 15rpx 25rpx;
+  background: linear-gradient(180deg, #f39c12 0%, #d68910 100%);
+  color: #fff;
+  font-size: 24rpx;
+  text-align: center;
+  border-radius: 8rpx;
+}
+
+/* ========== 制造页面 ========== */
+.manufacture-tabs {
+  display: flex;
+  padding: 15rpx;
+  gap: 15rpx;
+  background: rgba(0, 0, 0, 0.3);
+}
+
+.manufacture-tab {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20rpx 10rpx;
+  background: rgba(60, 40, 30, 0.8);
+  border: 2rpx solid #5a4030;
+  border-radius: 12rpx;
+}
+
+.manufacture-tab.active {
+  border-color: #ffd700;
+  background: rgba(255, 215, 0, 0.15);
+}
+
+.tab-icon {
+  font-size: 40rpx;
+  margin-bottom: 8rpx;
+}
+
+.tab-name {
+  font-size: 26rpx;
+  color: #ffd700;
+  font-weight: bold;
+}
+
+.tab-level {
+  font-size: 22rpx;
+  color: #c9a96e;
+}
+
+.manufacture-info {
+  padding: 15rpx 20rpx;
+  background: rgba(0, 0, 0, 0.2);
+  border-bottom: 1rpx solid #5a4030;
+}
+
+.info-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8rpx;
+}
+
+.info-name {
+  font-size: 30rpx;
+  color: #ffd700;
+  font-weight: bold;
+}
+
+.info-level {
+  font-size: 24rpx;
+  color: #c9a96e;
+  margin-left: 20rpx;
+}
+
+.btn-upgrade-small {
+  margin-left: auto;
+  padding: 8rpx 20rpx;
+  background: linear-gradient(180deg, #f39c12 0%, #d68910 100%);
+  color: #fff;
+  font-size: 22rpx;
+  border-radius: 6rpx;
+}
+
+.info-desc {
+  font-size: 24rpx;
+  color: #999;
+}
+
+/* 配方列表 */
+.recipe-list {
+  flex: 1;
+  padding: 15rpx;
+}
+
+.recipe-card {
+  display: flex;
+  align-items: center;
+  background: rgba(60, 40, 30, 0.8);
+  border: 2rpx solid #5a4030;
+  border-radius: 10rpx;
+  padding: 15rpx;
+  margin-bottom: 15rpx;
+}
+
+.recipe-card.disabled {
+  opacity: 0.6;
+}
+
+.recipe-icon {
+  width: 80rpx;
+  height: 80rpx;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 8rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 40rpx;
+  margin-right: 15rpx;
+}
+
+.recipe-info {
+  flex: 1;
+}
+
+.recipe-name {
+  font-size: 28rpx;
+  color: #e8d4b0;
+  margin-bottom: 6rpx;
+}
+
+.recipe-quality {
+  font-size: 22rpx;
+  padding: 2rpx 10rpx;
+  border-radius: 4rpx;
+  display: inline-block;
+}
+
+.quality-legendary { background: #ff6b00; color: #fff; }
+.quality-epic { background: #9b59b6; color: #fff; }
+.quality-rare { background: #3498db; color: #fff; }
+.quality-good { background: #27ae60; color: #fff; }
+.quality-normal { background: #7f8c8d; color: #fff; }
+
+.recipe-require {
+  font-size: 22rpx;
+  color: #e74c3c;
+  margin-top: 4rpx;
+}
+
+.recipe-cost {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  margin-right: 15rpx;
+  gap: 4rpx;
+}
+
+.recipe-cost text {
+  font-size: 20rpx;
+  color: #c9a96e;
+}
+
+.btn-make {
+  padding: 15rpx 25rpx;
+  background: linear-gradient(180deg, #8b4dff 0%, #6a3ac7 100%);
+  color: #fff;
+  font-size: 24rpx;
+  border-radius: 8rpx;
+}
+
+.btn-make.disabled {
+  background: #555;
+  color: #999;
+}
+
+/* ========== 底部资源栏 ========== */
+.resource-bar {
+  display: flex;
+  padding: 15rpx 20rpx;
+  background: linear-gradient(180deg, #2c1810 0%, #1a0f0a 100%);
+  border-top: 2rpx solid #5a4030;
+}
+
+.resource-item {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.resource-icon {
+  font-size: 28rpx;
+  margin-right: 6rpx;
+}
+
+.resource-label {
+  font-size: 22rpx;
+  color: #999;
+}
+
+.resource-value {
+  font-size: 24rpx;
+  color: #ffd700;
+  font-weight: bold;
+  margin-left: 4rpx;
+}
+
+/* ========== 弹窗 ========== */
+.modal-mask {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  width: 85%;
+  background: linear-gradient(180deg, #3d2a1f 0%, #2c1810 100%);
+  border: 4rpx solid #8b6914;
+  border-radius: 16rpx;
+  overflow: hidden;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 25rpx 30rpx;
+  background: linear-gradient(180deg, #4a3228 0%, #3d2a1f 100%);
+  border-bottom: 2rpx solid #5a4030;
+}
+
+.modal-title {
+  font-size: 34rpx;
+  color: #ffd700;
+  font-weight: bold;
+}
+
+.modal-close {
+  font-size: 48rpx;
+  color: #c9a96e;
+  line-height: 1;
+}
+
+.modal-body {
+  padding: 25rpx;
+}
+
+.recipe-detail {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 10rpx;
+  padding: 20rpx;
+}
+
+.detail-row {
+  display: flex;
+  padding: 12rpx 0;
+  border-bottom: 1rpx solid rgba(90, 64, 48, 0.3);
+}
+
+.detail-row:last-child {
+  border-bottom: none;
+}
+
+.detail-label {
+  width: 160rpx;
+  color: #999;
+  font-size: 26rpx;
+}
+
+.detail-value {
+  flex: 1;
+  color: #e8d4b0;
+  font-size: 26rpx;
+}
+
+.detail-value.insufficient {
+  color: #e74c3c;
+}
+
+.cost-section {
+  margin-top: 20rpx;
+  padding-top: 15rpx;
+  border-top: 1rpx solid rgba(90, 64, 48, 0.5);
+}
+
+.cost-title {
+  font-size: 26rpx;
+  color: #c9a96e;
+  margin-bottom: 15rpx;
+  display: block;
+}
+
+.cost-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15rpx;
+}
+
+.cost-item {
+  display: flex;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.3);
+  padding: 10rpx 15rpx;
+  border-radius: 6rpx;
+}
+
+.cost-icon {
+  font-size: 24rpx;
+  margin-right: 8rpx;
+}
+
+.cost-name {
+  font-size: 24rpx;
+  color: #999;
+  margin-right: 8rpx;
+}
+
+.cost-value {
+  font-size: 24rpx;
+  color: #ffd700;
+  font-weight: bold;
+}
+
+.cost-value.insufficient {
+  color: #e74c3c;
+}
+
+.modal-footer {
+  display: flex;
+  padding: 20rpx 25rpx;
+  border-top: 2rpx solid #5a4030;
+  gap: 20rpx;
+}
+
+.btn-cancel, .btn-confirm {
+  flex: 1;
+  padding: 20rpx;
+  text-align: center;
+  font-size: 30rpx;
+  border-radius: 10rpx;
+}
+
+.btn-cancel {
+  background: #4a3228;
+  color: #c9a96e;
+  border: 1rpx solid #5a4030;
+}
+
+.btn-confirm {
+  background: linear-gradient(180deg, #8b4dff 0%, #6a3ac7 100%);
+  color: #fff;
+  font-weight: bold;
+}
+
+.btn-confirm.disabled {
+  background: #555;
+  color: #999;
+}
+
+/* 空状态 */
+.empty-state {
+  padding: 80rpx;
+  text-align: center;
+  color: #666;
+  font-size: 28rpx;
+}

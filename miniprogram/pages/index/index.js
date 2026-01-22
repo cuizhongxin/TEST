@@ -253,6 +253,10 @@ Page({
     wx.navigateTo({ url: '/pages/craft/craft' })
   },
 
+  goToProduction() {
+    wx.navigateTo({ url: '/pages/production/production' })
+  },
+
   goToSecretRealm() {
     wx.navigateTo({ url: '/pages/secretRealm/secretRealm' })
   },

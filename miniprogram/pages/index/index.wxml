@@ -114,9 +114,9 @@
             <view class="icon-img">🍺</view>
             <text class="icon-name">酒馆</text>
           </view>
-          <view class="icon-item" bindtap="goToCraft">
-            <view class="icon-img">🔨</view>
-            <text class="icon-name">锻造</text>
+          <view class="icon-item" bindtap="goToProduction">
+            <view class="icon-img">🏭</view>
+            <text class="icon-name">生产</text>
           </view>
           <view class="icon-item" bindtap="goToSecretRealm">
             <view class="icon-img">💎</view>

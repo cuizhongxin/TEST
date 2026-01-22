@@ -1,0 +1,188 @@
+<!-- pages/production/production.wxml -->
+<view class="production-page">
+  <!-- 顶部标签栏 -->
+  <view class="tab-bar">
+    <view class="tab-item {{currentTab === 'produce' ? 'active' : ''}}" bindtap="switchTab" data-tab="produce">生产</view>
+    <view class="tab-item {{currentTab === 'manufacture' ? 'active' : ''}}" bindtap="switchTab" data-tab="manufacture">制造</view>
+    <view class="tab-close" bindtap="goBack">返回</view>
+  </view>
+
+  <!-- 生产标签页 -->
+  <view class="tab-content" wx:if="{{currentTab === 'produce'}}">
+    <scroll-view class="facility-grid" scroll-y>
+      <!-- 设施卡片 -->
+      <view class="facility-card" wx:for="{{facilities}}" wx:key="id">
+        <view class="facility-image">
+          <view class="facility-icon">
+            <text wx:if="{{item.type === 'silver'}}">🏛️</text>
+            <text wx:elif="{{item.type === 'metal'}}">⛏️</text>
+            <text wx:elif="{{item.type === 'food'}}">🌾</text>
+            <text wx:else>📜</text>
+          </view>
+        </view>
+        <view class="facility-info">
+          <view class="facility-name">{{item.name}}</view>
+          <view class="facility-stats">
+            <text>当前等级: {{item.level}}</text>
+            <text>单次产量: {{item.outputPerTime}}</text>
+            <text>每日次数: {{item.usedToday}}/{{item.dailyLimit}}</text>
+          </view>
+        </view>
+        <view class="facility-actions">
+          <view class="btn-produce {{item.usedToday >= item.dailyLimit ? 'disabled' : ''}}" 
+                bindtap="produce" data-facility="{{item}}">
+            {{item.btnText}}
+          </view>
+          <view class="btn-upgrade" bindtap="upgradeFacility" data-facility="{{item}}">升级</view>
+        </view>
+      </view>
+    </scroll-view>
+  </view>
+
+  <!-- 制造标签页 -->
+  <view class="tab-content" wx:if="{{currentTab === 'manufacture'}}">
+    <!-- 制造设施选择 -->
+    <view class="manufacture-tabs">
+      <view 
+        class="manufacture-tab {{selectedManufacture && selectedManufacture.type === item.type ? 'active' : ''}}"
+        wx:for="{{manufactureFacilities}}" 
+        wx:key="id"
+        bindtap="selectManufacture"
+        data-facility="{{item}}"
+      >
+        <text class="tab-icon">{{item.icon}}</text>
+        <text class="tab-name">{{item.name}}</text>
+        <text class="tab-level">Lv.{{item.level}}</text>
+      </view>
+    </view>
+
+    <!-- 设施信息 -->
+    <view class="manufacture-info" wx:if="{{selectedManufacture}}">
+      <view class="info-header">
+        <text class="info-name">{{selectedManufacture.name}}</text>
+        <text class="info-level">等级 {{selectedManufacture.level}}/{{selectedManufacture.maxLevel}}</text>
+        <view class="btn-upgrade-small" bindtap="upgradeManufacture" data-facility="{{selectedManufacture}}">升级</view>
+      </view>
+      <view class="info-desc">{{selectedManufacture.description}}</view>
+    </view>
+
+    <!-- 配方列表 -->
+    <scroll-view class="recipe-list" scroll-y>
+      <view 
+        class="recipe-card {{!item.canMake ? 'disabled' : ''}} {{item.quality}}"
+        wx:for="{{recipes}}" 
+        wx:key="id"
+        bindtap="showRecipeDetail"
+        data-recipe="{{item}}"
+      >
+        <view class="recipe-icon">
+          <text wx:if="{{item.resultType === 'equipment'}}">🗡️</text>
+          <text wx:elif="{{item.resultType === 'item'}}">📦</text>
+          <text wx:else>📖</text>
+        </view>
+        <view class="recipe-info">
+          <view class="recipe-name">{{item.name}}</view>
+          <view class="recipe-quality quality-{{item.quality === '传说' ? 'legendary' : item.quality === '史诗' ? 'epic' : item.quality === '精良' ? 'rare' : item.quality === '优秀' ? 'good' : 'normal'}}">{{item.quality}}</view>
+          <view class="recipe-require" wx:if="{{!item.levelEnough}}">需要{{item.requiredLevel}}级</view>
+        </view>
+        <view class="recipe-cost">
+          <text wx:if="{{item.costSilver > 0}}">💰{{item.costSilver}}</text>
+          <text wx:if="{{item.costMetal > 0}}">⛏️{{item.costMetal}}</text>
+          <text wx:if="{{item.costFood > 0}}">🌾{{item.costFood}}</text>
+          <text wx:if="{{item.costPaper > 0}}">📜{{item.costPaper}}</text>
+        </view>
+        <view class="btn-make {{item.canMake ? '' : 'disabled'}}" catchtap="manufacture" data-recipe="{{item}}">
+          制造
+        </view>
+      </view>
+      
+      <view class="empty-state" wx:if="{{recipes.length === 0}}">
+        <text>暂无可制造配方</text>
+      </view>
+    </scroll-view>
+  </view>
+
+  <!-- 底部资源栏 -->
+  <view class="resource-bar">
+    <view class="resource-item">
+      <text class="resource-icon">💰</text>
+      <text class="resource-label">白银:</text>
+      <text class="resource-value">{{resource.silver}}</text>
+    </view>
+    <view class="resource-item">
+      <text class="resource-icon">⛏️</text>
+      <text class="resource-label">金属:</text>
+      <text class="resource-value">{{resource.metal}}</text>
+    </view>
+    <view class="resource-item">
+      <text class="resource-icon">🌾</text>
+      <text class="resource-label">粮食:</text>
+      <text class="resource-value">{{resource.food}}</text>
+    </view>
+    <view class="resource-item">
+      <text class="resource-icon">📜</text>
+      <text class="resource-label">纸张:</text>
+      <text class="resource-value">{{resource.paper}}</text>
+    </view>
+  </view>
+
+  <!-- 配方详情弹窗 -->
+  <view class="modal-mask" wx:if="{{showRecipeModal}}" bindtap="closeRecipeModal">
+    <view class="modal-content" catchtap>
+      <view class="modal-header">
+        <text class="modal-title">{{selectedRecipe.name}}</text>
+        <view class="modal-close" bindtap="closeRecipeModal">×</view>
+      </view>
+      
+      <view class="modal-body">
+        <view class="recipe-detail">
+          <view class="detail-row">
+            <text class="detail-label">品质:</text>
+            <text class="detail-value quality-{{selectedRecipe.quality === '传说' ? 'legendary' : selectedRecipe.quality === '史诗' ? 'epic' : selectedRecipe.quality === '精良' ? 'rare' : selectedRecipe.quality === '优秀' ? 'good' : 'normal'}}">{{selectedRecipe.quality}}</text>
+          </view>
+          <view class="detail-row">
+            <text class="detail-label">描述:</text>
+            <text class="detail-value">{{selectedRecipe.description}}</text>
+          </view>
+          <view class="detail-row">
+            <text class="detail-label">需要等级:</text>
+            <text class="detail-value {{selectedRecipe.levelEnough ? '' : 'insufficient'}}">{{selectedRecipe.requiredLevel}}级</text>
+          </view>
+          
+          <view class="cost-section">
+            <text class="cost-title">制造消耗:</text>
+            <view class="cost-list">
+              <view class="cost-item" wx:if="{{selectedRecipe.costSilver > 0}}">
+                <text class="cost-icon">💰</text>
+                <text class="cost-name">白银</text>
+                <text class="cost-value {{resource.silver >= selectedRecipe.costSilver ? '' : 'insufficient'}}">{{selectedRecipe.costSilver}}</text>
+              </view>
+              <view class="cost-item" wx:if="{{selectedRecipe.costMetal > 0}}">
+                <text class="cost-icon">⛏️</text>
+                <text class="cost-name">金属</text>
+                <text class="cost-value {{resource.metal >= selectedRecipe.costMetal ? '' : 'insufficient'}}">{{selectedRecipe.costMetal}}</text>
+              </view>
+              <view class="cost-item" wx:if="{{selectedRecipe.costFood > 0}}">
+                <text class="cost-icon">🌾</text>
+                <text class="cost-name">粮食</text>
+                <text class="cost-value {{resource.food >= selectedRecipe.costFood ? '' : 'insufficient'}}">{{selectedRecipe.costFood}}</text>
+              </view>
+              <view class="cost-item" wx:if="{{selectedRecipe.costPaper > 0}}">
+                <text class="cost-icon">📜</text>
+                <text class="cost-name">纸张</text>
+                <text class="cost-value {{resource.paper >= selectedRecipe.costPaper ? '' : 'insufficient'}}">{{selectedRecipe.costPaper}}</text>
+              </view>
+            </view>
+          </view>
+        </view>
+      </view>
+      
+      <view class="modal-footer">
+        <view class="btn-cancel" bindtap="closeRecipeModal">取消</view>
+        <view class="btn-confirm {{selectedRecipe.canMake ? '' : 'disabled'}}" bindtap="manufacture">
+          {{selectedRecipe.canMake ? '立即制造' : (selectedRecipe.levelEnough ? '资源不足' : '等级不足')}}
+        </view>
+      </view>
+    </view>
+  </view>
+</view>
