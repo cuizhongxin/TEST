@@ -2,11 +2,13 @@ package com.miniprogram;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 /**
  * 微信小程序授权登录应用启动类
  */
 @SpringBootApplication
+@EnableScheduling
 public class MiniProgramAuthApplication {
     public static void main(String[] args) {
         SpringApplication.run(MiniProgramAuthApplication.class, args);

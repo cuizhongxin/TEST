@@ -1,0 +1,278 @@
+<!-- pages/alliance/alliance.wxml -->
+<view class="alliance-page">
+  <!-- 顶部标题栏 -->
+  <view class="header">
+    <view class="header-title">联盟</view>
+    <view class="header-close" bindtap="goBack">返回</view>
+  </view>
+
+  <!-- 主内容区 -->
+  <view class="main-content">
+    <!-- 表头 -->
+    <view class="table-header">
+      <view class="col col-name">联盟名称</view>
+      <view class="col col-leader">盟主</view>
+      <view class="col col-faction">国家</view>
+      <view class="col col-members">成员</view>
+      <view class="col col-action">操作</view>
+    </view>
+
+    <!-- 联盟列表 -->
+    <scroll-view class="alliance-list" scroll-y>
+      <view 
+        class="alliance-row" 
+        wx:for="{{allianceList}}" 
+        wx:key="id"
+        bindtap="viewAllianceDetail"
+        data-alliance="{{item}}"
+      >
+        <view class="col col-name">
+          <text class="alliance-name">{{item.name}}</text>
+        </view>
+        <view class="col col-leader">
+          <text class="leader-name {{item.faction === '蜀' ? 'shu' : item.faction === '魏' ? 'wei' : 'wu'}}">{{item.leaderName}}</text>
+        </view>
+        <view class="col col-faction">
+          <text class="faction-tag {{item.faction === '蜀' ? 'shu' : item.faction === '魏' ? 'wei' : 'wu'}}">{{item.faction}}</text>
+        </view>
+        <view class="col col-members">{{item.memberCount}}</view>
+        <view class="col col-action">
+          <view 
+            class="btn-apply" 
+            catchtap="applyJoin" 
+            data-alliance="{{item}}"
+            wx:if="{{!hasAlliance}}"
+          >申请加入</view>
+          <view class="btn-view" wx:else>查看</view>
+        </view>
+      </view>
+      
+      <!-- 空状态 -->
+      <view class="empty-state" wx:if="{{allianceList.length === 0 && !loading}}">
+        <text>暂无联盟数据</text>
+      </view>
+    </scroll-view>
+
+    <!-- 底部按钮 -->
+    <view class="bottom-bar">
+      <view class="btn-create" bindtap="showCreateAlliance" wx:if="{{!hasAlliance}}">创建联盟</view>
+      <view class="btn-my-alliance" bindtap="viewAllianceDetail" data-alliance="{{myAlliance}}" wx:else>我的联盟</view>
+    </view>
+  </view>
+
+  <!-- 创建联盟弹窗 -->
+  <view class="modal-mask" wx:if="{{showCreateModal}}" bindtap="closeCreateModal">
+    <view class="modal-content create-modal" catchtap>
+      <view class="modal-header">
+        <text class="modal-title">创建联盟</text>
+        <view class="modal-close" bindtap="closeCreateModal">×</view>
+      </view>
+      
+      <view class="modal-body">
+        <view class="form-item">
+          <text class="form-label">联盟名称</text>
+          <input 
+            class="form-input" 
+            placeholder="请输入联盟名称(2-8字)" 
+            value="{{newAllianceName}}"
+            bindinput="onAllianceNameInput"
+            maxlength="8"
+          />
+        </view>
+        
+        <view class="form-item">
+          <text class="form-label">选择国家</text>
+          <view class="faction-select">
+            <view 
+              class="faction-option shu {{selectedFaction === '蜀' ? 'selected' : ''}} {{playerInfo.faction !== '蜀' ? 'disabled' : ''}}"
+              bindtap="onFactionSelect"
+              data-faction="蜀"
+            >蜀</view>
+            <view 
+              class="faction-option wei {{selectedFaction === '魏' ? 'selected' : ''}} {{playerInfo.faction !== '魏' ? 'disabled' : ''}}"
+              bindtap="onFactionSelect"
+              data-faction="魏"
+            >魏</view>
+            <view 
+              class="faction-option wu {{selectedFaction === '吴' ? 'selected' : ''}} {{playerInfo.faction !== '吴' ? 'disabled' : ''}}"
+              bindtap="onFactionSelect"
+              data-faction="吴"
+            >吴</view>
+          </view>
+        </view>
+        
+        <view class="create-tip">
+          <text>* 创建联盟需要消耗 1000 黄金</text>
+        </view>
+      </view>
+      
+      <view class="modal-footer">
+        <view class="btn-cancel" bindtap="closeCreateModal">取消</view>
+        <view class="btn-confirm" bindtap="createAlliance">确定创建</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 联盟详情弹窗 -->
+  <view class="modal-mask" wx:if="{{showDetailModal}}" bindtap="closeDetailModal">
+    <view class="modal-content detail-modal" catchtap>
+      <!-- 标签栏 -->
+      <view class="tab-bar">
+        <view class="tab-item {{currentTab === 'info' ? 'active' : ''}}" bindtap="switchTab" data-tab="info">联盟信息</view>
+        <view class="tab-item {{currentTab === 'members' ? 'active' : ''}}" bindtap="switchTab" data-tab="members">成员管理</view>
+        <view class="tab-item {{currentTab === 'rewards' ? 'active' : ''}}" bindtap="switchTab" data-tab="rewards">联盟奖励</view>
+        <view class="tab-close" bindtap="closeDetailModal">返回</view>
+      </view>
+
+      <!-- 联盟信息标签页 -->
+      <view class="tab-content" wx:if="{{currentTab === 'info'}}">
+        <view class="info-section">
+          <view class="info-row">
+            <text class="info-label">联盟名称:</text>
+            <text class="info-value">{{detailAlliance.name}}</text>
+          </view>
+          <view class="info-row">
+            <text class="info-label">盟  主:</text>
+            <text class="info-value leader-name">{{detailAlliance.leaderName}}</text>
+          </view>
+          <view class="info-row">
+            <text class="info-label">联盟成员:</text>
+            <text class="info-value">{{detailAlliance.memberCount}}/{{detailAlliance.maxMembers}}</text>
+          </view>
+        </view>
+        
+        <view class="announcement-section">
+          <view class="announcement-header">
+            <text>公告</text>
+            <text class="edit-btn" wx:if="{{hasAlliance && myAlliance.id === detailAlliance.id}}">编辑</text>
+          </view>
+          <view class="announcement-content">
+            <text>{{detailAlliance.announcement || '暂无公告'}}</text>
+          </view>
+        </view>
+        
+        <!-- 成员列表预览 -->
+        <view class="members-preview">
+          <view class="preview-header">
+            <text class="col-name">成员名</text>
+            <text class="col-position">职位</text>
+            <text class="col-level">等级</text>
+            <text class="col-contribution">累战积分</text>
+          </view>
+          <scroll-view class="preview-list" scroll-y>
+            <view class="member-row" wx:for="{{detailAlliance.members}}" wx:key="odUserId">
+              <text class="col-name {{item.position === '盟主' ? 'leader' : ''}}">{{item.name}}</text>
+              <text class="col-position">{{item.position}}</text>
+              <text class="col-level">{{item.level}}</text>
+              <text class="col-contribution">{{item.contribution || 0}}</text>
+            </view>
+          </scroll-view>
+        </view>
+        
+        <!-- 盟战入口 -->
+        <view class="war-entry" wx:if="{{hasAlliance && myAlliance.id === detailAlliance.id}}" bindtap="goToAllianceWar">
+          <view class="war-entry-icon">⚔️</view>
+          <view class="war-entry-info">
+            <text class="war-entry-title">盟战</text>
+            <text class="war-entry-desc">每日20:45报名，21:00开战</text>
+          </view>
+          <view class="war-entry-arrow">›</view>
+        </view>
+        
+        <!-- 操作按钮 -->
+        <view class="action-buttons" wx:if="{{hasAlliance && myAlliance.id === detailAlliance.id}}">
+          <view class="btn-applications" bindtap="viewApplications">申请列表</view>
+          <view class="btn-manage" bindtap="switchTab" data-tab="members">成员管理</view>
+          <view class="btn-dissolve" bindtap="dissolveAlliance" wx:if="{{myAlliance.leaderId === playerInfo.id}}">解散联盟</view>
+          <view class="btn-leave" bindtap="leaveAlliance" wx:else>退出联盟</view>
+        </view>
+      </view>
+
+      <!-- 成员管理标签页 -->
+      <view class="tab-content" wx:if="{{currentTab === 'members'}}">
+        <view class="members-management">
+          <view class="members-header">
+            <text class="col-name">成员名</text>
+            <text class="col-position">职位</text>
+            <text class="col-level">等级</text>
+            <text class="col-power">战力</text>
+            <text class="col-action">操作</text>
+          </view>
+          <scroll-view class="members-list" scroll-y>
+            <view class="member-row" wx:for="{{detailAlliance.members}}" wx:key="odUserId">
+              <text class="col-name">{{item.name}}</text>
+              <text class="col-position">{{item.position}}</text>
+              <text class="col-level">{{item.level}}</text>
+              <text class="col-power">{{item.power}}</text>
+              <view class="col-action" wx:if="{{item.position !== '盟主' && hasAlliance && myAlliance.leaderId === playerInfo.id}}">
+                <text class="action-btn" catchtap="setPosition" data-member="{{item}}">职位</text>
+                <text class="action-btn kick" catchtap="kickMember" data-member="{{item}}">踢出</text>
+              </view>
+              <view class="col-action" wx:else>-</view>
+            </view>
+          </scroll-view>
+        </view>
+      </view>
+
+      <!-- 联盟奖励标签页 -->
+      <view class="tab-content" wx:if="{{currentTab === 'rewards'}}">
+        <view class="rewards-section">
+          <view class="reward-item">
+            <view class="reward-icon">🏆</view>
+            <view class="reward-info">
+              <text class="reward-name">联盟战奖励</text>
+              <text class="reward-desc">参与联盟战可获得丰厚奖励</text>
+            </view>
+          </view>
+          <view class="reward-item">
+            <view class="reward-icon">💰</view>
+            <view class="reward-info">
+              <text class="reward-name">每日签到</text>
+              <text class="reward-desc">每日签到可获得联盟贡献</text>
+            </view>
+          </view>
+          <view class="reward-item">
+            <view class="reward-icon">⭐</view>
+            <view class="reward-info">
+              <text class="reward-name">联盟商店</text>
+              <text class="reward-desc">使用贡献兑换稀有道具</text>
+            </view>
+          </view>
+        </view>
+        <view class="coming-soon">
+          <text>更多联盟玩法开发中...</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 申请列表弹窗 -->
+  <view class="modal-mask" wx:if="{{showApplicationModal}}" bindtap="closeApplicationModal">
+    <view class="modal-content application-modal" catchtap>
+      <view class="modal-header">
+        <text class="modal-title">申请列表</text>
+        <view class="modal-close" bindtap="closeApplicationModal">×</view>
+      </view>
+      
+      <view class="modal-body">
+        <scroll-view class="application-list" scroll-y>
+          <view class="application-item" wx:for="{{applicationList}}" wx:key="odUserId">
+            <view class="applicant-info">
+              <text class="applicant-name">{{item.name}}</text>
+              <text class="applicant-level">Lv.{{item.level}}</text>
+              <text class="applicant-power">战力: {{item.power}}</text>
+            </view>
+            <view class="applicant-actions">
+              <view class="btn-approve" catchtap="approveApplication" data-applicant-id="{{item.odUserId}}">同意</view>
+              <view class="btn-reject" catchtap="rejectApplication" data-applicant-id="{{item.odUserId}}">拒绝</view>
+            </view>
+          </view>
+          
+          <view class="empty-state" wx:if="{{applicationList.length === 0}}">
+            <text>暂无申请</text>
+          </view>
+        </scroll-view>
+      </view>
+    </view>
+  </view>
+</view>

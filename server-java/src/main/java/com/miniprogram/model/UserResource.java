@@ -96,7 +96,7 @@ public class UserResource {
         return UserResource.builder()
                 .id("res_" + System.currentTimeMillis())
                 .odUserId(odUserId)
-                .gold(1000L)              // 初始1000黄金
+                .gold(0L)              // 初始1000黄金
                 .silver(10000L)           // 初始10000白银
                 .diamond(100L)            // 初始100钻石
                 .stamina(100)             // 初始100体力
@@ -107,9 +107,9 @@ public class UserResource {
                 .metal(500L)
                 .food(1000L)
                 .paper(500L)
-                .enhanceStone1(20)        // 初始20个1级强化石
-                .enhanceStone2(10)        // 初始10个2级强化石
-                .enhanceStone3(5)         // 初始5个3级强化石
+                .enhanceStone1(0)        // 初始20个1级强化石
+                .enhanceStone2(0)        // 初始10个2级强化石
+                .enhanceStone3(0)         // 初始5个3级强化石
                 .enhanceStone4(0)
                 .enhanceStone5(0)
                 .enhanceStone6(0)

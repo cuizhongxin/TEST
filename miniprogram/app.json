@@ -15,7 +15,9 @@
     "pages/recharge/recharge",
     "pages/tactics/tactics",
     "pages/training/training",
-    "pages/enhance/enhance"
+    "pages/enhance/enhance",
+    "pages/alliance/alliance",
+    "pages/allianceWar/allianceWar"
   ],
   "window": {
     "backgroundTextStyle": "light",

@@ -266,7 +266,7 @@ Page({
   },
 
   goToAlliance() {
-    wx.showToast({ title: '联盟功能开发中', icon: 'none' })
+    wx.navigateTo({ url: '/pages/alliance/alliance' })
   },
 
   goToCharacter() {

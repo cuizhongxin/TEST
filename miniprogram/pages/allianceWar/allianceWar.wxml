@@ -1,0 +1,333 @@
+<!-- pages/allianceWar/allianceWar.wxml -->
+<view class="war-page">
+  <!-- 顶部标题栏 -->
+  <view class="header">
+    <view class="header-back" bindtap="goBack">返回</view>
+    <view class="header-title">盟战</view>
+    <view class="header-status {{status}}">
+      <text wx:if="{{status === 'NOT_STARTED'}}">未开始</text>
+      <text wx:elif="{{status === 'REGISTERING'}}">报名中</text>
+      <text wx:elif="{{status === 'IN_PROGRESS'}}">进行中</text>
+      <text wx:else>已结束</text>
+    </view>
+  </view>
+
+  <!-- 标签栏 -->
+  <view class="tab-bar">
+    <view class="tab-item {{currentTab === 'info' ? 'active' : ''}}" bindtap="switchTab" data-tab="info">盟战信息</view>
+    <view class="tab-item {{currentTab === 'participants' ? 'active' : ''}}" bindtap="switchTab" data-tab="participants">参战名单</view>
+    <view class="tab-item {{currentTab === 'battles' ? 'active' : ''}}" bindtap="switchTab" data-tab="battles">对战记录</view>
+    <view class="tab-item {{currentTab === 'rankings' ? 'active' : ''}}" bindtap="switchTab" data-tab="rankings">排名奖励</view>
+  </view>
+
+  <!-- 内容区 -->
+  <scroll-view class="content" scroll-y>
+    
+    <!-- 盟战信息标签 -->
+    <view class="tab-content" wx:if="{{currentTab === 'info'}}">
+      <!-- 盟战规则 -->
+      <view class="section rules-section">
+        <view class="section-title">⚔️ 盟战规则</view>
+        <view class="rules-list">
+          <view class="rule-item">
+            <view class="rule-icon">🕐</view>
+            <view class="rule-text">
+              <text class="rule-title">报名时间</text>
+              <text class="rule-desc">每日 20:45 - 21:00</text>
+            </view>
+          </view>
+          <view class="rule-item">
+            <view class="rule-icon">⚔️</view>
+            <view class="rule-text">
+              <text class="rule-title">战斗时间</text>
+              <text class="rule-desc">每日 21:00 开始</text>
+            </view>
+          </view>
+          <view class="rule-item">
+            <view class="rule-icon">🎯</view>
+            <view class="rule-text">
+              <text class="rule-title">配对规则</text>
+              <text class="rule-desc">同联盟不配对，胜者晋级</text>
+            </view>
+          </view>
+          <view class="rule-item">
+            <view class="rule-icon">🏆</view>
+            <view class="rule-text">
+              <text class="rule-title">胜利条件</text>
+              <text class="rule-desc">剩余玩家同联盟时结束</text>
+            </view>
+          </view>
+        </view>
+      </view>
+
+      <!-- 当前状态 -->
+      <view class="section status-section">
+        <view class="section-title">📊 当前状态</view>
+        <view class="status-info">
+          <view class="status-row">
+            <text class="status-label">战斗日期:</text>
+            <text class="status-value">{{war.date || '今日'}}</text>
+          </view>
+          <view class="status-row">
+            <text class="status-label">当前轮次:</text>
+            <text class="status-value">第 {{war.currentRound || 0}} 轮</text>
+          </view>
+          <view class="status-row">
+            <text class="status-label">参战人数:</text>
+            <text class="status-value">{{participants.length}} 人</text>
+          </view>
+          <view class="status-row" wx:if="{{registered && myParticipant}}">
+            <text class="status-label">我的状态:</text>
+            <text class="status-value highlight">
+              {{myParticipant.status === 'WAITING' ? '等待配对' : 
+                myParticipant.status === 'IN_BATTLE' ? '战斗中' : 
+                myParticipant.status === 'SPECTATING' ? '已淘汰' : '胜利者'}}
+            </text>
+          </view>
+          <view class="status-row" wx:if="{{registered && myParticipant}}">
+            <text class="status-label">我的编号:</text>
+            <text class="status-value">{{myParticipant.playerNumber}} 号</text>
+          </view>
+          <view class="status-row" wx:if="{{registered && myParticipant}}">
+            <text class="status-label">胜/负/旗:</text>
+            <text class="status-value">{{myParticipant.wins}} / {{myParticipant.losses}} / {{myParticipant.flags}}</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- 报名区域 -->
+      <view class="section register-section">
+        <view class="section-title">📝 盟战报名</view>
+        
+        <view class="register-area" wx:if="{{status === 'NOT_STARTED'}}">
+          <view class="register-tip">盟战报名将于 20:45 开始</view>
+          <!-- 测试按钮 -->
+          <view class="test-buttons">
+            <view class="btn-test" bindtap="triggerRegistration">开启报名(测试)</view>
+          </view>
+        </view>
+        
+        <view class="register-area" wx:elif="{{status === 'REGISTERING'}}">
+          <view class="register-tip" wx:if="{{!registered}}">报名中！战斗将于 21:00 开始</view>
+          <view class="register-tip success" wx:else>您已成功报名，编号: {{myParticipant.playerNumber}}</view>
+          
+          <view class="btn-register" bindtap="register" wx:if="{{!registered}}">立即报名</view>
+          <view class="btn-cancel-register" bindtap="cancelRegister" wx:else>取消报名</view>
+          
+          <!-- 测试按钮 -->
+          <view class="test-buttons">
+            <view class="btn-test" bindtap="triggerBattle">开始战斗(测试)</view>
+          </view>
+        </view>
+        
+        <view class="register-area" wx:elif="{{status === 'IN_PROGRESS'}}">
+          <view class="register-tip battle">⚔️ 战斗进行中...</view>
+          <view class="my-status" wx:if="{{registered && myParticipant}}">
+            <text wx:if="{{myParticipant.status === 'WAITING'}}">🎯 等待下一轮配对</text>
+            <text wx:elif="{{myParticipant.status === 'IN_BATTLE'}}">⚔️ 您正在战斗中</text>
+            <text wx:elif="{{myParticipant.status === 'SPECTATING'}}">👀 您已进入观战席</text>
+            <text wx:else>🏆 您是最终胜利者！</text>
+          </view>
+          <view class="register-tip" wx:if="{{!registered}}">
+            本场盟战您未参加
+          </view>
+        </view>
+        
+        <view class="register-area" wx:else>
+          <view class="register-tip finished">🏁 盟战已结束</view>
+          <view class="btn-view-result" bindtap="switchTab" data-tab="rankings">查看排名</view>
+          <!-- 测试按钮 -->
+          <view class="test-buttons">
+            <view class="btn-test" bindtap="resetWar">重置盟战(测试)</view>
+          </view>
+        </view>
+      </view>
+
+      <!-- 奖励说明 -->
+      <view class="section rewards-section">
+        <view class="section-title">🎁 奖励说明</view>
+        <view class="rewards-list">
+          <view class="reward-item">
+            <view class="reward-title">🎖️ 参战奖励</view>
+            <view class="reward-desc">所有参战君主自动获得"盟战礼盒"</view>
+          </view>
+          <view class="reward-item">
+            <view class="reward-title">🥇 个人排名</view>
+            <view class="reward-desc">前5名获得"盟战宝箱"等丰厚奖励</view>
+          </view>
+          <view class="reward-item">
+            <view class="reward-title">🏰 联盟排名</view>
+            <view class="reward-desc">前3名联盟获得宝箱和高级道具</view>
+          </view>
+          <view class="reward-item">
+            <view class="reward-title">🚩 军旗奖励</view>
+            <view class="reward-desc">每夺取1面军旗，联盟额外获得资源</view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 参战名单标签 -->
+    <view class="tab-content" wx:if="{{currentTab === 'participants'}}">
+      <view class="section">
+        <view class="section-title">👥 参战名单 ({{participants.length}}人)</view>
+        <view class="participants-list">
+          <view class="participant-header">
+            <text class="col-num">编号</text>
+            <text class="col-name">玩家</text>
+            <text class="col-alliance">联盟</text>
+            <text class="col-status">状态</text>
+            <text class="col-score">战绩</text>
+          </view>
+          <view class="participant-item {{item.odUserId === myParticipant.odUserId ? 'is-me' : ''}}" 
+                wx:for="{{participants}}" wx:key="odUserId">
+            <text class="col-num">{{item.playerNumber}}</text>
+            <text class="col-name {{item.faction === '蜀' ? 'shu' : item.faction === '魏' ? 'wei' : 'wu'}}">{{item.playerName}}</text>
+            <text class="col-alliance">{{item.allianceName}}</text>
+            <text class="col-status {{item.status}}">
+              {{item.status === 'WAITING' ? '等待' : 
+                item.status === 'IN_BATTLE' ? '战斗' : 
+                item.status === 'SPECTATING' ? '淘汰' : '胜利'}}
+            </text>
+            <text class="col-score">{{item.wins}}/{{item.losses}}</text>
+          </view>
+          <view class="empty-state" wx:if="{{participants.length === 0}}">
+            <text>暂无参战玩家</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 对战记录标签 -->
+    <view class="tab-content" wx:if="{{currentTab === 'battles'}}">
+      <!-- 我的对战 -->
+      <view class="section" wx:if="{{myBattles.length > 0}}">
+        <view class="section-title">🎯 我的对战</view>
+        <view class="battles-list">
+          <view class="battle-item" wx:for="{{myBattles}}" wx:key="id">
+            <view class="battle-round">第{{item.round}}轮</view>
+            <view class="battle-players">
+              <view class="battle-player {{item.winnerId === item.player1Id ? 'winner' : 'loser'}}">
+                <text class="player-name">{{item.player1Name}}</text>
+                <text class="player-score">{{item.player1Score}}分</text>
+              </view>
+              <view class="battle-vs">VS</view>
+              <view class="battle-player {{item.winnerId === item.player2Id ? 'winner' : 'loser'}}">
+                <text class="player-name">{{item.player2Name}}</text>
+                <text class="player-score">{{item.player2Score}}分</text>
+              </view>
+            </view>
+            <view class="battle-result">
+              胜者: <text class="winner-name">{{item.winnerName}}</text>
+            </view>
+          </view>
+        </view>
+      </view>
+      
+      <!-- 全部对战 -->
+      <view class="section">
+        <view class="section-title">📜 全部对战记录</view>
+        <view class="battles-list">
+          <view class="battle-item" wx:for="{{allBattles}}" wx:key="id">
+            <view class="battle-round">第{{item.round}}轮</view>
+            <view class="battle-players">
+              <view class="battle-player {{item.winnerId === item.player1Id ? 'winner' : 'loser'}}">
+                <text class="player-name">{{item.player1Name}}</text>
+                <text class="player-alliance">({{item.player1Alliance}})</text>
+              </view>
+              <view class="battle-vs">{{item.player1Score}} : {{item.player2Score}}</view>
+              <view class="battle-player {{item.winnerId === item.player2Id ? 'winner' : 'loser'}}">
+                <text class="player-name">{{item.player2Name}}</text>
+                <text class="player-alliance">({{item.player2Alliance}})</text>
+              </view>
+            </view>
+          </view>
+          <view class="empty-state" wx:if="{{allBattles.length === 0}}">
+            <text>暂无对战记录</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 排名奖励标签 -->
+    <view class="tab-content" wx:if="{{currentTab === 'rankings'}}">
+      <!-- 联盟排名 -->
+      <view class="section">
+        <view class="section-title">🏰 联盟排名</view>
+        <view class="ranking-list">
+          <view class="ranking-header">
+            <text class="col-rank">排名</text>
+            <text class="col-name">联盟</text>
+            <text class="col-flags">军旗</text>
+            <text class="col-members">人数</text>
+            <text class="col-wins">胜场</text>
+          </view>
+          <view class="ranking-item rank-{{item.rank}}" wx:for="{{allianceRanks}}" wx:key="allianceId">
+            <text class="col-rank">
+              <text wx:if="{{item.rank === 1}}">🥇</text>
+              <text wx:elif="{{item.rank === 2}}">🥈</text>
+              <text wx:elif="{{item.rank === 3}}">🥉</text>
+              <text wx:else>{{item.rank}}</text>
+            </text>
+            <text class="col-name {{item.faction === '蜀' ? 'shu' : item.faction === '魏' ? 'wei' : 'wu'}}">{{item.allianceName}}</text>
+            <text class="col-flags">{{item.totalFlags}}</text>
+            <text class="col-members">{{item.participantCount}}</text>
+            <text class="col-wins">{{item.wins}}</text>
+          </view>
+          <view class="empty-state" wx:if="{{allianceRanks.length === 0}}">
+            <text>盟战结束后显示排名</text>
+          </view>
+        </view>
+      </view>
+      
+      <!-- 个人排名 -->
+      <view class="section">
+        <view class="section-title">👤 个人排名</view>
+        <view class="ranking-list">
+          <view class="ranking-header">
+            <text class="col-rank">排名</text>
+            <text class="col-name">玩家</text>
+            <text class="col-alliance">联盟</text>
+            <text class="col-wins">胜场</text>
+            <text class="col-flags">军旗</text>
+          </view>
+          <view class="ranking-item rank-{{item.rank}} {{item.odUserId === myParticipant.odUserId ? 'is-me' : ''}}" 
+                wx:for="{{playerRanks}}" wx:key="odUserId">
+            <text class="col-rank">
+              <text wx:if="{{item.rank === 1}}">🥇</text>
+              <text wx:elif="{{item.rank === 2}}">🥈</text>
+              <text wx:elif="{{item.rank === 3}}">🥉</text>
+              <text wx:else>{{item.rank}}</text>
+            </text>
+            <text class="col-name">{{item.playerName}}</text>
+            <text class="col-alliance">{{item.allianceName}}</text>
+            <text class="col-wins">{{item.wins}}</text>
+            <text class="col-flags">{{item.flags}}</text>
+          </view>
+          <view class="empty-state" wx:if="{{playerRanks.length === 0}}">
+            <text>盟战结束后显示排名</text>
+          </view>
+        </view>
+      </view>
+      
+      <!-- 奖励展示 -->
+      <view class="section" wx:if="{{allianceRanks.length > 0}}">
+        <view class="section-title">🎁 获得奖励</view>
+        <view class="rewards-detail">
+          <view class="reward-group" wx:for="{{allianceRanks}}" wx:key="allianceId" wx:if="{{index < 5}}">
+            <view class="reward-group-title">
+              <text wx:if="{{item.rank === 1}}">🥇 第1名: {{item.allianceName}}</text>
+              <text wx:elif="{{item.rank === 2}}">🥈 第2名: {{item.allianceName}}</text>
+              <text wx:elif="{{item.rank === 3}}">🥉 第3名: {{item.allianceName}}</text>
+              <text wx:else>第{{item.rank}}名: {{item.allianceName}}</text>
+            </view>
+            <view class="reward-items">
+              <text class="reward-tag" wx:for="{{item.rewards}}" wx:key="*this" wx:for-item="reward">{{reward}}</text>
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+  </scroll-view>
+</view>

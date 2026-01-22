@@ -63,9 +63,8 @@ public class RecruitController {
     @PostMapping("/buy")
     public ApiResponse<UserResource> buyToken(@RequestBody Map<String, Object> body,
                                               HttpServletRequest request) {
-        Long userIdLong = (Long) request.getAttribute("userId");
-        String userId = userIdLong != null ? String.valueOf(userIdLong) : null;
-        String tokenType = (String) body.get("tokenType");
+        String userId = request.getAttribute("userId").toString();
+        String tokenType = body.get("tokenType").toString();
         
         logger.info("购买招贤令, userId: {}, tokenType: {}", userId, tokenType);
         
