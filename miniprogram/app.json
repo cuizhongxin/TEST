@@ -18,7 +18,9 @@
     "pages/enhance/enhance",
     "pages/alliance/alliance",
     "pages/allianceWar/allianceWar",
-    "pages/production/production"
+    "pages/production/production",
+    "pages/campaign/campaign",
+    "pages/campaignBattle/campaignBattle"
   ],
   "window": {
     "backgroundTextStyle": "light",

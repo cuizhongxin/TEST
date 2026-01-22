@@ -262,7 +262,7 @@ Page({
   },
 
   goToDungeon() {
-    wx.navigateTo({ url: '/pages/dungeon/dungeon' })
+    wx.navigateTo({ url: '/pages/campaign/campaign' })
   },
 
   goToWarehouse() {

@@ -1,0 +1,157 @@
+<!--pages/campaignBattle/campaignBattle.wxml-->
+<view class="page-container">
+  <!-- 顶部状态栏 -->
+  <view class="top-bar">
+    <view class="troops-info">
+      <text class="troops-label">己兵力:</text>
+      <text class="troops-value">{{progress.currentTroops}}/{{progress.maxTroops}}</text>
+      <button class="btn-replenish" size="mini" bindtap="replenishTroops">补充</button>
+    </view>
+    
+    <view class="campaign-title">{{campaign.name}}</view>
+    
+    <view class="action-bar">
+      <view class="revive-info">
+        <text>重生次数: {{progress.reviveCount}}</text>
+      </view>
+      <button class="btn-action" size="mini" bindtap="endCampaign">结束战役</button>
+      <button class="btn-action" size="mini" bindtap="pauseCampaign">暂停战役</button>
+    </view>
+  </view>
+
+  <!-- 当前关卡信息 -->
+  <view class="stage-info" wx:if="{{currentStage}}">
+    <view class="boss-preview">
+      <view class="boss-avatar-frame">
+        <view class="boss-avatar">
+          <text class="boss-icon">👤</text>
+        </view>
+      </view>
+      <view class="boss-details">
+        <view class="boss-row">
+          <text class="boss-label">将领:</text>
+          <text class="boss-value">{{currentStage.bossName}}</text>
+        </view>
+        <view class="boss-row">
+          <text class="boss-label">级别:</text>
+          <text class="boss-value">{{currentStage.bossLevel}}级</text>
+        </view>
+        <view class="boss-row">
+          <text class="boss-label">经验:</text>
+          <text class="boss-value highlight">{{currentStage.expReward}}</text>
+        </view>
+        <view class="boss-row">
+          <text class="boss-label">掉落:</text>
+          <text class="boss-value drop">将领装备·大器篇</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 底部关卡列表 -->
+  <scroll-view class="stage-list" scroll-x>
+    <view class="stage-scroll">
+      <view class="stage-item {{index + 1 === progress.currentStage ? 'current' : ''}} {{index + 1 <= progress.maxClearedStage ? 'cleared' : ''}}"
+            wx:for="{{campaign.stages}}"
+            wx:key="index"
+            data-index="{{index}}"
+            bindtap="selectStage">
+        <view class="stage-avatar-frame">
+          <view class="stage-avatar">
+            <text class="stage-icon">👤</text>
+          </view>
+          <!-- 进攻按钮 -->
+          <view class="attack-badge" wx:if="{{index + 1 === progress.currentStage}}">
+            <text>进攻</text>
+          </view>
+          <!-- 已通关标记 -->
+          <view class="cleared-badge" wx:if="{{index + 1 <= progress.maxClearedStage}}">
+            <text>✓</text>
+          </view>
+        </view>
+        <view class="stage-num">第{{index + 1}}关</view>
+      </view>
+    </view>
+  </scroll-view>
+
+  <!-- 进攻按钮（固定在底部） -->
+  <view class="bottom-actions">
+    <button class="btn-attack" bindtap="attackStage" wx:if="{{progress.inProgress && progress.currentStage <= campaign.stages.length}}">
+      进攻
+    </button>
+    <button class="btn-complete" wx:if="{{!progress.inProgress || progress.currentStage > campaign.stages.length}}">
+      战役完成
+    </button>
+  </view>
+</view>
+
+<!-- 补充兵力弹窗 -->
+<view class="modal-mask" wx:if="{{showReplenishModal}}" bindtap="closeReplenishModal">
+  <view class="replenish-modal" catchtap="">
+    <view class="modal-header">
+      <text class="modal-title">补充兵力</text>
+      <view class="modal-close" bindtap="closeReplenishModal">✕</view>
+    </view>
+    <view class="modal-body">
+      <view class="replenish-info">
+        <text>当前兵力: {{progress.currentTroops}}/{{progress.maxTroops}}</text>
+      </view>
+      <view class="replenish-cost">
+        <text>消耗白银: {{replenishCost}}</text>
+      </view>
+      <view class="current-silver">
+        <text>当前白银: {{silver}}</text>
+      </view>
+    </view>
+    <view class="modal-footer">
+      <button class="btn-confirm" bindtap="confirmReplenish">确认补充</button>
+      <button class="btn-cancel" bindtap="closeReplenishModal">取消</button>
+    </view>
+  </view>
+</view>
+
+<!-- 战斗结果弹窗 -->
+<view class="modal-mask" wx:if="{{showBattleResult}}" bindtap="closeBattleResult">
+  <view class="battle-result-modal" catchtap="">
+    <view class="modal-header {{battleResult.victory ? 'victory' : 'defeat'}}">
+      <text class="modal-title">{{battleResult.victory ? '战斗胜利' : '战斗失败'}}</text>
+    </view>
+    <view class="modal-body">
+      <view class="battle-log">
+        <view class="log-item" wx:for="{{battleResult.battleLog}}" wx:key="index">
+          <text>{{item}}</text>
+        </view>
+      </view>
+      
+      <view class="battle-rewards" wx:if="{{battleResult.victory}}">
+        <view class="reward-item">
+          <text>获得经验: {{battleResult.expGained}}</text>
+        </view>
+        <view class="reward-item">
+          <text>获得白银: {{battleResult.silverGained}}</text>
+        </view>
+        <view class="drop-items" wx:if="{{battleResult.itemsDropped && battleResult.itemsDropped.length > 0}}">
+          <text class="drop-title">掉落物品:</text>
+          <view class="drop-item" wx:for="{{battleResult.itemsDropped}}" wx:key="index">
+            <text>{{item.itemName}}</text>
+          </view>
+        </view>
+      </view>
+      
+      <view class="battle-loss" wx:if="{{!battleResult.victory}}">
+        <view class="loss-item">
+          <text>损失兵力: {{battleResult.troopsLost}}</text>
+        </view>
+        <view class="loss-item">
+          <text>剩余兵力: {{battleResult.remainingTroops}}</text>
+        </view>
+        <view class="revive-option" wx:if="{{progress.reviveCount > 0}}">
+          <button class="btn-revive" bindtap="revive">重生 (剩余{{progress.reviveCount}}次)</button>
+        </view>
+      </view>
+    </view>
+    <view class="modal-footer">
+      <button class="btn-continue" bindtap="closeBattleResult">继续</button>
+    </view>
+  </view>
+</view>

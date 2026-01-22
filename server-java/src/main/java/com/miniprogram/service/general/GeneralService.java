@@ -403,6 +403,35 @@ public class GeneralService {
     }
     
     /**
+     * 给用户阵型中的所有武将加经验
+     * @param odUserId 用户ID
+     * @param totalExp 总经验（平分给阵型中的武将）
+     */
+    public void addExpToFormation(String odUserId, int totalExp) {
+        // 获取用户的所有武将
+        List<General> generals = getUserGenerals(odUserId);
+        if (generals.isEmpty()) {
+            logger.warn("用户 {} 没有武将", odUserId);
+            return;
+        }
+        
+        // 简化处理：取前6个武将作为阵型
+        int formationSize = Math.min(6, generals.size());
+        int expPerGeneral = totalExp / formationSize;
+        
+        for (int i = 0; i < formationSize; i++) {
+            General general = generals.get(i);
+            try {
+                addGeneralExp(general.getId(), expPerGeneral);
+            } catch (Exception e) {
+                logger.error("给武将 {} 加经验失败: {}", general.getName(), e.getMessage());
+            }
+        }
+        
+        logger.info("用户 {} 的阵型武将获得经验，每人 {}", odUserId, expPerGeneral);
+    }
+    
+    /**
      * 获取用户武将数量
      */
     public int getUserGeneralCount(String userId) {

@@ -1,0 +1,177 @@
+<!--pages/campaign/campaign.wxml-->
+<view class="page-container">
+  <!-- 顶部资源栏 -->
+  <view class="top-bar">
+    <view class="resource-item">
+      <image class="resource-icon" src="/images/icons/stamina.png" mode="aspectFit"/>
+      <text class="resource-value">精力: {{stamina}}</text>
+    </view>
+    <view class="resource-item">
+      <image class="resource-icon" src="/images/icons/tiger.png" mode="aspectFit"/>
+      <text class="resource-value">虎符: {{tigerTalisman}}</text>
+    </view>
+  </view>
+
+  <view class="main-content">
+    <!-- 左侧战役列表 -->
+    <scroll-view class="campaign-list" scroll-y>
+      <view class="campaign-item {{selectedCampaign && selectedCampaign.campaign.id === item.campaign.id ? 'selected' : ''}} {{!item.unlocked ? 'locked' : ''}}"
+            wx:for="{{campaigns}}" 
+            wx:key="index"
+            data-index="{{index}}"
+            bindtap="selectCampaign">
+        <view class="campaign-bg">
+          <view class="campaign-name">{{item.campaign.name}}</view>
+          <view class="campaign-limit">
+            <text class="limit-icon">⏱</text>
+            <text>日次数: {{item.todayRemaining}}/{{item.campaign.dailyLimit}}</text>
+          </view>
+          <view class="lock-mask" wx:if="{{!item.unlocked}}">
+            <text class="lock-text">🔒 需要等级 {{item.campaign.requiredLevel}}</text>
+          </view>
+        </view>
+      </view>
+    </scroll-view>
+
+    <!-- 右侧战役详情 -->
+    <view class="campaign-detail" wx:if="{{selectedCampaign}}">
+      <view class="detail-header">
+        <view class="detail-title">{{selectedCampaign.campaign.name}}</view>
+        <view class="detail-subtitle">第{{selectedCampaign.campaign.chapter}}章</view>
+      </view>
+      
+      <view class="detail-info">
+        <view class="info-row">
+          <text class="info-label">敌人等级:</text>
+          <text class="info-value">{{selectedCampaign.campaign.minEnemyLevel}}-{{selectedCampaign.campaign.maxEnemyLevel}}</text>
+        </view>
+        <view class="info-row">
+          <text class="info-label">战斗经验:</text>
+          <text class="info-value highlight">{{selectedCampaign.campaign.minExp}}-{{selectedCampaign.campaign.maxExp}}</text>
+        </view>
+        <view class="info-row">
+          <text class="info-label">消耗精力:</text>
+          <text class="info-value">{{selectedCampaign.campaign.staminaCost}}/关</text>
+        </view>
+        <view class="info-row">
+          <text class="info-label">已通关:</text>
+          <text class="info-value">{{selectedCampaign.progress.maxClearedStage}}/{{selectedCampaign.campaign.stages.length}}关</text>
+        </view>
+      </view>
+
+      <view class="drop-preview">
+        <view class="drop-title">掉落奖励</view>
+        <view class="drop-items">
+          <view class="drop-item" wx:for="{{selectedCampaign.campaign.dropRewards}}" wx:key="index">
+            <view class="drop-icon-bg {{getQualityClass(item)}}">
+              <text class="drop-icon">⚔</text>
+            </view>
+            <text class="drop-name">{{item}}</text>
+          </view>
+        </view>
+      </view>
+
+      <view class="action-buttons">
+        <button class="btn-enter" 
+                bindtap="enterCampaign"
+                disabled="{{!selectedCampaign.unlocked || selectedCampaign.todayRemaining <= 0}}">
+          {{selectedCampaign.progress.inProgress ? '继续战役' : '进入战役'}}
+        </button>
+        <button class="btn-sweep" 
+                bindtap="showSweepModal"
+                wx:if="{{selectedCampaign.progress.maxClearedStage > 0}}"
+                disabled="{{tigerTalisman <= 0}}">
+          开始扫荡
+        </button>
+      </view>
+    </view>
+  </view>
+
+  <!-- 返回按钮 -->
+  <view class="back-btn" bindtap="goBack">
+    <text>返回</text>
+  </view>
+</view>
+
+<!-- 扫荡弹窗 -->
+<view class="modal-mask" wx:if="{{showSweepModal}}" bindtap="closeSweepModal">
+  <view class="sweep-modal" catchtap="">
+    <view class="modal-header">
+      <text class="modal-title">扫荡设置</text>
+      <view class="modal-close" bindtap="closeSweepModal">✕</view>
+    </view>
+    
+    <view class="modal-body">
+      <view class="sweep-info">
+        <text>当前关数: 第{{selectedCampaign.progress.maxClearedStage}}关</text>
+      </view>
+      <view class="sweep-tips">
+        <text>• 扫荡过程中自动消耗白银补充兵力</text>
+        <text>• 扫荡至指定关数或者战斗失败则扫荡自动停止</text>
+      </view>
+      
+      <view class="sweep-setting">
+        <text class="setting-label">扫荡完第</text>
+        <view class="sweep-count">
+          <button class="count-btn" bindtap="decreaseSweepTarget">-</button>
+          <text class="count-value">{{sweepTarget}}</text>
+          <button class="count-btn" bindtap="increaseSweepTarget">+</button>
+        </view>
+        <text class="setting-label">关后自动结束</text>
+      </view>
+      
+      <view class="sweep-cost">
+        <text>每次扫荡需要消耗1枚虎符</text>
+        <text class="tiger-count">剩余虎符: {{tigerTalisman}}</text>
+      </view>
+    </view>
+    
+    <view class="modal-footer">
+      <button class="btn-start-sweep" bindtap="startSweep">开始扫荡</button>
+      <button class="btn-cancel" bindtap="closeSweepModal">返回</button>
+    </view>
+  </view>
+</view>
+
+<!-- 扫荡结果弹窗 -->
+<view class="modal-mask" wx:if="{{showSweepResult}}" bindtap="closeSweepResult">
+  <view class="result-modal" catchtap="">
+    <view class="modal-header">
+      <text class="modal-title">扫荡结果</text>
+    </view>
+    
+    <view class="modal-body">
+      <view class="result-item">
+        <text>通关关卡: {{sweepResult.stagesCleared}}关</text>
+      </view>
+      <view class="result-item">
+        <text>获得经验: {{sweepResult.totalExp}}</text>
+      </view>
+      <view class="result-item">
+        <text>获得白银: {{sweepResult.totalSilver}}</text>
+      </view>
+      <view class="result-item">
+        <text>消耗虎符: {{sweepResult.tigerTalismanUsed}}</text>
+      </view>
+      <view class="result-item">
+        <text>消耗白银(补兵): {{sweepResult.silverUsed}}</text>
+      </view>
+      <view class="result-item highlight">
+        <text>{{sweepResult.stopReason}}</text>
+      </view>
+      
+      <view class="drop-list" wx:if="{{sweepResult.allDrops.length > 0}}">
+        <text class="drop-title">掉落物品</text>
+        <view class="drops">
+          <view class="drop-item" wx:for="{{sweepResult.allDrops}}" wx:key="index">
+            <text>{{item.itemName}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+    
+    <view class="modal-footer">
+      <button class="btn-confirm" bindtap="closeSweepResult">确定</button>
+    </view>
+  </view>
+</view>

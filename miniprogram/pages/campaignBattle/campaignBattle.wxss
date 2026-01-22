@@ -1,0 +1,480 @@
+/* pages/campaignBattle/campaignBattle.wxss */
+
+.page-container {
+  min-height: 100vh;
+  background: linear-gradient(180deg, #1a1a2e 0%, #16213e 50%, #0f0f23 100%);
+  display: flex;
+  flex-direction: column;
+}
+
+/* 顶部状态栏 */
+.top-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20rpx;
+  background: rgba(0, 0, 0, 0.5);
+  border-bottom: 2rpx solid #8b7355;
+}
+
+.troops-info {
+  display: flex;
+  align-items: center;
+  gap: 10rpx;
+}
+
+.troops-label {
+  color: #aaa;
+  font-size: 24rpx;
+}
+
+.troops-value {
+  color: #98fb98;
+  font-size: 26rpx;
+  font-weight: bold;
+}
+
+.btn-replenish {
+  background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+  color: #fff;
+  font-size: 22rpx;
+  padding: 0 20rpx;
+  height: 50rpx;
+  line-height: 50rpx;
+  border-radius: 8rpx;
+  border: none;
+}
+
+.campaign-title {
+  color: #ffd700;
+  font-size: 36rpx;
+  font-weight: bold;
+  text-shadow: 2rpx 2rpx 4rpx rgba(0, 0, 0, 0.5);
+}
+
+.action-bar {
+  display: flex;
+  align-items: center;
+  gap: 15rpx;
+}
+
+.revive-info {
+  color: #ff6b6b;
+  font-size: 22rpx;
+  padding-right: 10rpx;
+}
+
+.btn-action {
+  background: rgba(100, 100, 100, 0.5);
+  color: #ccc;
+  font-size: 22rpx;
+  padding: 0 15rpx;
+  height: 50rpx;
+  line-height: 50rpx;
+  border-radius: 8rpx;
+  border: 1rpx solid #666;
+}
+
+/* 当前关卡信息 */
+.stage-info {
+  flex: 1;
+  padding: 30rpx;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.boss-preview {
+  display: flex;
+  background: rgba(0, 0, 0, 0.4);
+  border-radius: 20rpx;
+  border: 2rpx solid #8b7355;
+  padding: 30rpx;
+  gap: 30rpx;
+  min-width: 500rpx;
+}
+
+.boss-avatar-frame {
+  width: 180rpx;
+  height: 220rpx;
+  background: linear-gradient(135deg, #4a3d2d 0%, #2d2517 100%);
+  border-radius: 12rpx;
+  border: 3rpx solid #ffd700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.boss-avatar {
+  width: 150rpx;
+  height: 180rpx;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 8rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.boss-icon {
+  font-size: 80rpx;
+}
+
+.boss-details {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 15rpx;
+}
+
+.boss-row {
+  display: flex;
+  gap: 15rpx;
+}
+
+.boss-label {
+  color: #aaa;
+  font-size: 28rpx;
+  width: 80rpx;
+}
+
+.boss-value {
+  color: #fff;
+  font-size: 28rpx;
+}
+
+.boss-value.highlight {
+  color: #98fb98;
+}
+
+.boss-value.drop {
+  color: #ffd700;
+  font-size: 24rpx;
+}
+
+/* 底部关卡列表 */
+.stage-list {
+  height: 200rpx;
+  background: rgba(0, 0, 0, 0.5);
+  border-top: 2rpx solid #8b7355;
+  white-space: nowrap;
+}
+
+.stage-scroll {
+  display: inline-flex;
+  padding: 20rpx;
+  gap: 20rpx;
+}
+
+.stage-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10rpx;
+  opacity: 0.5;
+}
+
+.stage-item.cleared {
+  opacity: 0.8;
+}
+
+.stage-item.current {
+  opacity: 1;
+}
+
+.stage-avatar-frame {
+  position: relative;
+  width: 100rpx;
+  height: 120rpx;
+  background: linear-gradient(135deg, #2d2d44 0%, #1a1a2e 100%);
+  border-radius: 10rpx;
+  border: 2rpx solid #4a4a6a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.stage-item.current .stage-avatar-frame {
+  border-color: #ffd700;
+  box-shadow: 0 0 15rpx rgba(255, 215, 0, 0.5);
+}
+
+.stage-item.cleared .stage-avatar-frame {
+  border-color: #98fb98;
+}
+
+.stage-avatar {
+  width: 80rpx;
+  height: 100rpx;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 6rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.stage-icon {
+  font-size: 50rpx;
+}
+
+.attack-badge {
+  position: absolute;
+  bottom: -5rpx;
+  left: 50%;
+  transform: translateX(-50%);
+  background: linear-gradient(135deg, #dc143c 0%, #8b0000 100%);
+  color: #fff;
+  font-size: 20rpx;
+  padding: 4rpx 12rpx;
+  border-radius: 6rpx;
+}
+
+.cleared-badge {
+  position: absolute;
+  top: -10rpx;
+  right: -10rpx;
+  width: 36rpx;
+  height: 36rpx;
+  background: #98fb98;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #000;
+  font-size: 24rpx;
+  font-weight: bold;
+}
+
+.stage-num {
+  color: #ccc;
+  font-size: 22rpx;
+}
+
+.stage-item.current .stage-num {
+  color: #ffd700;
+  font-weight: bold;
+}
+
+/* 底部操作按钮 */
+.bottom-actions {
+  padding: 20rpx 30rpx 40rpx;
+  background: rgba(0, 0, 0, 0.5);
+}
+
+.btn-attack {
+  width: 100%;
+  height: 90rpx;
+  line-height: 90rpx;
+  background: linear-gradient(135deg, #dc143c 0%, #8b0000 100%);
+  color: #fff;
+  font-size: 34rpx;
+  font-weight: bold;
+  border-radius: 12rpx;
+  border: none;
+  box-shadow: 0 8rpx 20rpx rgba(220, 20, 60, 0.4);
+}
+
+.btn-complete {
+  width: 100%;
+  height: 90rpx;
+  line-height: 90rpx;
+  background: linear-gradient(135deg, #ffd700 0%, #daa520 100%);
+  color: #000;
+  font-size: 34rpx;
+  font-weight: bold;
+  border-radius: 12rpx;
+  border: none;
+}
+
+/* 弹窗样式 */
+.modal-mask {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.replenish-modal, .battle-result-modal {
+  width: 560rpx;
+  background: linear-gradient(180deg, #2d2d44 0%, #1a1a2e 100%);
+  border-radius: 20rpx;
+  border: 2rpx solid #8b7355;
+  overflow: hidden;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 25rpx 30rpx;
+  background: linear-gradient(90deg, #8b7355 0%, #6b5335 100%);
+}
+
+.modal-header.victory {
+  background: linear-gradient(90deg, #2ecc71 0%, #27ae60 100%);
+}
+
+.modal-header.defeat {
+  background: linear-gradient(90deg, #e74c3c 0%, #c0392b 100%);
+}
+
+.modal-title {
+  color: #fff;
+  font-size: 32rpx;
+  font-weight: bold;
+}
+
+.modal-close {
+  color: #fff;
+  font-size: 36rpx;
+  padding: 10rpx;
+}
+
+.modal-body {
+  padding: 30rpx;
+}
+
+.replenish-info, .replenish-cost, .current-silver {
+  text-align: center;
+  padding: 15rpx 0;
+  font-size: 28rpx;
+}
+
+.replenish-info text {
+  color: #fff;
+}
+
+.replenish-cost text {
+  color: #ff6b6b;
+}
+
+.current-silver text {
+  color: #ffd700;
+}
+
+.modal-footer {
+  display: flex;
+  gap: 20rpx;
+  padding: 20rpx 30rpx 30rpx;
+}
+
+.btn-confirm {
+  flex: 1;
+  height: 70rpx;
+  line-height: 70rpx;
+  background: linear-gradient(135deg, #ffd700 0%, #daa520 100%);
+  color: #000;
+  font-size: 28rpx;
+  font-weight: bold;
+  border-radius: 10rpx;
+  border: none;
+}
+
+.btn-cancel {
+  flex: 1;
+  height: 70rpx;
+  line-height: 70rpx;
+  background: rgba(100, 100, 100, 0.5);
+  color: #ccc;
+  font-size: 28rpx;
+  border-radius: 10rpx;
+  border: 1rpx solid #666;
+}
+
+.btn-continue {
+  flex: 1;
+  height: 70rpx;
+  line-height: 70rpx;
+  background: linear-gradient(135deg, #1e90ff 0%, #104e8b 100%);
+  color: #fff;
+  font-size: 28rpx;
+  border-radius: 10rpx;
+  border: none;
+}
+
+/* 战斗日志 */
+.battle-log {
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 12rpx;
+  padding: 20rpx;
+  max-height: 300rpx;
+  overflow-y: auto;
+}
+
+.log-item {
+  padding: 10rpx 0;
+  color: #ccc;
+  font-size: 26rpx;
+  border-bottom: 1rpx solid rgba(139, 115, 85, 0.2);
+}
+
+.log-item:last-child {
+  border-bottom: none;
+}
+
+/* 战斗奖励 */
+.battle-rewards {
+  margin-top: 20rpx;
+  padding-top: 20rpx;
+  border-top: 1rpx solid rgba(139, 115, 85, 0.3);
+}
+
+.reward-item {
+  padding: 10rpx 0;
+  color: #98fb98;
+  font-size: 28rpx;
+  text-align: center;
+}
+
+.drop-items {
+  margin-top: 15rpx;
+}
+
+.drop-title {
+  color: #ffd700;
+  font-size: 26rpx;
+}
+
+.drop-items .drop-item {
+  display: inline-block;
+  background: rgba(255, 215, 0, 0.2);
+  padding: 8rpx 15rpx;
+  border-radius: 8rpx;
+  color: #ffd700;
+  font-size: 24rpx;
+  margin: 5rpx;
+}
+
+/* 战斗损失 */
+.battle-loss {
+  margin-top: 20rpx;
+  padding-top: 20rpx;
+  border-top: 1rpx solid rgba(139, 115, 85, 0.3);
+}
+
+.loss-item {
+  padding: 10rpx 0;
+  color: #ff6b6b;
+  font-size: 28rpx;
+  text-align: center;
+}
+
+.revive-option {
+  margin-top: 20rpx;
+}
+
+.btn-revive {
+  width: 100%;
+  height: 70rpx;
+  line-height: 70rpx;
+  background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+  color: #fff;
+  font-size: 28rpx;
+  border-radius: 10rpx;
+  border: none;
+}
