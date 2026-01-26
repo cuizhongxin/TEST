@@ -97,58 +97,59 @@ page {
 .res-value.gold { color: #ffd700; }
 .res-value.silver { color: #c0c0c0; }
 
-/* ==================== 我的武将横栏（在中间区域内） ==================== */
+/* ==================== 我的武将横栏（最多6个） ==================== */
 .generals-bar-inner {
   display: flex;
   align-items: center;
-  padding: 8rpx;
+  padding: 6rpx;
   background: rgba(0,0,0,0.3);
   border: 1rpx solid #5a4a3a;
   border-radius: 8rpx;
-  margin-bottom: 10rpx;
-  gap: 8rpx;
+  margin-bottom: 8rpx;
+  gap: 6rpx;
 }
 
 .generals-title {
-  font-size: 12rpx;
+  font-size: 11rpx;
   color: #ffd700;
   white-space: nowrap;
-  padding-right: 8rpx;
+  padding-right: 6rpx;
   border-right: 1rpx solid #5a4a3a;
   writing-mode: vertical-lr;
   text-orientation: mixed;
 }
 
-.generals-scroll {
+.generals-row {
   flex: 1;
-  white-space: nowrap;
+  display: flex;
+  gap: 6rpx;
 }
 
 .general-card-mini {
-  display: inline-flex;
+  display: flex;
   flex-direction: column;
   align-items: center;
-  margin-right: 8rpx;
-  padding: 4rpx;
+  padding: 3rpx;
   background: rgba(0,0,0,0.3);
   border: 1rpx solid #5a4a3a;
   border-radius: 4rpx;
 }
 
 .card-avatar-mini {
-  width: 40rpx;
-  height: 40rpx;
+  width: 36rpx;
+  height: 36rpx;
   border-radius: 4rpx;
   border: 2rpx solid;
 }
 
 .card-name-mini {
-  font-size: 10rpx;
+  font-size: 9rpx;
   color: #c9a227;
   margin-top: 2rpx;
-  max-width: 45rpx;
+  max-width: 40rpx;
   overflow: hidden;
   text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .add-card-mini {
@@ -157,12 +158,12 @@ page {
 }
 
 .add-icon-mini {
-  width: 40rpx;
-  height: 40rpx;
+  width: 36rpx;
+  height: 36rpx;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 24rpx;
+  font-size: 20rpx;
   color: #8b6914;
 }
 
@@ -179,31 +180,33 @@ page {
 .left-sidebar, .right-sidebar {
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  gap: 10rpx;
-  width: 55rpx;
+  justify-content: flex-start;
+  gap: 6rpx;
+  width: 50rpx;
   flex-shrink: 0;
+  padding: 4rpx 0;
+  overflow: hidden;
 }
 
 .sidebar-icon {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 6rpx 4rpx;
+  padding: 4rpx 3rpx;
   background: linear-gradient(180deg, rgba(74, 58, 40, 0.9) 0%, rgba(58, 42, 24, 0.9) 100%);
-  border: 2rpx solid #8b6914;
-  border-radius: 8rpx;
-  box-shadow: 0 2rpx 6rpx rgba(0,0,0,0.5);
+  border: 1rpx solid #8b6914;
+  border-radius: 6rpx;
+  box-shadow: 0 2rpx 4rpx rgba(0,0,0,0.5);
 }
 
 .icon-emoji {
-  font-size: 22rpx;
+  font-size: 18rpx;
 }
 
 .icon-label {
-  font-size: 10rpx;
+  font-size: 9rpx;
   color: #c9a227;
-  margin-top: 2rpx;
+  margin-top: 1rpx;
 }
 
 /* ==================== 中间主区域 - 可滚动 ==================== */

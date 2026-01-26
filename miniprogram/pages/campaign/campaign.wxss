@@ -1,320 +1,190 @@
-/* pages/campaign/campaign.wxss */
-
-.page-container {
-  min-height: 100vh;
-  background: linear-gradient(180deg, #1a1a2e 0%, #16213e 50%, #0f0f23 100%);
-  padding: 20rpx;
-  box-sizing: border-box;
-}
-
-/* 顶部资源栏 */
-.top-bar {
+.container {
+  width: 100vw;
+  height: 100vh;
+  background: linear-gradient(180deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
   display: flex;
-  justify-content: flex-end;
-  padding: 10rpx 20rpx;
-  gap: 30rpx;
+  flex-direction: column;
+  overflow: hidden;
 }
 
-.resource-item {
+/* 顶部标题栏 */
+.header {
   display: flex;
   align-items: center;
-  background: rgba(0, 0, 0, 0.4);
-  padding: 8rpx 20rpx;
-  border-radius: 20rpx;
-  border: 1rpx solid #8b7355;
-}
-
-.resource-icon {
-  width: 36rpx;
-  height: 36rpx;
-  margin-right: 10rpx;
-}
-
-.resource-value {
-  color: #ffd700;
-  font-size: 26rpx;
-}
-
-/* 主内容区 */
-.main-content {
-  display: flex;
-  height: calc(100vh - 180rpx);
-  gap: 20rpx;
-}
-
-/* 左侧战役列表 */
-.campaign-list {
-  width: 280rpx;
-  height: 100%;
+  justify-content: space-between;
+  padding: 12rpx 20rpx;
   background: rgba(0, 0, 0, 0.3);
-  border-radius: 16rpx;
-  border: 2rpx solid #8b7355;
+  flex-shrink: 0;
 }
 
-.campaign-item {
-  padding: 15rpx;
-  border-bottom: 1rpx solid rgba(139, 115, 85, 0.3);
-  transition: all 0.3s;
-}
-
-.campaign-item.selected {
-  background: linear-gradient(135deg, #8b7355 0%, #6b5335 100%);
-}
-
-.campaign-item.locked {
-  opacity: 0.6;
-}
-
-.campaign-bg {
-  position: relative;
-  background: linear-gradient(135deg, #2d2d44 0%, #1a1a2e 100%);
-  border-radius: 12rpx;
-  padding: 20rpx 15rpx;
-  border: 2rpx solid #4a4a6a;
-}
-
-.campaign-item.selected .campaign-bg {
-  background: linear-gradient(135deg, #4a3d2d 0%, #2d2517 100%);
-  border-color: #ffd700;
-}
-
-.campaign-name {
-  color: #fff;
-  font-size: 28rpx;
-  font-weight: bold;
-  text-align: center;
-  text-shadow: 2rpx 2rpx 4rpx rgba(0, 0, 0, 0.5);
-}
-
-.campaign-limit {
+.back-btn {
+  width: 50rpx;
+  height: 50rpx;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-top: 10rpx;
-  color: #98fb98;
-  font-size: 22rpx;
 }
 
-.limit-icon {
-  margin-right: 5rpx;
+.back-icon {
+  font-size: 40rpx;
+  color: #ffd700;
 }
 
-.lock-mask {
+.title {
+  font-size: 32rpx;
+  color: #ffd700;
+  font-weight: bold;
+}
+
+.placeholder {
+  width: 50rpx;
+}
+
+/* 战役列表（横向滚动） */
+.campaign-list {
+  flex: 1;
+  padding: 16rpx;
+  overflow: hidden;
+}
+
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  color: #888;
+}
+
+.campaign-grid {
+  display: flex;
+  gap: 20rpx;
+  height: 100%;
+}
+
+/* 战役卡片（横屏适配） */
+.campaign-card {
+  position: relative;
+  width: 280rpx;
+  height: 100%;
+  border-radius: 12rpx;
+  overflow: hidden;
+  box-shadow: 0 6rpx 20rpx rgba(0, 0, 0, 0.4);
+  flex-shrink: 0;
+}
+
+.campaign-card.locked {
+  opacity: 0.6;
+}
+
+.campaign-banner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.campaign-bg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.campaign-overlay {
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.7);
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.3) 0%, rgba(0, 0, 0, 0.7) 100%);
+}
+
+.campaign-info {
+  position: absolute;
+  left: 12rpx;
+  bottom: 12rpx;
+  right: 12rpx;
+}
+
+.campaign-name {
+  font-size: 28rpx;
+  color: #ffd700;
+  font-weight: bold;
+  text-shadow: 2rpx 2rpx 4rpx rgba(0, 0, 0, 0.8);
+  display: block;
+}
+
+.daily-limit {
+  margin-top: 6rpx;
+  padding: 3rpx 10rpx;
+  background: rgba(0, 128, 0, 0.8);
+  border-radius: 6rpx;
+  display: inline-block;
+}
+
+.daily-limit text {
+  font-size: 20rpx;
+  color: #fff;
+}
+
+/* 锁定遮罩 */
+.lock-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  border-radius: 12rpx;
+}
+
+.lock-icon {
+  font-size: 50rpx;
 }
 
 .lock-text {
-  color: #ff6b6b;
-  font-size: 22rpx;
-}
-
-/* 右侧战役详情 */
-.campaign-detail {
-  flex: 1;
-  background: rgba(0, 0, 0, 0.3);
-  border-radius: 16rpx;
-  border: 2rpx solid #8b7355;
-  padding: 30rpx;
-  display: flex;
-  flex-direction: column;
-}
-
-.detail-header {
-  text-align: center;
-  padding-bottom: 30rpx;
-  border-bottom: 2rpx solid rgba(139, 115, 85, 0.5);
-}
-
-.detail-title {
-  color: #ffd700;
-  font-size: 40rpx;
-  font-weight: bold;
-  text-shadow: 3rpx 3rpx 6rpx rgba(0, 0, 0, 0.5);
-}
-
-.detail-subtitle {
-  color: #aaa;
-  font-size: 26rpx;
-  margin-top: 10rpx;
-}
-
-.detail-info {
-  padding: 30rpx 0;
-  border-bottom: 1rpx solid rgba(139, 115, 85, 0.3);
-}
-
-.info-row {
-  display: flex;
-  justify-content: space-between;
-  padding: 12rpx 20rpx;
-}
-
-.info-label {
-  color: #aaa;
-  font-size: 28rpx;
-}
-
-.info-value {
+  font-size: 24rpx;
   color: #fff;
-  font-size: 28rpx;
-}
-
-.info-value.highlight {
-  color: #98fb98;
-  font-weight: bold;
-}
-
-/* 掉落预览 */
-.drop-preview {
-  flex: 1;
-  padding: 20rpx 0;
-}
-
-.drop-title {
-  color: #ffd700;
-  font-size: 28rpx;
-  margin-bottom: 20rpx;
-  padding-left: 20rpx;
-  border-left: 4rpx solid #ffd700;
-}
-
-.drop-items {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 20rpx;
-  padding: 10rpx;
-}
-
-.drop-item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 120rpx;
-}
-
-.drop-icon-bg {
-  width: 80rpx;
-  height: 80rpx;
-  border-radius: 12rpx;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: 2rpx solid;
-}
-
-.drop-icon-bg.normal {
-  background: linear-gradient(135deg, #666 0%, #444 100%);
-  border-color: #888;
-}
-
-.drop-icon-bg.excellent {
-  background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
-  border-color: #27ae60;
-}
-
-.drop-icon-bg.rare {
-  background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
-  border-color: #2980b9;
-}
-
-.drop-icon-bg.epic {
-  background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%);
-  border-color: #8e44ad;
-}
-
-.drop-icon-bg.legend {
-  background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
-  border-color: #e67e22;
-}
-
-.drop-icon-bg.myth {
-  background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
-  border-color: #c0392b;
-}
-
-.drop-icon {
-  font-size: 36rpx;
-}
-
-.drop-name {
-  color: #ccc;
-  font-size: 22rpx;
   margin-top: 8rpx;
-  text-align: center;
 }
 
-/* 操作按钮 */
-.action-buttons {
-  display: flex;
-  gap: 20rpx;
-  padding-top: 20rpx;
+/* 状态标签 */
+.status-tag {
+  position: absolute;
+  top: 12rpx;
+  right: 12rpx;
+  padding: 6rpx 12rpx;
+  border-radius: 6rpx;
+  font-size: 20rpx;
 }
 
-.btn-enter {
-  flex: 1;
-  height: 80rpx;
-  line-height: 80rpx;
-  background: linear-gradient(135deg, #dc143c 0%, #8b0000 100%);
+.status-tag.progress {
+  background: linear-gradient(135deg, #e74c3c, #c0392b);
   color: #fff;
-  font-size: 30rpx;
-  font-weight: bold;
-  border-radius: 12rpx;
-  border: none;
 }
 
-.btn-enter[disabled] {
-  background: #666;
-  color: #999;
-}
-
-.btn-sweep {
-  flex: 1;
-  height: 80rpx;
-  line-height: 80rpx;
-  background: linear-gradient(135deg, #1e90ff 0%, #104e8b 100%);
+.status-tag.paused {
+  background: linear-gradient(135deg, #f39c12, #e67e22);
   color: #fff;
-  font-size: 30rpx;
-  font-weight: bold;
-  border-radius: 12rpx;
-  border: none;
 }
 
-.btn-sweep[disabled] {
-  background: #666;
-  color: #999;
+.sweep-tag {
+  position: absolute;
+  top: 12rpx;
+  left: 12rpx;
+  padding: 6rpx 12rpx;
+  background: linear-gradient(135deg, #9b59b6, #8e44ad);
+  border-radius: 6rpx;
 }
 
-/* 返回按钮 */
-.back-btn {
-  position: fixed;
-  bottom: 40rpx;
-  left: 40rpx;
-  width: 120rpx;
-  height: 60rpx;
-  background: rgba(0, 0, 0, 0.6);
-  border: 2rpx solid #8b7355;
-  border-radius: 30rpx;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.sweep-tag text {
+  font-size: 20rpx;
+  color: #fff;
 }
 
-.back-btn text {
-  color: #ffd700;
-  font-size: 26rpx;
-}
-
-/* 弹窗样式 */
-.modal-mask {
+/* 详情弹窗（横屏适配） */
+.detail-modal {
   position: fixed;
   top: 0;
   left: 0;
@@ -327,186 +197,147 @@
   z-index: 1000;
 }
 
-.sweep-modal, .result-modal {
-  width: 600rpx;
-  background: linear-gradient(180deg, #2d2d44 0%, #1a1a2e 100%);
-  border-radius: 20rpx;
-  border: 2rpx solid #8b7355;
+.detail-content {
+  width: 70%;
+  max-width: 600rpx;
+  max-height: 90vh;
+  background: linear-gradient(180deg, #2c3e50 0%, #1a252f 100%);
+  border-radius: 16rpx;
+  border: 2rpx solid #ffd700;
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }
 
-.modal-header {
+.detail-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16rpx 24rpx;
+  background: linear-gradient(90deg, #8b4513, #a0522d);
+  border-bottom: 2rpx solid #ffd700;
+  flex-shrink: 0;
+}
+
+.detail-title {
+  font-size: 32rpx;
+  color: #ffd700;
+  font-weight: bold;
+}
+
+.close-btn {
+  width: 44rpx;
+  height: 44rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 36rpx;
+  color: #fff;
+}
+
+.detail-body {
+  flex: 1;
+  padding: 20rpx;
+  overflow-y: auto;
+}
+
+.info-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 25rpx 30rpx;
-  background: linear-gradient(90deg, #8b7355 0%, #6b5335 100%);
-}
-
-.modal-title {
-  color: #fff;
-  font-size: 32rpx;
-  font-weight: bold;
-}
-
-.modal-close {
-  color: #fff;
-  font-size: 36rpx;
-  padding: 10rpx;
-}
-
-.modal-body {
-  padding: 30rpx;
-}
-
-.sweep-info {
-  text-align: center;
-  color: #ffd700;
-  font-size: 28rpx;
-  margin-bottom: 20rpx;
-}
-
-.sweep-tips {
-  display: flex;
-  flex-direction: column;
-  gap: 10rpx;
-  color: #aaa;
-  font-size: 24rpx;
-  padding: 20rpx;
-  background: rgba(0, 0, 0, 0.3);
-  border-radius: 12rpx;
-  margin-bottom: 20rpx;
-}
-
-.sweep-setting {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10rpx;
-  margin: 20rpx 0;
-}
-
-.setting-label {
-  color: #fff;
-  font-size: 28rpx;
-}
-
-.sweep-count {
-  display: flex;
-  align-items: center;
-  gap: 15rpx;
-}
-
-.count-btn {
-  width: 60rpx;
-  height: 60rpx;
-  line-height: 60rpx;
-  text-align: center;
-  background: #8b7355;
-  color: #fff;
-  font-size: 36rpx;
-  border-radius: 8rpx;
-  padding: 0;
-  margin: 0;
-  min-height: 0;
-}
-
-.count-value {
-  color: #ffd700;
-  font-size: 36rpx;
-  font-weight: bold;
-  width: 80rpx;
-  text-align: center;
-}
-
-.sweep-cost {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 10rpx;
-  color: #ff6b6b;
-  font-size: 24rpx;
-  padding-top: 20rpx;
-  border-top: 1rpx solid rgba(139, 115, 85, 0.3);
-}
-
-.tiger-count {
-  color: #ffd700;
-  font-size: 26rpx;
-}
-
-.modal-footer {
-  display: flex;
-  gap: 20rpx;
-  padding: 20rpx 30rpx 30rpx;
-}
-
-.btn-start-sweep {
-  flex: 1;
-  height: 70rpx;
-  line-height: 70rpx;
-  background: linear-gradient(135deg, #1e90ff 0%, #104e8b 100%);
-  color: #fff;
-  font-size: 28rpx;
-  border-radius: 10rpx;
-  border: none;
-}
-
-.btn-cancel {
-  flex: 1;
-  height: 70rpx;
-  line-height: 70rpx;
-  background: rgba(100, 100, 100, 0.5);
-  color: #ccc;
-  font-size: 28rpx;
-  border-radius: 10rpx;
-  border: 1rpx solid #666;
-}
-
-.btn-confirm {
-  flex: 1;
-  height: 70rpx;
-  line-height: 70rpx;
-  background: linear-gradient(135deg, #ffd700 0%, #daa520 100%);
-  color: #000;
-  font-size: 28rpx;
-  font-weight: bold;
-  border-radius: 10rpx;
-  border: none;
-}
-
-/* 结果弹窗 */
-.result-item {
-  display: flex;
-  justify-content: center;
   padding: 12rpx 0;
-  color: #fff;
-  font-size: 28rpx;
+  border-bottom: 1rpx solid rgba(255, 215, 0, 0.2);
 }
 
-.result-item.highlight {
-  color: #98fb98;
+.info-label {
+  font-size: 26rpx;
+  color: #aaa;
+}
+
+.info-value {
+  font-size: 26rpx;
+  color: #fff;
+}
+
+.info-value.highlight {
+  color: #ffd700;
   font-weight: bold;
-  margin-top: 15rpx;
+}
+
+/* 掉落预览 */
+.drop-section {
+  margin-top: 20rpx;
+}
+
+.drop-title {
+  font-size: 26rpx;
+  color: #ffd700;
+  margin-bottom: 12rpx;
+  display: block;
 }
 
 .drop-list {
-  margin-top: 20rpx;
-  padding-top: 20rpx;
-  border-top: 1rpx solid rgba(139, 115, 85, 0.3);
-}
-
-.drops {
   display: flex;
+  gap: 16rpx;
   flex-wrap: wrap;
-  gap: 15rpx;
-  margin-top: 10rpx;
 }
 
-.drop-list .drop-item {
-  background: rgba(255, 215, 0, 0.2);
-  padding: 8rpx 15rpx;
-  border-radius: 8rpx;
-  color: #ffd700;
-  font-size: 24rpx;
+.drop-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 12rpx;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 10rpx;
+  border: 2rpx solid #555;
+}
+
+.drop-item.quality-excellent { border-color: #2ecc71; }
+.drop-item.quality-rare { border-color: #3498db; }
+.drop-item.quality-epic { border-color: #9b59b6; }
+.drop-item.quality-legendary { border-color: #f39c12; }
+
+.drop-icon {
+  width: 60rpx;
+  height: 60rpx;
+}
+
+.drop-name {
+  font-size: 20rpx;
+  color: #fff;
+  margin-top: 6rpx;
+}
+
+/* 底部按钮 */
+.detail-footer {
+  display: flex;
+  gap: 16rpx;
+  padding: 16rpx 20rpx;
+  background: rgba(0, 0, 0, 0.3);
+  flex-shrink: 0;
+}
+
+.btn {
+  flex: 1;
+  height: 70rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10rpx;
+  font-size: 28rpx;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #e74c3c, #c0392b);
+  color: #fff;
+}
+
+.btn-sweep {
+  background: linear-gradient(135deg, #9b59b6, #8e44ad);
+  color: #fff;
+}
+
+.btn-disabled {
+  background: #555;
+  color: #888;
 }

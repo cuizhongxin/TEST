@@ -62,21 +62,21 @@
 
     <!-- 中间主区域 - 可滚动 -->
     <scroll-view class="center-area" scroll-y enhanced show-scrollbar="{{false}}">
-      <!-- 我的武将（横屏展示） -->
+      <!-- 我的武将（最多显示6个） -->
       <view class="generals-bar-inner">
-        <view class="generals-title">我的武将 ({{generalCount}})</view>
-        <scroll-view class="generals-scroll" scroll-x>
-          <view class="general-card-mini" wx:for="{{generals}}" wx:key="id" 
-                data-id="{{item.id}}" bindtap="goToCharacterDetail">
+        <view class="generals-title">武将({{generalCount}})</view>
+        <view class="generals-row">
+          <view class="general-card-mini" wx:for="{{displayGenerals}}" wx:key="index" 
+                wx:if="{{item}}" data-id="{{item.id}}" bindtap="goToCharacterDetail">
             <image class="card-avatar-mini" src="{{item.avatar || userInfo.avatarUrl}}" 
-                   style="border-color: {{item.quality.color}}" mode="aspectFill"></image>
+                   style="border-color: {{item.quality.color || '#8b6914'}}" mode="aspectFill"></image>
             <text class="card-name-mini">{{item.name}}</text>
           </view>
-          <view class="general-card-mini add-card-mini" bindtap="goToRecruit">
+          <view class="general-card-mini add-card-mini" bindtap="goToRecruit" wx:if="{{generalCount < 6}}">
             <view class="add-icon-mini">+</view>
             <text class="card-name-mini">招募</text>
           </view>
-        </scroll-view>
+        </view>
       </view>
 
       <!-- 功能按钮区 -->

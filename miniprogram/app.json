@@ -24,9 +24,11 @@
   ],
   "window": {
     "backgroundTextStyle": "light",
-    "navigationBarBackgroundColor": "#fff",
-    "navigationBarTitleText": "微信授权登录",
-    "navigationBarTextStyle": "black"
+    "navigationBarBackgroundColor": "#1a0a00",
+    "navigationBarTitleText": "席卷三国",
+    "navigationBarTextStyle": "white",
+    "pageOrientation": "landscape",
+    "resizable": false
   },
   "style": "v2",
   "sitemapLocation": "sitemap.json",

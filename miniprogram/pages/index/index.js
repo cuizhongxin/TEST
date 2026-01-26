@@ -1,6 +1,6 @@
 // pages/index/index.js
-const app = getApp()
-const request = require('../../utils/request.js')
+var app = getApp()
+var request = require('../../utils/request.js')
 
 Page({
   data: {
@@ -15,10 +15,16 @@ Page({
     fame: 0,
     generalCount: 0,
     maxGeneral: 10,
-    gold: 14894,
-    silver: 4225105,
+    gold: 0,
+    silver: 0,
     stamina: 100,
-    generalOrder: 9,
+    generalOrder: 0,
+    
+    generals: [],
+    displayGenerals: [null, null, null, null, null, null],
+    
+    lastMessage: null,
+    
     // 左侧悬浮图标
     leftIcons: [
       { id: 1, icon: '🏔️', label: '秘境', name: 'secretRealm' },
@@ -26,6 +32,7 @@ Page({
       { id: 3, icon: '📜', label: '招募', name: 'recruit' },
       { id: 4, icon: '🚪', label: '退出', name: 'logout' }
     ],
+    
     // 右侧悬浮图标
     rightIcons: [
       { id: 1, icon: '💰', label: '充值', name: 'recharge' },
@@ -111,37 +118,43 @@ Page({
         })
 
         if (generals.length === 0) {
-          await this.initGenerals()
+          wx.showToast({ title: '快去酒馆招募武将吧', icon: 'none', duration: 2000 })
         }
       }
     } catch (error) {
-      console.error('获取武将失败:', error)
+      console.error('获取武将列表失败:', error)
     }
   },
 
-  async initGenerals() {
+  async fetchUserResource() {
     try {
-      const response = await request({ url: '/general/init', method: 'POST' })
+      const response = await request({ url: '/resource', method: 'GET' })
       if (response.code === 200 && response.data) {
-        const generals = response.data.map(g => {
-          g.avatar = this.data.userInfo?.avatarUrl || ''
-          return g
+        const data = response.data
+        this.setData({
+          gold: data.gold || 0,
+          silver: data.silver || 0,
+          stamina: data.stamina || 100,
+          generalOrder: data.generalOrder || 0,
+          fame: data.fame || 0,
+          maxGeneral: data.maxGeneral || 10
         })
         
-        const displayGenerals = [null, null, null, null, null, null]
-        for (let i = 0; i < Math.min(6, generals.length); i++) {
-          displayGenerals[i] = generals[i]
-        }
+        // 设置爵位
+        const fameLevel = data.fame || 0
+        let rank = '白身'
+        if (fameLevel >= 10000) rank = '王'
+        else if (fameLevel >= 5000) rank = '公'
+        else if (fameLevel >= 2000) rank = '侯'
+        else if (fameLevel >= 1000) rank = '伯'
+        else if (fameLevel >= 500) rank = '子'
+        else if (fameLevel >= 200) rank = '男'
+        else if (fameLevel >= 100) rank = '士'
         
-        this.setData({ 
-          generals,
-          displayGenerals,
-          generalCount: generals.length
-        })
-        wx.showToast({ title: '获得初始武将！', icon: 'success' })
+        this.setData({ rank })
       }
     } catch (error) {
-      console.error('初始化武将失败:', error)
+      console.error('获取资源失败:', error)
     }
   },
 

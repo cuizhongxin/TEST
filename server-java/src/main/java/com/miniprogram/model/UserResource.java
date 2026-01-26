@@ -22,11 +22,15 @@ public class UserResource {
     private Long silver;        // 白银（游戏内获得）
     private Long diamond;       // 钻石（充值获得）
     
+    // 等级
+    private Integer level;             // 君主等级
+    
     // 体力和令牌
     private Integer stamina;           // 体力
     private Integer maxStamina;        // 最大体力
     private Integer generalOrder;      // 将令
     private Integer maxGeneralOrder;   // 最大将令
+    private Integer tigerTally;        // 虎符（扫荡用）
     
     // 材料资源
     private Long wood;          // 木材
@@ -99,10 +103,12 @@ public class UserResource {
                 .gold(0L)              // 初始1000黄金
                 .silver(10000L)           // 初始10000白银
                 .diamond(100L)            // 初始100钻石
+                .level(1)                 // 初始1级
                 .stamina(100)             // 初始100体力
                 .maxStamina(100)
                 .generalOrder(10)         // 初始10将令
                 .maxGeneralOrder(10)
+                .tigerTally(10)           // 初始10虎符
                 .wood(500L)
                 .metal(500L)
                 .food(1000L)

@@ -282,18 +282,56 @@ public class RechargeService {
     }
     
     /**
-     * 生成微信支付参数（模拟）
-     * 实际项目中需要调用微信支付API
+     * 生成微信支付参数
+     * 实际项目中需要:
+     * 1. 调用微信统一下单API获取prepay_id
+     * 2. 使用API密钥生成签名
+     * 
+     * 统一下单API需要的参数包括:
+     * - appid, mch_id, nonce_str, sign, body, out_trade_no
+     * - total_fee (订单金额，单位分), spbill_create_ip, notify_url, trade_type, openid
      */
-    public Map<String, String> generateWechatPayParams(RechargeOrder order) {
-        Map<String, String> params = new HashMap<>();
-        params.put("appId", "wx9b30f4663bae806e");
-        params.put("timeStamp", String.valueOf(System.currentTimeMillis() / 1000));
-        params.put("nonceStr", UUID.randomUUID().toString().replace("-", ""));
-        params.put("package", "prepay_id=wx" + System.currentTimeMillis());
-        params.put("signType", "MD5");
-        params.put("paySign", "MOCK_SIGN_" + order.getId());
+    public Map<String, Object> generateWechatPayParams(RechargeOrder order) {
+        Map<String, Object> params = new HashMap<>();
+        
+        // 小程序AppID (需要替换为真实的)
+        String appId = "wx9b30f4663bae806e";
+        String timeStamp = String.valueOf(System.currentTimeMillis() / 1000);
+        String nonceStr = UUID.randomUUID().toString().replace("-", "");
+        
+        // 正式环境需要调用微信统一下单API获取prepay_id
+        // 这里模拟返回
+        String prepayId = "wx" + System.currentTimeMillis();
+        
+        // 前端 wx.requestPayment 需要的参数
+        params.put("appId", appId);
+        params.put("timeStamp", timeStamp);
+        params.put("nonceStr", nonceStr);
+        params.put("package", "prepay_id=" + prepayId);
+        params.put("signType", "RSA");  // 推荐使用RSA签名
+        params.put("paySign", generatePaySign(appId, timeStamp, nonceStr, "prepay_id=" + prepayId));
+        
+        // 额外参数(某些SDK可能需要)
+        params.put("totalFee", order.getAmount());  // 金额(分)
+        params.put("orderId", order.getId());
+        params.put("body", order.getProductName());
+        
         return params;
+    }
+    
+    /**
+     * 生成支付签名
+     * 正式环境需要使用商户API密钥进行签名
+     */
+    private String generatePaySign(String appId, String timeStamp, String nonceStr, String packageVal) {
+        // 正式环境签名算法:
+        // 1. 将参数按字典序排序: appId, nonceStr, package, signType, timeStamp
+        // 2. 拼接成字符串: appId=xxx&nonceStr=xxx&package=xxx&signType=RSA&timeStamp=xxx
+        // 3. 使用商户私钥进行RSA-SHA256签名
+        // 4. 对签名结果进行Base64编码
+        
+        // 模拟签名
+        return "MOCK_SIGN_" + System.currentTimeMillis();
     }
     
     /**

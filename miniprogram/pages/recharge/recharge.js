@@ -14,7 +14,7 @@ Page({
     products: [],
     selectedProduct: null,
     
-    // 支付方式
+    // 支付方式（微信小程序中只能用微信支付）
     paymentMethod: 'WECHAT',
     
     // 支付状态
@@ -71,6 +71,36 @@ Page({
   // 选择支付方式
   selectPayment: function(e) {
     var method = e.currentTarget.dataset.method
+    
+    // 微信小程序中，支付宝和银联需要跳转
+    if (method === 'ALIPAY') {
+      wx.showModal({
+        title: '提示',
+        content: '支付宝支付需要跳转到支付宝小程序完成，是否继续？',
+        confirmText: '跳转支付',
+        success: (res) => {
+          if (res.confirm) {
+            this.setData({ paymentMethod: method })
+          }
+        }
+      })
+      return
+    }
+    
+    if (method === 'UNIONPAY') {
+      wx.showModal({
+        title: '提示',
+        content: '银联支付需要跳转到云闪付小程序完成，是否继续？',
+        confirmText: '跳转支付',
+        success: (res) => {
+          if (res.confirm) {
+            this.setData({ paymentMethod: method })
+          }
+        }
+      })
+      return
+    }
+    
     this.setData({ paymentMethod: method })
   },
 
@@ -123,87 +153,170 @@ Page({
     })
   },
 
-  // 调用微信支付
+  // 调用微信支付（真实API）
   callWechatPay: function(orderId, payParams) {
     var that = this
+    var selectedProduct = this.data.selectedProduct
     
-    // 开发测试模式：显示确认框模拟支付
-    // 正式环境需要接入真实微信支付
-    wx.showModal({
-      title: '微信支付',
-      content: '支付金额：¥' + (that.data.selectedProduct.price / 100) + '\n（开发模式：点击确定模拟支付成功）',
-      confirmText: '确定支付',
-      cancelText: '取消',
-      success: function(res) {
-        if (res.confirm) {
-          // 模拟支付成功
-          that.mockPaySuccess(orderId)
-        } else {
+    // 检查是否有真实支付参数（兼容不同字段名）
+    var timeStamp = payParams.timeStamp || payParams.timestamp || payParams.time_stamp
+    var nonceStr = payParams.nonceStr || payParams.nonce_str || payParams.noncestr
+    var packageVal = payParams.package || payParams.prepay_id
+    var signType = payParams.signType || payParams.sign_type || 'RSA'
+    var paySign = payParams.paySign || payParams.pay_sign || payParams.sign
+    
+    // 如果 package 是纯 prepay_id，需要加前缀
+    if (packageVal && !packageVal.startsWith('prepay_id=')) {
+      packageVal = 'prepay_id=' + packageVal
+    }
+    
+    console.log('微信支付参数:', {
+      timeStamp: timeStamp,
+      nonceStr: nonceStr,
+      package: packageVal,
+      signType: signType,
+      paySign: paySign
+    })
+    
+    if (timeStamp && nonceStr && packageVal && paySign) {
+      // 构建支付参数对象
+      var paymentParams = {
+        timeStamp: String(timeStamp),  // 必须是字符串
+        nonceStr: String(nonceStr),
+        package: String(packageVal),
+        signType: signType,
+        paySign: String(paySign),
+        success: function(res) {
+          console.log('微信支付成功', res)
+          that.onPaySuccess(orderId)
+        },
+        fail: function(err) {
+          console.error('微信支付失败', err)
           that.setData({ paying: false })
-          wx.showToast({ title: '已取消支付', icon: 'none' })
+          if (err.errMsg && err.errMsg.indexOf('cancel') > -1) {
+            wx.showToast({ title: '已取消支付', icon: 'none' })
+          } else {
+            wx.showToast({ title: '支付失败: ' + (err.errMsg || '未知错误'), icon: 'none' })
+          }
         }
       }
-    })
-    
-    /* 正式环境微信支付代码（需要后端返回真实prepay_id）
-    wx.requestPayment({
-      timeStamp: payParams.timeStamp,
-      nonceStr: payParams.nonceStr,
-      package: payParams.package,
-      signType: payParams.signType,
-      paySign: payParams.paySign,
-      success: function(res) {
-        that.onPaySuccess(orderId)
-      },
-      fail: function(err) {
-        that.setData({ paying: false })
-        if (err.errMsg.indexOf('cancel') > -1) {
-          wx.showToast({ title: '已取消支付', icon: 'none' })
-        } else {
-          wx.showToast({ title: '支付失败', icon: 'none' })
+      
+      // 真实微信支付
+      wx.requestPayment(paymentParams)
+    } else {
+      // 后端未返回完整支付参数，显示缺少的参数
+      var missing = []
+      if (!timeStamp) missing.push('timeStamp')
+      if (!nonceStr) missing.push('nonceStr')
+      if (!packageVal) missing.push('package')
+      if (!paySign) missing.push('paySign')
+      
+      console.error('支付参数不完整，缺少:', missing, '收到的参数:', payParams)
+      
+      wx.showModal({
+        title: '支付参数不完整',
+        content: '缺少参数: ' + missing.join(', ') + '\n\n当前为测试模式，点击确定模拟支付成功。',
+        confirmText: '模拟支付',
+        cancelText: '取消',
+        success: function(res) {
+          if (res.confirm) {
+            that.mockPaySuccess(orderId)
+          } else {
+            that.setData({ paying: false })
+          }
         }
-      }
-    })
-    */
+      })
+    }
   },
 
-  // 调用支付宝（小程序环境下需要跳转或使用H5）
+  // 支付宝支付 - 跳转支付宝小程序
   callAlipay: function(orderId, payParams) {
     var that = this
     
-    // 小程序中无法直接调用支付宝，通常需要：
-    // 1. 跳转到支付宝小程序
-    // 2. 使用 web-view 打开支付宝H5页面
-    // 这里用模拟支付
-    wx.showModal({
-      title: '支付宝支付',
-      content: '即将跳转支付宝完成支付',
-      success: function(res) {
-        if (res.confirm) {
-          that.mockPaySuccess(orderId)
-        } else {
+    // 检查是否有跳转参数
+    if (payParams && payParams.alipayAppId && payParams.alipayPath) {
+      // 跳转到支付宝小程序
+      wx.navigateToMiniProgram({
+        appId: payParams.alipayAppId, // 支付宝小程序AppID
+        path: payParams.alipayPath,   // 支付页面路径
+        extraData: {
+          orderId: orderId,
+          amount: that.data.selectedProduct.price
+        },
+        success: function(res) {
+          console.log('跳转支付宝小程序成功')
+          // 返回后需要查询订单状态
+        },
+        fail: function(err) {
+          console.error('跳转支付宝失败', err)
           that.setData({ paying: false })
+          wx.showToast({ title: '跳转支付宝失败', icon: 'none' })
         }
+      })
+    } else {
+      // 使用 web-view 打开支付宝H5支付页面
+      if (payParams && payParams.alipayH5Url) {
+        wx.navigateTo({
+          url: '/pages/webview/webview?url=' + encodeURIComponent(payParams.alipayH5Url)
+        })
+      } else {
+        wx.showModal({
+          title: '支付宝支付',
+          content: '需要后端配置支付宝接口参数。\n\n当前为测试模式，点击确定模拟支付成功。',
+          confirmText: '模拟支付',
+          cancelText: '取消',
+          success: function(res) {
+            if (res.confirm) {
+              that.mockPaySuccess(orderId)
+            } else {
+              that.setData({ paying: false })
+            }
+          }
+        })
       }
-    })
+    }
   },
 
-  // 调用银联支付
+  // 银联支付 - 跳转云闪付小程序
   callUnionpay: function(orderId, payParams) {
     var that = this
     
-    // 银联支付通常需要跳转APP或使用SDK
-    wx.showModal({
-      title: '银联支付',
-      content: '即将跳转银联完成支付',
-      success: function(res) {
-        if (res.confirm) {
-          that.mockPaySuccess(orderId)
-        } else {
+    // 银联云闪付小程序AppID
+    var unionpayAppId = 'wxf7261e11865b9d3d' // 云闪付官方小程序ID
+    
+    if (payParams && payParams.tn) {
+      // 跳转到云闪付小程序
+      wx.navigateToMiniProgram({
+        appId: unionpayAppId,
+        path: 'pages/main/main',
+        extraData: {
+          tn: payParams.tn,  // 银联交易流水号
+          orderId: orderId
+        },
+        success: function(res) {
+          console.log('跳转云闪付成功')
+        },
+        fail: function(err) {
+          console.error('跳转云闪付失败', err)
           that.setData({ paying: false })
+          wx.showToast({ title: '跳转云闪付失败', icon: 'none' })
         }
-      }
-    })
+      })
+    } else {
+      wx.showModal({
+        title: '银联支付',
+        content: '需要后端配置银联接口参数。\n\n当前为测试模式，点击确定模拟支付成功。',
+        confirmText: '模拟支付',
+        cancelText: '取消',
+        success: function(res) {
+          if (res.confirm) {
+            that.mockPaySuccess(orderId)
+          } else {
+            that.setData({ paying: false })
+          }
+        }
+      })
+    }
   },
 
   // 模拟支付成功（测试用）
