@@ -78,6 +78,76 @@ public class GeneralController {
         
         return ApiResponse.success(generals);
     }
+    
+    /**
+     * 解雇武将
+     */
+    @PostMapping("/dismiss")
+    public ApiResponse<?> dismissGeneral(@RequestBody java.util.Map<String, String> params,
+                                         HttpServletRequest request) {
+        Long userIdLong = (Long) request.getAttribute("userId");
+        String userId = userIdLong != null ? String.valueOf(userIdLong) : null;
+        String generalId = params.get("generalId");
+        
+        logger.info("解雇武将, userId: {}, generalId: {}", userId, generalId);
+        
+        try {
+            boolean result = generalService.dismissGeneral(userId, generalId);
+            return ApiResponse.success(java.util.Collections.singletonMap("success", result));
+        } catch (Exception e) {
+            return ApiResponse.error(400, e.getMessage());
+        }
+    }
+    
+    /**
+     * 将领传承
+     */
+    @PostMapping("/inherit")
+    public ApiResponse<?> inheritGeneral(@RequestBody java.util.Map<String, String> params,
+                                         HttpServletRequest request) {
+        Long userIdLong = (Long) request.getAttribute("userId");
+        String userId = userIdLong != null ? String.valueOf(userIdLong) : null;
+        String sourceGeneralId = params.get("sourceGeneralId");
+        String targetGeneralId = params.get("targetGeneralId");
+        String scrollType = params.get("scrollType");
+        
+        logger.info("将领传承, userId: {}, source: {}, target: {}, scroll: {}", 
+                   userId, sourceGeneralId, targetGeneralId, scrollType);
+        
+        try {
+            java.util.Map<String, Object> result = generalService.inheritGeneral(
+                userId, sourceGeneralId, targetGeneralId, scrollType);
+            return ApiResponse.success(result);
+        } catch (Exception e) {
+            return ApiResponse.error(400, e.getMessage());
+        }
+    }
+    
+    /**
+     * 军事演习
+     */
+    @PostMapping("/drill")
+    public ApiResponse<?> drill(@RequestBody java.util.Map<String, Object> params,
+                                HttpServletRequest request) {
+        Long userIdLong = (Long) request.getAttribute("userId");
+        String userId = userIdLong != null ? String.valueOf(userIdLong) : null;
+        String generalId = (String) params.get("generalId");
+        String drillType = (String) params.get("drillType");
+        Integer count = (Integer) params.get("count");
+        
+        if (count == null) count = 1;
+        
+        logger.info("军事演习, userId: {}, generalId: {}, type: {}, count: {}", 
+                   userId, generalId, drillType, count);
+        
+        try {
+            java.util.Map<String, Object> result = generalService.drill(
+                userId, generalId, drillType, count);
+            return ApiResponse.success(result);
+        } catch (Exception e) {
+            return ApiResponse.error(400, e.getMessage());
+        }
+    }
 }
 
 

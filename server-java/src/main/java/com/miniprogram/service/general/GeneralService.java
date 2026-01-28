@@ -513,6 +513,119 @@ public class GeneralService {
     }
     
     /**
+     * 解雇武将
+     */
+    public boolean dismissGeneral(String userId, String generalId) {
+        General general = generalRepository.findById(generalId);
+        if (general == null) {
+            throw new RuntimeException("武将不存在");
+        }
+        if (!general.getUserId().equals(userId)) {
+            throw new RuntimeException("无权操作该武将");
+        }
+        if (general.getStatus() != null && general.getStatus().getLocked() != null && general.getStatus().getLocked()) {
+            throw new RuntimeException("武将已锁定，无法解雇");
+        }
+        
+        generalRepository.delete(generalId);
+        logger.info("解雇武将: userId={}, generalId={}, name={}", userId, generalId, general.getName());
+        return true;
+    }
+    
+    /**
+     * 将领传承 - 将源武将的经验传给目标武将，源武将消失
+     */
+    public Map<String, Object> inheritGeneral(String userId, String sourceGeneralId, String targetGeneralId, String scrollType) {
+        General source = generalRepository.findById(sourceGeneralId);
+        General target = generalRepository.findById(targetGeneralId);
+        
+        if (source == null || target == null) {
+            throw new RuntimeException("武将不存在");
+        }
+        if (!source.getUserId().equals(userId) || !target.getUserId().equals(userId)) {
+            throw new RuntimeException("无权操作该武将");
+        }
+        if (sourceGeneralId.equals(targetGeneralId)) {
+            throw new RuntimeException("不能传承给自己");
+        }
+        
+        // 计算传承率
+        double rate;
+        switch (scrollType) {
+            case "basic": rate = 0.5; break;
+            case "medium": rate = 0.75; break;
+            case "advanced": rate = 1.0; break;
+            default: rate = 0.5;
+        }
+        
+        // 计算传承经验
+        long sourceExp = source.getExp() != null ? source.getExp() : 0;
+        // 加上源武将等级对应的总经验
+        for (int i = 1; i < source.getLevel(); i++) {
+            sourceExp += calculateMaxExp(i);
+        }
+        
+        long expGained = (long)(sourceExp * rate);
+        
+        // 给目标武将加经验
+        Map<String, Object> expResult = addGeneralExp(targetGeneralId, expGained);
+        
+        // 删除源武将
+        generalRepository.delete(sourceGeneralId);
+        
+        Map<String, Object> result = new HashMap<>();
+        result.put("success", true);
+        result.put("expGained", expGained);
+        result.put("sourceGeneral", source.getName());
+        result.put("targetGeneral", target.getName());
+        result.put("levelUp", expResult.get("levelUp"));
+        result.put("newLevel", expResult.get("newLevel"));
+        
+        logger.info("将领传承: {} -> {}, 传承经验: {}", source.getName(), target.getName(), expGained);
+        
+        return result;
+    }
+    
+    /**
+     * 军事演习 - 使用演习令获得经验
+     */
+    public Map<String, Object> drill(String userId, String generalId, String drillType, int count) {
+        General general = generalRepository.findById(generalId);
+        if (general == null) {
+            throw new RuntimeException("武将不存在");
+        }
+        if (!general.getUserId().equals(userId)) {
+            throw new RuntimeException("无权操作该武将");
+        }
+        
+        // 计算经验
+        int expPerDrill;
+        switch (drillType) {
+            case "small": expPerDrill = 100; break;
+            case "medium": expPerDrill = 500; break;
+            case "large": expPerDrill = 2000; break;
+            default: expPerDrill = 100;
+        }
+        
+        long totalExp = (long)expPerDrill * count;
+        
+        // 给武将加经验
+        Map<String, Object> expResult = addGeneralExp(generalId, totalExp);
+        
+        Map<String, Object> result = new HashMap<>();
+        result.put("success", true);
+        result.put("expGained", totalExp);
+        result.put("drillType", drillType);
+        result.put("count", count);
+        result.put("levelUp", expResult.get("levelUp"));
+        result.put("newLevel", expResult.get("newLevel"));
+        
+        logger.info("军事演习: {} 使用 {} x{}, 获得经验: {}", general.getName(), drillType, count, totalExp);
+        
+        return result;
+    }
+    
+    /**
      * 创建兵种类型对象
      */
     private General.TroopType createTroopType(int id, String name, String icon, String desc, 

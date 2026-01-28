@@ -1,186 +1,874 @@
-/* pages/character/character.wxss */
-page {
-  background: linear-gradient(135deg, #1a0a0a 0%, #2d1515 50%, #1a0a0a 100%);
-  height: 100vh;
-}
-
+/* pages/character/character.wxss - 将领详情页样式 */
 .page-container {
+  width: 100vw;
+  height: 100vh;
+  background: linear-gradient(135deg, #2c1810 0%, #4a2c17 50%, #2c1810 100%);
   display: flex;
   flex-direction: column;
-  height: 100vh;
-  color: #e8d5b0;
+  overflow: hidden;
 }
 
-.top-bar {
+/* 顶部标签 */
+.tabs {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 10rpx 20rpx;
-  background: linear-gradient(180deg, rgba(139, 69, 19, 0.9) 0%, rgba(101, 67, 33, 0.85) 100%);
-  border-bottom: 2rpx solid #d4a056;
+  background: rgba(0,0,0,0.6);
+  border-bottom: 2rpx solid #8b6914;
+  flex-shrink: 0;
 }
 
-.back-btn {
-  font-size: 22rpx;
-  padding: 8rpx 16rpx;
-  background: rgba(0,0,0,0.3);
-  border-radius: 8rpx;
-}
-
-.page-title {
+.tab-item {
+  flex: 1;
+  padding: 20rpx;
+  text-align: center;
+  color: #aaa;
   font-size: 26rpx;
+  border-bottom: 4rpx solid transparent;
+}
+
+.tab-item.active {
+  color: #ffd700;
+  border-bottom-color: #ffd700;
+  background: rgba(255,215,0,0.1);
+}
+
+/* 主内容区 */
+.main-content {
+  flex: 1;
+  display: flex;
+  padding: 16rpx;
+  gap: 16rpx;
+  overflow: hidden;
+}
+
+/* 左侧将领列表 */
+.left-panel {
+  width: 280rpx;
+  background: rgba(0,0,0,0.5);
+  border-radius: 12rpx;
+  border: 2rpx solid #5a4a3a;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.panel-title {
+  font-size: 24rpx;
+  color: #ffd700;
+  padding: 12rpx 16rpx;
+  background: linear-gradient(90deg, rgba(139,105,20,0.8) 0%, transparent 100%);
+  border-bottom: 1rpx solid #5a4a3a;
+}
+
+.general-scroll {
+  flex: 1;
+  overflow-y: auto;
+}
+
+.general-item {
+  display: flex;
+  align-items: center;
+  padding: 12rpx;
+  border-bottom: 1rpx solid rgba(90,74,58,0.5);
+  gap: 12rpx;
+}
+
+.general-item.active {
+  background: rgba(255,215,0,0.2);
+  border-left: 4rpx solid #ffd700;
+}
+
+.general-avatar {
+  width: 60rpx;
+  height: 60rpx;
+  border-radius: 8rpx;
+  overflow: hidden;
+  border: 2rpx solid #5a4a3a;
+  flex-shrink: 0;
+}
+
+.general-avatar image {
+  width: 100%;
+  height: 100%;
+}
+
+.general-info {
+  flex: 1;
+  overflow: hidden;
+}
+
+.general-name-row {
+  display: flex;
+  align-items: center;
+  gap: 4rpx;
+}
+
+.general-name {
+  font-size: 24rpx;
+  font-weight: bold;
+}
+
+.troop-type {
+  font-size: 20rpx;
+  color: #888;
+}
+
+.general-level {
+  font-size: 20rpx;
+  color: #7fff00;
+}
+
+.general-power {
+  font-size: 22rpx;
   color: #ffd700;
   font-weight: bold;
 }
 
-.count {
-  font-size: 18rpx;
-  color: #aaa;
-}
+/* 品质颜色 */
+.quality-1, .quality-border-1 { color: #888; border-color: #888 !important; }
+.quality-2, .quality-border-2 { color: #00ff00; border-color: #00ff00 !important; }
+.quality-3, .quality-border-3 { color: #0088ff; border-color: #0088ff !important; }
+.quality-4, .quality-border-4 { color: #9900ff; border-color: #9900ff !important; }
+.quality-5, .quality-border-5 { color: #ff8800; border-color: #ff8800 !important; }
+.quality-6, .quality-border-6 { color: #ff0000; border-color: #ff0000 !important; }
 
-.main-content {
+.quality-bg-1 { background: #888; }
+.quality-bg-2 { background: #00aa00; }
+.quality-bg-3 { background: #0066cc; }
+.quality-bg-4 { background: #7700cc; }
+.quality-bg-5 { background: #cc6600; }
+.quality-bg-6 { background: #cc0000; }
+
+/* 右侧详情区 */
+.right-panel {
   flex: 1;
-  display: flex;
-  padding: 15rpx;
-  gap: 15rpx;
+  background: rgba(0,0,0,0.5);
+  border-radius: 12rpx;
+  border: 2rpx solid #5a4a3a;
   overflow: hidden;
-}
-
-.general-list {
-  width: 280rpx;
-  background: rgba(0,0,0,0.4);
-  border: 2rpx solid #8b4513;
-  border-radius: 10rpx;
-  padding: 10rpx;
-}
-
-.general-card {
   display: flex;
-  align-items: center;
-  padding: 12rpx;
-  margin-bottom: 10rpx;
-  background: rgba(139, 69, 19, 0.3);
-  border: 1rpx solid #654321;
+  flex-direction: column;
+}
+
+.detail-content, .inherit-content, .drill-content {
+  flex: 1;
+  padding: 16rpx;
+  overflow-y: auto;
+}
+
+/* 将领头部信息 */
+.general-header {
+  display: flex;
+  gap: 20rpx;
+  padding-bottom: 16rpx;
+  border-bottom: 1rpx solid #5a4a3a;
+  margin-bottom: 16rpx;
+}
+
+.portrait-section {
+  position: relative;
+}
+
+.portrait {
+  width: 120rpx;
+  height: 120rpx;
+  border-radius: 12rpx;
+  overflow: hidden;
+  border: 3rpx solid #ffd700;
+}
+
+.portrait image {
+  width: 100%;
+  height: 100%;
+}
+
+.level-badge {
+  position: absolute;
+  bottom: -8rpx;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0,200,0,0.9);
+  color: #fff;
+  font-size: 18rpx;
+  padding: 2rpx 12rpx;
   border-radius: 8rpx;
 }
 
-.general-card.selected {
-  border-color: #ffd700;
-  background: rgba(218, 165, 32, 0.3);
-}
-
-.card-avatar {
-  width: 50rpx;
-  height: 50rpx;
-  border-radius: 50%;
-  border: 2rpx solid;
-  overflow: hidden;
-  margin-right: 10rpx;
-}
-
-.card-avatar image {
-  width: 100%;
-  height: 100%;
-}
-
-.card-info {
+.info-section {
   flex: 1;
 }
 
-.card-name {
-  font-size: 20rpx;
-  font-weight: bold;
-  display: block;
-}
-
-.card-quality {
-  font-size: 16rpx;
-  color: #aaa;
-}
-
-.card-power {
-  font-size: 18rpx;
-  color: #ff6b6b;
-}
-
-.detail-panel {
-  flex: 1;
-  background: rgba(0,0,0,0.4);
-  border: 2rpx solid #8b4513;
-  border-radius: 10rpx;
-  padding: 20rpx;
-}
-
-.detail-header {
+.name-row {
   display: flex;
   align-items: center;
-  gap: 20rpx;
-  margin-bottom: 20rpx;
-  padding-bottom: 15rpx;
-  border-bottom: 1rpx solid #654321;
+  gap: 12rpx;
+  margin-bottom: 8rpx;
 }
 
-.detail-avatar {
-  width: 80rpx;
-  height: 80rpx;
-  border-radius: 50%;
-  border: 3rpx solid;
-  overflow: hidden;
-}
-
-.detail-avatar image {
-  width: 100%;
-  height: 100%;
-}
-
-.detail-title {
-  flex: 1;
-}
-
-.detail-name {
-  font-size: 28rpx;
+.name {
+  font-size: 32rpx;
   font-weight: bold;
-  display: block;
 }
 
-.detail-type {
+.quality-tag {
   font-size: 18rpx;
-  color: #aaa;
+  color: #fff;
+  padding: 2rpx 12rpx;
+  border-radius: 4rpx;
 }
 
-.attributes {
+.type-row {
+  font-size: 22rpx;
+  color: #ccc;
+  margin-bottom: 8rpx;
+}
+
+.type-label {
+  color: #888;
+}
+
+.faction {
+  color: #ffd700;
+  margin-left: 12rpx;
+}
+
+.exp-row {
   display: flex;
-  flex-wrap: wrap;
-  gap: 15rpx;
+  align-items: center;
+  gap: 8rpx;
+}
+
+.exp-label {
+  font-size: 20rpx;
+  color: #888;
+}
+
+.exp-bar {
+  flex: 1;
+  height: 12rpx;
+  background: rgba(0,0,0,0.5);
+  border-radius: 6rpx;
+  overflow: hidden;
+  max-width: 200rpx;
+}
+
+.exp-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #00aa00 0%, #7fff00 100%);
+}
+
+.exp-text {
+  font-size: 18rpx;
+  color: #7fff00;
+}
+
+.dismiss-btn {
+  padding: 12rpx 24rpx;
+  background: linear-gradient(180deg, #8b2020 0%, #5a1010 100%);
+  border-radius: 8rpx;
+  color: #fff;
+  font-size: 24rpx;
+  border: 1rpx solid #aa3030;
+  align-self: flex-start;
+}
+
+/* 兵种说明 */
+.troop-info {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+  padding: 12rpx;
+  background: rgba(139,105,20,0.2);
+  border-radius: 8rpx;
+  margin-bottom: 16rpx;
+}
+
+.troop-icon {
+  font-size: 36rpx;
+}
+
+.troop-desc {
+  flex: 1;
+  font-size: 22rpx;
+  color: #ccc;
+  line-height: 1.5;
+}
+
+/* 属性面板 */
+.attributes-panel {
+  margin-bottom: 16rpx;
+}
+
+.attr-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12rpx;
 }
 
 .attr-item {
-  width: calc(50% - 10rpx);
+  background: rgba(0,0,0,0.3);
+  border-radius: 8rpx;
+  padding: 12rpx;
   display: flex;
-  justify-content: space-between;
-  padding: 10rpx 15rpx;
-  background: rgba(139, 69, 19, 0.3);
-  border-radius: 6rpx;
+  flex-direction: column;
+  align-items: center;
 }
 
-.attr-label {
-  font-size: 18rpx;
+.attr-icon {
+  font-size: 28rpx;
+  margin-bottom: 4rpx;
+}
+
+.attr-detail {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+}
+
+.attr-name {
+  font-size: 22rpx;
   color: #aaa;
 }
 
 .attr-value {
-  font-size: 18rpx;
+  font-size: 26rpx;
+  color: #fff;
+  font-weight: bold;
+}
+
+.attr-value.highlight {
   color: #ffd700;
 }
 
-.total-power {
-  margin-top: 20rpx;
+.attr-desc {
+  font-size: 18rpx;
+  color: #666;
+  margin-top: 4rpx;
+}
+
+/* 装备面板 */
+.equipment-panel {
+  margin-bottom: 16rpx;
+}
+
+.equip-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12rpx;
+}
+
+.equip-slot {
+  background: rgba(0,0,0,0.4);
+  border: 2rpx solid #5a4a3a;
+  border-radius: 12rpx;
+  padding: 12rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+}
+
+.slot-icon {
+  width: 60rpx;
+  height: 60rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0,0,0,0.3);
+  border-radius: 8rpx;
+  overflow: hidden;
+}
+
+.slot-icon image {
+  width: 100%;
+  height: 100%;
+}
+
+.empty-slot {
+  font-size: 32rpx;
+}
+
+.slot-name {
+  font-size: 20rpx;
+  color: #ccc;
+  margin-top: 8rpx;
   text-align: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100%;
+}
+
+.slot-enhance {
+  position: absolute;
+  top: 4rpx;
+  right: 4rpx;
+  background: rgba(0,200,0,0.8);
+  color: #fff;
+  font-size: 16rpx;
+  padding: 2rpx 6rpx;
+  border-radius: 4rpx;
+}
+
+/* 特性列表 */
+.traits-panel {
+  margin-bottom: 16rpx;
+}
+
+.traits-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8rpx;
+}
+
+.trait-item {
+  background: rgba(255,215,0,0.2);
+  border: 1rpx solid #ffd700;
+  border-radius: 8rpx;
+  padding: 6rpx 12rpx;
+}
+
+.trait-text {
+  font-size: 20rpx;
+  color: #ffd700;
+}
+
+/* 传承界面 */
+.inherit-title, .drill-title {
+  font-size: 28rpx;
+  color: #ffd700;
+  font-weight: bold;
+  margin-bottom: 12rpx;
+}
+
+.inherit-desc, .drill-desc {
+  font-size: 22rpx;
+  color: #aaa;
+  margin-bottom: 20rpx;
+  line-height: 1.5;
+}
+
+.inherit-section {
+  margin-bottom: 20rpx;
+}
+
+.inherit-label {
+  font-size: 24rpx;
+  color: #ffd700;
+  margin-bottom: 12rpx;
+}
+
+.scroll-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12rpx;
+}
+
+.scroll-item {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+  padding: 12rpx 16rpx;
+  background: rgba(0,0,0,0.3);
+  border: 2rpx solid #5a4a3a;
+  border-radius: 8rpx;
+  min-width: 200rpx;
+}
+
+.scroll-item.selected {
+  border-color: #ffd700;
+  background: rgba(255,215,0,0.15);
+}
+
+.scroll-icon {
+  font-size: 32rpx;
+}
+
+.scroll-info {
+  flex: 1;
+}
+
+.scroll-name {
+  font-size: 22rpx;
+  color: #fff;
+  display: block;
+}
+
+.scroll-rate {
+  font-size: 18rpx;
+  color: #7fff00;
+}
+
+.scroll-count {
+  font-size: 22rpx;
+  color: #ffd700;
+}
+
+.inherit-general-select {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20rpx;
+}
+
+.general-slot {
+  width: 150rpx;
+  height: 180rpx;
+  background: rgba(0,0,0,0.4);
+  border: 2rpx dashed #5a4a3a;
+  border-radius: 12rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #666;
   font-size: 22rpx;
 }
 
-.power-value {
-  font-size: 32rpx;
+.general-slot.has-general {
+  border-style: solid;
+  border-color: #ffd700;
+}
+
+.general-slot image {
+  width: 80rpx;
+  height: 80rpx;
+  border-radius: 8rpx;
+}
+
+.general-slot-name {
+  font-size: 22rpx;
+  color: #fff;
+  margin-top: 8rpx;
+}
+
+.exp-info {
+  font-size: 18rpx;
+  color: #7fff00;
+}
+
+.inherit-arrow {
+  font-size: 40rpx;
+  color: #ffd700;
+}
+
+.inherit-preview, .drill-preview {
+  text-align: center;
+  padding: 16rpx;
+  background: rgba(0,200,0,0.15);
+  border-radius: 8rpx;
+  margin: 16rpx 0;
+}
+
+.inherit-preview text, .drill-preview text {
+  font-size: 24rpx;
+  color: #7fff00;
+}
+
+/* 军事演习 */
+.drill-general {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+  padding: 16rpx;
+  background: rgba(0,0,0,0.3);
+  border-radius: 12rpx;
+  margin-bottom: 20rpx;
+}
+
+.drill-portrait {
+  width: 80rpx;
+  height: 80rpx;
+  border-radius: 8rpx;
+  overflow: hidden;
+  border: 2rpx solid #ffd700;
+}
+
+.drill-portrait image {
+  width: 100%;
+  height: 100%;
+}
+
+.drill-info {
+  flex: 1;
+}
+
+.drill-name {
+  font-size: 26rpx;
+  color: #ffd700;
   font-weight: bold;
+  display: block;
+}
+
+.drill-level {
+  font-size: 20rpx;
+  color: #7fff00;
+  display: block;
+  margin: 4rpx 0;
+}
+
+.drill-exp {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+}
+
+.drill-exp .exp-bar {
+  width: 150rpx;
+}
+
+.drill-exp text {
+  font-size: 18rpx;
+  color: #aaa;
+}
+
+.drill-items {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12rpx;
+  margin-bottom: 20rpx;
+}
+
+.drill-item {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+  padding: 12rpx 16rpx;
+  background: rgba(0,0,0,0.3);
+  border: 2rpx solid #5a4a3a;
+  border-radius: 8rpx;
+  min-width: 200rpx;
+}
+
+.drill-item.selected {
+  border-color: #ffd700;
+  background: rgba(255,215,0,0.15);
+}
+
+.drill-icon {
+  font-size: 32rpx;
+}
+
+.drill-item-info {
+  flex: 1;
+}
+
+.drill-item-name {
+  font-size: 22rpx;
+  color: #fff;
+  display: block;
+}
+
+.drill-item-exp {
+  font-size: 18rpx;
+  color: #7fff00;
+}
+
+.drill-item-count {
+  font-size: 22rpx;
+  color: #ffd700;
+}
+
+.drill-count-section {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+  margin-bottom: 16rpx;
+}
+
+.drill-count-section > text {
+  font-size: 24rpx;
+  color: #ccc;
+}
+
+.count-control {
+  display: flex;
+  align-items: center;
+}
+
+.count-btn {
+  width: 50rpx;
+  height: 50rpx;
+  background: rgba(139,105,20,0.5);
+  border: 1rpx solid #8b6914;
+  border-radius: 8rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffd700;
+  font-size: 28rpx;
+}
+
+.count-value {
+  width: 80rpx;
+  text-align: center;
+  font-size: 26rpx;
+  color: #fff;
+}
+
+.max-btn {
+  padding: 8rpx 16rpx;
+  background: rgba(139,105,20,0.5);
+  border: 1rpx solid #8b6914;
+  border-radius: 8rpx;
+  color: #ffd700;
+  font-size: 22rpx;
+}
+
+/* 操作按钮 */
+.action-btn {
+  padding: 20rpx;
+  background: linear-gradient(180deg, #8b6914 0%, #654321 100%);
+  border-radius: 12rpx;
+  color: #ffd700;
+  font-size: 28rpx;
+  font-weight: bold;
+  text-align: center;
+  border: 2rpx solid #aa8833;
+  margin-top: auto;
+}
+
+.action-btn.disabled {
+  background: #333;
+  color: #666;
+  border-color: #444;
+}
+
+/* 空状态 */
+.empty-state {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #666;
+  font-size: 28rpx;
+}
+
+/* 弹窗 */
+.modal-mask {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  width: 500rpx;
+  background: linear-gradient(180deg, #3a2a1a 0%, #2a1a10 100%);
+  border-radius: 16rpx;
+  border: 2rpx solid #8b6914;
+  overflow: hidden;
+}
+
+.modal-content.large {
+  width: 600rpx;
+  max-height: 70vh;
+}
+
+.modal-title {
+  padding: 20rpx;
+  text-align: center;
+  font-size: 28rpx;
+  color: #ffd700;
+  font-weight: bold;
+  background: rgba(139,105,20,0.3);
+  border-bottom: 1rpx solid #5a4a3a;
+}
+
+.modal-body {
+  padding: 30rpx;
+  text-align: center;
+}
+
+.modal-body text {
+  display: block;
+  font-size: 26rpx;
+  color: #ccc;
+  margin-bottom: 12rpx;
+}
+
+.modal-body .warning {
   color: #ff6b6b;
+  font-size: 22rpx;
+}
+
+.modal-list {
+  max-height: 400rpx;
+  padding: 16rpx;
+}
+
+.modal-general-item {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+  padding: 12rpx;
+  background: rgba(0,0,0,0.3);
+  border-radius: 8rpx;
+  margin-bottom: 8rpx;
+}
+
+.modal-general-item image {
+  width: 60rpx;
+  height: 60rpx;
+  border-radius: 8rpx;
+}
+
+.modal-general-info {
+  flex: 1;
+}
+
+.modal-general-name {
+  font-size: 24rpx;
+  color: #fff;
+  display: block;
+}
+
+.modal-general-level {
+  font-size: 20rpx;
+  color: #7fff00;
+}
+
+.modal-footer {
+  display: flex;
+  border-top: 1rpx solid #5a4a3a;
+}
+
+.modal-btn {
+  flex: 1;
+  padding: 24rpx;
+  text-align: center;
+  font-size: 26rpx;
+}
+
+.modal-btn.cancel {
+  color: #aaa;
+  border-right: 1rpx solid #5a4a3a;
+}
+
+.modal-btn.confirm {
+  color: #ff6b6b;
+}
+
+/* 底部栏 */
+.bottom-bar {
+  display: flex;
+  justify-content: flex-end;
+  padding: 12rpx 20rpx;
+  background: rgba(0,0,0,0.8);
+  border-top: 2rpx solid #5a4a3a;
+  flex-shrink: 0;
+}
+
+.back-btn {
+  padding: 12rpx 32rpx;
+  background: linear-gradient(180deg, #5a4a3a 0%, #3a2a1a 100%);
+  border-radius: 8rpx;
+  color: #ccc;
+  font-size: 24rpx;
+  border: 1rpx solid #6a5a4a;
 }
