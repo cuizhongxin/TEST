@@ -4,22 +4,19 @@
     if (nationId === 'WEI') return '魏';
     if (nationId === 'SHU') return '蜀';
     if (nationId === 'WU') return '吴';
+    if (nationId === 'HAN') return '汉';
     return '未知';
   }
   
-  // 获取国家索引
-  function getNationIndex(nationId) {
-    if (nationId === 'WEI') return 0;
-    if (nationId === 'SHU') return 1;
-    if (nationId === 'WU') return 2;
-    return 0;
-  }
-  
-  // 获取国家颜色
+  // 获取国家颜色（遍历nations数组查找）
   function getNationColor(nations, nationId) {
-    if (!nations || !nations.length) return '#666';
-    var idx = getNationIndex(nationId);
-    return nations[idx] && nations[idx].color ? nations[idx].color : '#666';
+    if (!nations || !nations.length || !nationId) return '#666';
+    for (var i = 0; i < nations.length; i++) {
+      if (nations[i].id === nationId) {
+        return nations[i].color || '#666';
+      }
+    }
+    return '#666';
   }
   
   // 格式化加成百分比
@@ -30,7 +27,6 @@
   
   module.exports = {
     getNationName: getNationName,
-    getNationIndex: getNationIndex,
     getNationColor: getNationColor,
     formatBonus: formatBonus
   };
@@ -62,8 +58,10 @@
     
     <view class="player-info">
       <view class="nation-badge" wx:if="{{playerNation}}" 
-            style="background: {{utils.getNationColor(nations, playerNation)}}">
+            style="background: {{utils.getNationColor(nations, playerNation)}}"
+            bindtap="openChangeNation">
         <text>{{utils.getNationName(playerNation)}}</text>
+        <text class="change-hint">⇄</text>
       </view>
       <view class="merit-info" bindtap="openExchange">
         <text class="merit-icon">🎖️</text>
@@ -86,6 +84,9 @@
     </view>
     <view class="nation-area wu-area">
       <text class="area-name">吴</text>
+    </view>
+    <view class="nation-area han-area">
+      <text class="area-name">汉</text>
     </view>
     
     <!-- 城市 -->
@@ -332,6 +333,72 @@
           </view>
         </scroll-view>
       </view>
+    </view>
+  </view>
+  
+  <!-- 转国弹窗 -->
+  <view class="modal-overlay" wx:if="{{showChangeNation}}" bindtap="closeChangeNation">
+    <view class="modal-content change-nation-modal" catchtap="">
+      <view class="modal-close" bindtap="closeChangeNation">✕</view>
+      <view class="modal-title">转国</view>
+      
+      <view class="current-nation-info">
+        <text class="info-label">当前国家</text>
+        <view class="nation-tag" style="background: {{utils.getNationColor(nations, playerNation)}}">
+          <text>{{utils.getNationName(playerNation)}}国</text>
+        </view>
+      </view>
+      
+      <!-- 转国条件 -->
+      <view class="transfer-conditions">
+        <view class="condition-title">转国条件</view>
+        <view class="condition-item {{hasLuoyang ? 'met' : 'unmet'}}">
+          <text class="condition-icon">{{hasLuoyang ? '✓' : '✗'}}</text>
+          <text>占领洛阳（汉都城）</text>
+        </view>
+        <view class="condition-item {{nationCityCount >= 25 ? 'met' : 'unmet'}}">
+          <text class="condition-icon">{{nationCityCount >= 25 ? '✓' : '✗'}}</text>
+          <text>本国城池数量≥25（当前：{{nationCityCount}}）</text>
+        </view>
+        <view class="condition-item">
+          <text class="condition-icon">💰</text>
+          <text>费用：{{transferGoldCost}}黄金 + {{transferSilverCost}}白银</text>
+        </view>
+        <view class="condition-item">
+          <text class="condition-icon">⚠️</text>
+          <text>需退出当前联盟</text>
+        </view>
+      </view>
+      
+      <!-- 目标国家选择 -->
+      <view class="target-nation-section" wx:if="{{canChangeNation}}">
+        <view class="section-title">选择目标国家</view>
+        <view class="nation-options">
+          <view class="nation-option {{item.id === targetNation ? 'selected' : ''}} {{item.id === playerNation ? 'disabled' : ''}}"
+                wx:for="{{nations}}" wx:key="id"
+                style="border-color: {{item.color}}"
+                bindtap="selectTargetNation" data-nation="{{item.id}}">
+            <view class="nation-flag-small" style="background: {{item.color}}">
+              <text>{{item.name}}</text>
+            </view>
+            <text class="nation-cities-count">{{item.cities.length}}城</text>
+            <view class="selected-mark" wx:if="{{item.id === targetNation}}">✓</view>
+          </view>
+        </view>
+      </view>
+      
+      <!-- 不满足条件提示 -->
+      <view class="unmet-reasons" wx:if="{{!canChangeNation && changeNationReasons.length > 0}}">
+        <text class="reasons-title">暂不满足转国条件：</text>
+        <view class="reason-item" wx:for="{{changeNationReasons}}" wx:key="*this">
+          <text>• {{item}}</text>
+        </view>
+      </view>
+      
+      <button class="confirm-btn" bindtap="doChangeNation" 
+              disabled="{{!canChangeNation || !targetNation}}">
+        确认转国
+      </button>
     </view>
   </view>
 </view>

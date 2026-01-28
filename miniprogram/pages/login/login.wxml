@@ -1,44 +1,96 @@
 <!--pages/login/login.wxml-->
 <view class="login-container">
-  <view class="login-header">
-    <image class="logo" src="/images/logo.png" mode="aspectFit"></image>
-    <text class="title">三国志·战役</text>
-    <text class="subtitle">重温经典，再战沙场</text>
-  </view>
+  <!-- 登录界面 -->
+  <view class="login-panel" wx:if="{{!showNationSelect}}">
+    <view class="login-header">
+      <image class="logo" src="/images/logo.png" mode="aspectFit"></image>
+      <text class="title">三国志·战役</text>
+      <text class="subtitle">重温经典，再战沙场</text>
+    </view>
 
-  <view class="login-content">
-    <view class="feature-list">
-      <view class="feature-item">
-        <text class="feature-icon">⚔️</text>
-        <text class="feature-text">经典三国战役</text>
+    <view class="login-content">
+      <view class="feature-list">
+        <view class="feature-item">
+          <text class="feature-icon">⚔️</text>
+          <text class="feature-text">经典三国战役</text>
+        </view>
+        <view class="feature-item">
+          <text class="feature-icon">👥</text>
+          <text class="feature-text">百位名将收集</text>
+        </view>
+        <view class="feature-item">
+          <text class="feature-icon">🏆</text>
+          <text class="feature-text">策略排兵布阵</text>
+        </view>
       </view>
-      <view class="feature-item">
-        <text class="feature-icon">👥</text>
-        <text class="feature-text">百位名将收集</text>
-      </view>
-      <view class="feature-item">
-        <text class="feature-icon">🏆</text>
-        <text class="feature-text">策略排兵布阵</text>
+    </view>
+
+    <view class="login-footer">
+      <button 
+        class="login-btn" 
+        bindtap="handleLogin"
+        loading="{{isLoading}}"
+        disabled="{{isLoading}}"
+      >
+        <image class="wechat-icon" src="/images/wechat-icon.png" mode="aspectFit"></image>
+        <text>微信授权登录</text>
+      </button>
+      
+      <view class="agreement">
+        <text>登录即表示同意</text>
+        <text class="link">《用户协议》</text>
+        <text>和</text>
+        <text class="link">《隐私政策》</text>
       </view>
     </view>
   </view>
 
-  <view class="login-footer">
-    <button 
-      class="login-btn" 
-      bindtap="handleLogin"
-      loading="{{isLoading}}"
-      disabled="{{isLoading}}"
-    >
-      <image class="wechat-icon" src="/images/wechat-icon.png" mode="aspectFit"></image>
-      <text>微信授权登录</text>
-    </button>
-    
-    <view class="agreement">
-      <text>登录即表示同意</text>
-      <text class="link">《用户协议》</text>
-      <text>和</text>
-      <text class="link">《隐私政策》</text>
+  <!-- 国家选择界面 -->
+  <view class="nation-select-panel" wx:if="{{showNationSelect}}">
+    <view class="nation-header">
+      <text class="nation-title">选择阵营</text>
+      <text class="nation-subtitle">请选择您要效忠的国家，一旦选择无法轻易更改</text>
+    </view>
+
+    <view class="nation-list">
+      <!-- 魏国 -->
+      <view class="nation-card {{selectedNation === 'WEI' ? 'selected' : ''}}"
+            wx:for="{{nations}}" wx:key="id"
+            style="border-color: {{item.color}}"
+            bindtap="onSelectNation" data-nation="{{item.id}}">
+        <view class="nation-banner" style="background: {{item.color}}">
+          <text class="nation-flag">{{item.name}}</text>
+        </view>
+        <view class="nation-info">
+          <text class="nation-name">{{item.name}}国</text>
+          <text class="nation-capital">国都：{{item.capitalName}}</text>
+          <text class="nation-cities">领土：{{item.cities.length}}城</text>
+          <view class="nation-desc" wx:if="{{item.id === 'WEI'}}">
+            <text>北方霸主，兵强马壮</text>
+          </view>
+          <view class="nation-desc" wx:elif="{{item.id === 'SHU'}}">
+            <text>仁德之师，同仇敌忾</text>
+          </view>
+          <view class="nation-desc" wx:elif="{{item.id === 'WU'}}">
+            <text>水师无双，富甲一方</text>
+          </view>
+          <view class="nation-desc" wx:elif="{{item.id === 'HAN'}}">
+            <text>汉室正统，天命所归</text>
+          </view>
+        </view>
+        <view class="select-mark" wx:if="{{selectedNation === item.id}}">✓</view>
+      </view>
+    </view>
+
+    <view class="nation-footer">
+      <button class="confirm-btn" 
+              bindtap="confirmNation"
+              disabled="{{!selectedNation}}">
+        确认选择
+      </button>
+      <view class="nation-tip">
+        <text>提示：占领洛阳且拥有25城以上可申请转国</text>
+      </view>
     </view>
   </view>
 </view>

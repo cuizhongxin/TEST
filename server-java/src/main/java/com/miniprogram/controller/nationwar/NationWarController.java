@@ -43,6 +43,44 @@ public class NationWarController {
     }
     
     /**
+     * 检查是否已选择国家
+     */
+    @GetMapping("/has-nation")
+    public ResponseEntity<?> hasNation(HttpServletRequest request) {
+        String odUserId = (String) request.getAttribute("odUserId");
+        
+        boolean hasNation = nationWarService.hasSelectedNation(odUserId);
+        String nation = nationWarService.getPlayerNation(odUserId);
+        
+        Map<String, Object> result = new HashMap<>();
+        result.put("hasNation", hasNation);
+        result.put("nation", nation);
+        
+        if (nation != null) {
+            NationWar.Nation nationInfo = nationWarService.getNation(nation);
+            if (nationInfo != null) {
+                result.put("nationName", nationInfo.getName());
+                result.put("nationColor", nationInfo.getColor());
+            }
+        }
+        
+        return ResponseEntity.ok(result);
+    }
+    
+    /**
+     * 获取所有国家列表（用于选择）
+     */
+    @GetMapping("/nations")
+    public ResponseEntity<?> getNations(HttpServletRequest request) {
+        List<NationWar.Nation> nations = nationWarService.getAllNations();
+        
+        Map<String, Object> result = new HashMap<>();
+        result.put("nations", nations);
+        
+        return ResponseEntity.ok(result);
+    }
+    
+    /**
      * 选择国家
      */
     @PostMapping("/select-nation")
@@ -54,11 +92,39 @@ public class NationWarController {
         
         nationWarService.setPlayerNation(odUserId, nationId);
         
+        NationWar.Nation nation = nationWarService.getNation(nationId);
+        
         Map<String, Object> result = new HashMap<>();
         result.put("success", true);
         result.put("nation", nationId);
-        result.put("message", "选择国家成功");
+        result.put("nationName", nation != null ? nation.getName() : nationId);
+        result.put("message", "选择国家成功，欢迎加入" + (nation != null ? nation.getName() : nationId) + "国！");
         
+        return ResponseEntity.ok(result);
+    }
+    
+    /**
+     * 检查是否可以转国
+     */
+    @GetMapping("/can-change-nation")
+    public ResponseEntity<?> canChangeNation(HttpServletRequest request) {
+        String odUserId = (String) request.getAttribute("odUserId");
+        
+        Map<String, Object> result = nationWarService.checkCanChangeNation(odUserId);
+        return ResponseEntity.ok(result);
+    }
+    
+    /**
+     * 转国
+     */
+    @PostMapping("/change-nation")
+    public ResponseEntity<?> changeNation(
+            HttpServletRequest request,
+            @RequestBody Map<String, String> body) {
+        String odUserId = (String) request.getAttribute("odUserId");
+        String newNationId = body.get("nationId");
+        
+        Map<String, Object> result = nationWarService.changeNation(odUserId, newNationId);
         return ResponseEntity.ok(result);
     }
     

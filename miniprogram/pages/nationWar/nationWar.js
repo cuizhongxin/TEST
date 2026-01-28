@@ -33,6 +33,16 @@ Page({
     showSignUp: false,
     showExchange: false,
     showWarResult: false,
+    showChangeNation: false,
+    
+    // 转国相关
+    canChangeNation: false,
+    changeNationReasons: [],
+    hasLuoyang: false,
+    nationCityCount: 0,
+    transferGoldCost: 1000,
+    transferSilverCost: 100000,
+    targetNation: null,
     
     // 当前国战
     currentWar: null,
@@ -139,23 +149,57 @@ Page({
   // 使用默认地图数据（后端不可用时）
   useDefaultMapData() {
     const defaultNations = [
-      { id: 'WEI', name: '魏', color: '#0066cc', capitalId: 'LUOYANG', capitalName: '洛阳', cities: ['LUOYANG', 'XUCHANG', 'YECHENG', 'CHANGAN'] },
-      { id: 'SHU', name: '蜀', color: '#00aa00', capitalId: 'CHENGDU', capitalName: '成都', cities: ['CHENGDU', 'HANZHONG', 'JIAMENG'] },
-      { id: 'WU', name: '吴', color: '#cc0000', capitalId: 'JIANYE', capitalName: '建业', cities: ['JIANYE', 'WUCHANG', 'CHANGSHA', 'JIANGXIA'] }
+      { id: 'WEI', name: '魏', color: '#0066cc', capitalId: 'YECHENG', capitalName: '邺城', cities: ['YECHENG', 'XUCHANG', 'CHENLIU', 'YINGCHUAN', 'NANYANG_WEI', 'PUYANG', 'JUANCHENG', 'DONGPING', 'BEIHAI', 'LANGYE'] },
+      { id: 'SHU', name: '蜀', color: '#00aa00', capitalId: 'CHENGDU', capitalName: '成都', cities: ['CHENGDU', 'HANZHONG', 'JIAMENG', 'ZITONG', 'BAZHONG', 'JIANNING', 'YONGCHANG', 'YIZHOU', 'NANZHONG', 'WUDU'] },
+      { id: 'WU', name: '吴', color: '#cc0000', capitalId: 'JIANYE', capitalName: '建业', cities: ['JIANYE', 'WUCHANG', 'CHANGSHA', 'JIANGXIA', 'LUJIANG', 'KUAIJI', 'DANYANG', 'YUZHANG', 'LINGLING', 'GUIYANG'] },
+      { id: 'HAN', name: '汉', color: '#ffcc00', capitalId: 'LUOYANG', capitalName: '洛阳', cities: ['LUOYANG', 'CHANGAN', 'HONGNONG', 'HEDONG', 'SHANGDANG', 'TAIYUAN', 'YANMEN', 'DAIJUN', 'YOUZHOU', 'LIAOXI'] }
     ];
     
     const defaultCities = [
-      { id: 'LUOYANG', name: '洛阳', owner: 'WEI', x: 400, y: 200, isCapital: true, defenseBonus: 20, neighbors: ['XUCHANG', 'CHANGAN'] },
-      { id: 'XUCHANG', name: '许昌', owner: 'WEI', x: 450, y: 250, isCapital: false, defenseBonus: 10, neighbors: ['LUOYANG', 'YECHENG', 'WUCHANG'] },
-      { id: 'YECHENG', name: '邺城', owner: 'WEI', x: 500, y: 150, isCapital: false, defenseBonus: 10, neighbors: ['XUCHANG'] },
-      { id: 'CHANGAN', name: '长安', owner: 'WEI', x: 300, y: 200, isCapital: false, defenseBonus: 15, neighbors: ['LUOYANG', 'HANZHONG'] },
-      { id: 'CHENGDU', name: '成都', owner: 'SHU', x: 200, y: 350, isCapital: true, defenseBonus: 20, neighbors: ['HANZHONG', 'JIAMENG'] },
-      { id: 'HANZHONG', name: '汉中', owner: 'SHU', x: 250, y: 280, isCapital: false, defenseBonus: 15, neighbors: ['CHENGDU', 'CHANGAN'] },
-      { id: 'JIAMENG', name: '剑阁', owner: 'SHU', x: 220, y: 320, isCapital: false, defenseBonus: 10, neighbors: ['CHENGDU', 'WUCHANG'] },
-      { id: 'JIANYE', name: '建业', owner: 'WU', x: 550, y: 350, isCapital: true, defenseBonus: 20, neighbors: ['WUCHANG', 'CHANGSHA'] },
-      { id: 'WUCHANG', name: '武昌', owner: 'WU', x: 450, y: 350, isCapital: false, defenseBonus: 10, neighbors: ['JIANYE', 'XUCHANG', 'JIAMENG', 'JIANGXIA'] },
-      { id: 'CHANGSHA', name: '长沙', owner: 'WU', x: 480, y: 400, isCapital: false, defenseBonus: 10, neighbors: ['JIANYE', 'JIANGXIA'] },
-      { id: 'JIANGXIA', name: '江夏', owner: 'WU', x: 420, y: 380, isCapital: false, defenseBonus: 10, neighbors: ['WUCHANG', 'CHANGSHA'] }
+      // 魏国城市
+      { id: 'YECHENG', name: '邺城', owner: 'WEI', x: 480, y: 120, isCapital: true, defenseBonus: 25 },
+      { id: 'XUCHANG', name: '许昌', owner: 'WEI', x: 450, y: 220, isCapital: false, defenseBonus: 15 },
+      { id: 'CHENLIU', name: '陈留', owner: 'WEI', x: 480, y: 200, isCapital: false, defenseBonus: 10 },
+      { id: 'YINGCHUAN', name: '颍川', owner: 'WEI', x: 420, y: 250, isCapital: false, defenseBonus: 10 },
+      { id: 'NANYANG_WEI', name: '南阳', owner: 'WEI', x: 380, y: 280, isCapital: false, defenseBonus: 10 },
+      { id: 'PUYANG', name: '濮阳', owner: 'WEI', x: 500, y: 160, isCapital: false, defenseBonus: 10 },
+      { id: 'JUANCHENG', name: '鄄城', owner: 'WEI', x: 520, y: 180, isCapital: false, defenseBonus: 10 },
+      { id: 'DONGPING', name: '东平', owner: 'WEI', x: 540, y: 150, isCapital: false, defenseBonus: 10 },
+      { id: 'BEIHAI', name: '北海', owner: 'WEI', x: 580, y: 140, isCapital: false, defenseBonus: 10 },
+      { id: 'LANGYE', name: '琅琊', owner: 'WEI', x: 600, y: 180, isCapital: false, defenseBonus: 10 },
+      // 蜀国城市
+      { id: 'CHENGDU', name: '成都', owner: 'SHU', x: 180, y: 350, isCapital: true, defenseBonus: 25 },
+      { id: 'HANZHONG', name: '汉中', owner: 'SHU', x: 220, y: 280, isCapital: false, defenseBonus: 20 },
+      { id: 'JIAMENG', name: '剑阁', owner: 'SHU', x: 200, y: 320, isCapital: false, defenseBonus: 20 },
+      { id: 'ZITONG', name: '梓潼', owner: 'SHU', x: 210, y: 300, isCapital: false, defenseBonus: 10 },
+      { id: 'BAZHONG', name: '巴中', owner: 'SHU', x: 230, y: 340, isCapital: false, defenseBonus: 10 },
+      { id: 'JIANNING', name: '建宁', owner: 'SHU', x: 160, y: 420, isCapital: false, defenseBonus: 10 },
+      { id: 'YONGCHANG', name: '永昌', owner: 'SHU', x: 120, y: 450, isCapital: false, defenseBonus: 10 },
+      { id: 'YIZHOU', name: '益州', owner: 'SHU', x: 200, y: 380, isCapital: false, defenseBonus: 10 },
+      { id: 'NANZHONG', name: '南中', owner: 'SHU', x: 150, y: 480, isCapital: false, defenseBonus: 10 },
+      { id: 'WUDU', name: '武都', owner: 'SHU', x: 250, y: 260, isCapital: false, defenseBonus: 15 },
+      // 吴国城市
+      { id: 'JIANYE', name: '建业', owner: 'WU', x: 560, y: 320, isCapital: true, defenseBonus: 25 },
+      { id: 'WUCHANG', name: '武昌', owner: 'WU', x: 440, y: 340, isCapital: false, defenseBonus: 15 },
+      { id: 'CHANGSHA', name: '长沙', owner: 'WU', x: 420, y: 400, isCapital: false, defenseBonus: 10 },
+      { id: 'JIANGXIA', name: '江夏', owner: 'WU', x: 460, y: 310, isCapital: false, defenseBonus: 10 },
+      { id: 'LUJIANG', name: '庐江', owner: 'WU', x: 520, y: 300, isCapital: false, defenseBonus: 10 },
+      { id: 'KUAIJI', name: '会稽', owner: 'WU', x: 600, y: 360, isCapital: false, defenseBonus: 10 },
+      { id: 'DANYANG', name: '丹阳', owner: 'WU', x: 580, y: 300, isCapital: false, defenseBonus: 10 },
+      { id: 'YUZHANG', name: '豫章', owner: 'WU', x: 500, y: 380, isCapital: false, defenseBonus: 10 },
+      { id: 'LINGLING', name: '零陵', owner: 'WU', x: 380, y: 450, isCapital: false, defenseBonus: 10 },
+      { id: 'GUIYANG', name: '桂阳', owner: 'WU', x: 440, y: 460, isCapital: false, defenseBonus: 10 },
+      // 汉/群雄城市
+      { id: 'LUOYANG', name: '洛阳', owner: 'HAN', x: 380, y: 200, isCapital: true, defenseBonus: 30 },
+      { id: 'CHANGAN', name: '长安', owner: 'HAN', x: 280, y: 200, isCapital: false, defenseBonus: 20 },
+      { id: 'HONGNONG', name: '弘农', owner: 'HAN', x: 340, y: 220, isCapital: false, defenseBonus: 10 },
+      { id: 'HEDONG', name: '河东', owner: 'HAN', x: 380, y: 150, isCapital: false, defenseBonus: 10 },
+      { id: 'SHANGDANG', name: '上党', owner: 'HAN', x: 420, y: 120, isCapital: false, defenseBonus: 15 },
+      { id: 'TAIYUAN', name: '太原', owner: 'HAN', x: 400, y: 80, isCapital: false, defenseBonus: 15 },
+      { id: 'YANMEN', name: '雁门', owner: 'HAN', x: 380, y: 40, isCapital: false, defenseBonus: 20 },
+      { id: 'DAIJUN', name: '代郡', owner: 'HAN', x: 450, y: 50, isCapital: false, defenseBonus: 10 },
+      { id: 'YOUZHOU', name: '幽州', owner: 'HAN', x: 520, y: 40, isCapital: false, defenseBonus: 15 },
+      { id: 'LIAOXI', name: '辽西', owner: 'HAN', x: 600, y: 50, isCapital: false, defenseBonus: 10 }
     ];
     
     this.setData({
@@ -163,8 +207,7 @@ Page({
       cities: defaultCities,
       playerNation: null,
       playerMerit: 0,
-      attackableCities: [],
-      showSelectNation: true
+      attackableCities: []
     });
   },
 
@@ -490,6 +533,88 @@ Page({
   },
 
   // 返回
+  // ========== 转国功能 ==========
+  
+  // 打开转国弹窗
+  async openChangeNation() {
+    try {
+      const res = await request({
+        url: '/api/nationwar/can-change-nation',
+        method: 'GET'
+      });
+      
+      this.setData({
+        canChangeNation: res.canChange,
+        changeNationReasons: res.reasons || [],
+        hasLuoyang: res.hasLuoyang,
+        nationCityCount: res.cityCount || 0,
+        transferGoldCost: res.goldCost || 1000,
+        transferSilverCost: res.silverCost || 100000,
+        showChangeNation: true,
+        targetNation: null
+      });
+    } catch (err) {
+      console.error('检查转国条件失败:', err);
+      wx.showToast({ title: '检查失败', icon: 'none' });
+    }
+  },
+  
+  // 关闭转国弹窗
+  closeChangeNation() {
+    this.setData({ showChangeNation: false, targetNation: null });
+  },
+  
+  // 选择目标国家
+  selectTargetNation(e) {
+    const nationId = e.currentTarget.dataset.nation;
+    if (nationId !== this.data.playerNation) {
+      this.setData({ targetNation: nationId });
+    }
+  },
+  
+  // 确认转国
+  async doChangeNation() {
+    if (!this.data.targetNation) {
+      wx.showToast({ title: '请选择目标国家', icon: 'none' });
+      return;
+    }
+    
+    if (!this.data.canChangeNation) {
+      wx.showToast({ title: '不满足转国条件', icon: 'none' });
+      return;
+    }
+    
+    wx.showModal({
+      title: '确认转国',
+      content: `转国需要消耗 ${this.data.transferGoldCost} 黄金 + ${this.data.transferSilverCost} 白银，且需退出当前联盟。确定要转国吗？`,
+      success: async (res) => {
+        if (res.confirm) {
+          try {
+            const result = await request({
+              url: '/api/nationwar/change-nation',
+              method: 'POST',
+              data: { nationId: this.data.targetNation }
+            });
+            
+            wx.showToast({ title: result.message || '转国成功', icon: 'success' });
+            
+            this.setData({
+              playerNation: this.data.targetNation,
+              showChangeNation: false,
+              targetNation: null
+            });
+            
+            // 重新加载地图数据
+            this.loadMapData();
+          } catch (err) {
+            console.error('转国失败:', err);
+            wx.showToast({ title: err.message || '转国失败', icon: 'none' });
+          }
+        }
+      }
+    });
+  },
+
   goBack() {
     wx.navigateBack();
   }
