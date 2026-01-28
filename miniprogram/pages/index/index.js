@@ -250,7 +250,7 @@ Page({
   },
 
   goToEnhance() {
-    wx.showToast({ title: '强化功能开发中', icon: 'none' })
+    wx.navigateTo({ url: '/pages/enhance/enhance' })
   },
 
   goToSoldier() {

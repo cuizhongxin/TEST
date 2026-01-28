@@ -153,9 +153,17 @@ Page({
     })
   },
 
-  // 调用微信支付（真实API）
+  // 调用微信支付（测试模式：直接成功）
   callWechatPay: function(orderId, payParams) {
     var that = this
+    
+    // ========== 测试模式：直接模拟支付成功 ==========
+    console.log('测试模式：直接模拟支付成功，订单ID:', orderId)
+    that.mockPaySuccess(orderId)
+    return
+    
+    // ========== 以下是真实支付代码（暂时注释） ==========
+    /*
     var selectedProduct = this.data.selectedProduct
     
     // 检查是否有真实支付参数（兼容不同字段名）
@@ -227,96 +235,25 @@ Page({
         }
       })
     }
+    */
   },
 
-  // 支付宝支付 - 跳转支付宝小程序
+  // 支付宝支付（测试模式：直接成功）
   callAlipay: function(orderId, payParams) {
     var that = this
     
-    // 检查是否有跳转参数
-    if (payParams && payParams.alipayAppId && payParams.alipayPath) {
-      // 跳转到支付宝小程序
-      wx.navigateToMiniProgram({
-        appId: payParams.alipayAppId, // 支付宝小程序AppID
-        path: payParams.alipayPath,   // 支付页面路径
-        extraData: {
-          orderId: orderId,
-          amount: that.data.selectedProduct.price
-        },
-        success: function(res) {
-          console.log('跳转支付宝小程序成功')
-          // 返回后需要查询订单状态
-        },
-        fail: function(err) {
-          console.error('跳转支付宝失败', err)
-          that.setData({ paying: false })
-          wx.showToast({ title: '跳转支付宝失败', icon: 'none' })
-        }
-      })
-    } else {
-      // 使用 web-view 打开支付宝H5支付页面
-      if (payParams && payParams.alipayH5Url) {
-        wx.navigateTo({
-          url: '/pages/webview/webview?url=' + encodeURIComponent(payParams.alipayH5Url)
-        })
-      } else {
-        wx.showModal({
-          title: '支付宝支付',
-          content: '需要后端配置支付宝接口参数。\n\n当前为测试模式，点击确定模拟支付成功。',
-          confirmText: '模拟支付',
-          cancelText: '取消',
-          success: function(res) {
-            if (res.confirm) {
-              that.mockPaySuccess(orderId)
-            } else {
-              that.setData({ paying: false })
-            }
-          }
-        })
-      }
-    }
+    // ========== 测试模式：直接模拟支付成功 ==========
+    console.log('测试模式：支付宝直接模拟支付成功，订单ID:', orderId)
+    that.mockPaySuccess(orderId)
   },
 
-  // 银联支付 - 跳转云闪付小程序
+  // 银联支付（测试模式：直接成功）
   callUnionpay: function(orderId, payParams) {
     var that = this
     
-    // 银联云闪付小程序AppID
-    var unionpayAppId = 'wxf7261e11865b9d3d' // 云闪付官方小程序ID
-    
-    if (payParams && payParams.tn) {
-      // 跳转到云闪付小程序
-      wx.navigateToMiniProgram({
-        appId: unionpayAppId,
-        path: 'pages/main/main',
-        extraData: {
-          tn: payParams.tn,  // 银联交易流水号
-          orderId: orderId
-        },
-        success: function(res) {
-          console.log('跳转云闪付成功')
-        },
-        fail: function(err) {
-          console.error('跳转云闪付失败', err)
-          that.setData({ paying: false })
-          wx.showToast({ title: '跳转云闪付失败', icon: 'none' })
-        }
-      })
-    } else {
-      wx.showModal({
-        title: '银联支付',
-        content: '需要后端配置银联接口参数。\n\n当前为测试模式，点击确定模拟支付成功。',
-        confirmText: '模拟支付',
-        cancelText: '取消',
-        success: function(res) {
-          if (res.confirm) {
-            that.mockPaySuccess(orderId)
-          } else {
-            that.setData({ paying: false })
-          }
-        }
-      })
-    }
+    // ========== 测试模式：直接模拟支付成功 ==========
+    console.log('测试模式：银联直接模拟支付成功，订单ID:', orderId)
+    that.mockPaySuccess(orderId)
   },
 
   // 模拟支付成功（测试用）

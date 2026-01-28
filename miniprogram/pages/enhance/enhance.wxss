@@ -1,59 +1,101 @@
-/* pages/enhance/enhance.wxss */
+/* pages/enhance/enhance.wxss - 精炼系统样式 */
 .page-container {
-  min-height: 100vh;
-  background: linear-gradient(180deg, #8b7355 0%, #6b5344 100%);
-  padding: 20rpx;
-  box-sizing: border-box;
+  width: 100vw;
+  height: 100vh;
+  background: linear-gradient(135deg, #2c1810 0%, #4a2c17 50%, #2c1810 100%);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
 }
 
-.header {
-  text-align: center;
-  padding: 20rpx 0;
+/* 顶部选项卡 */
+.tabs {
+  display: flex;
+  background: rgba(0,0,0,0.6);
+  border-bottom: 2rpx solid #8b6914;
+  flex-shrink: 0;
 }
 
-.title {
-  font-size: 36rpx;
+.tab-item {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16rpx 0;
+  color: #aaa;
+  border-bottom: 4rpx solid transparent;
+  transition: all 0.3s;
+}
+
+.tab-item.active {
   color: #ffd700;
+  border-bottom-color: #ffd700;
+  background: rgba(255,215,0,0.1);
+}
+
+.tab-icon {
+  font-size: 32rpx;
+  margin-right: 8rpx;
+}
+
+.tab-text {
+  font-size: 26rpx;
   font-weight: bold;
 }
 
-.section-title {
-  font-size: 28rpx;
+/* 主内容区 */
+.main-content {
+  flex: 1;
+  display: flex;
+  padding: 16rpx;
+  gap: 16rpx;
+  overflow: hidden;
+}
+
+/* 左侧武将面板 */
+.left-panel {
+  width: 200rpx;
+  background: rgba(0,0,0,0.5);
+  border-radius: 12rpx;
+  border: 2rpx solid #5a4a3a;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.panel-title {
+  font-size: 26rpx;
   color: #ffd700;
-  margin-bottom: 16rpx;
-  display: block;
+  padding: 12rpx 16rpx;
+  background: linear-gradient(90deg, rgba(139,105,20,0.8) 0%, transparent 100%);
+  border-bottom: 1rpx solid #5a4a3a;
 }
 
-.general-section {
-  margin-bottom: 30rpx;
-}
-
-.general-list {
-  white-space: nowrap;
+.general-scroll {
+  flex: 1;
+  overflow-y: auto;
 }
 
 .general-item {
-  display: inline-flex;
-  flex-direction: column;
+  display: flex;
   align-items: center;
-  padding: 16rpx;
-  margin-right: 16rpx;
-  background: rgba(0,0,0,0.3);
-  border-radius: 12rpx;
-  border: 2rpx solid transparent;
+  padding: 12rpx;
+  border-bottom: 1rpx solid rgba(90,74,58,0.5);
+  transition: background 0.2s;
 }
 
 .general-item.active {
-  border-color: #ffd700;
   background: rgba(255,215,0,0.2);
+  border-left: 4rpx solid #ffd700;
 }
 
 .general-avatar {
-  width: 80rpx;
-  height: 80rpx;
+  width: 64rpx;
+  height: 64rpx;
   border-radius: 8rpx;
   overflow: hidden;
   border: 2rpx solid #8b6914;
+  flex-shrink: 0;
 }
 
 .general-avatar image {
@@ -61,115 +103,680 @@
   height: 100%;
 }
 
+.general-info {
+  margin-left: 8rpx;
+  overflow: hidden;
+}
+
 .general-name {
   font-size: 24rpx;
   color: #fff;
-  margin-top: 8rpx;
+  display: block;
 }
 
-.equip-section {
-  margin-bottom: 30rpx;
+.general-type {
+  font-size: 20rpx;
+  color: #aaa;
 }
 
-.equip-list {
+/* 中间装备面板 */
+.center-panel {
+  flex: 1;
+  background: rgba(0,0,0,0.5);
+  border-radius: 12rpx;
+  border: 2rpx solid #5a4a3a;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
-  gap: 12rpx;
 }
 
-.equip-item {
+.general-detail {
+  padding: 16rpx;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.general-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 16rpx;
+  padding-bottom: 12rpx;
+  border-bottom: 1rpx solid #5a4a3a;
+}
+
+.general-portrait {
+  width: 120rpx;
+  height: 120rpx;
+  border-radius: 12rpx;
+  border: 3rpx solid #ffd700;
+}
+
+.general-stats {
+  flex: 1;
+}
+
+.general-title {
   display: flex;
   align-items: center;
   gap: 16rpx;
-  padding: 16rpx;
-  background: rgba(0,0,0,0.3);
-  border-radius: 8rpx;
-  border: 2rpx solid transparent;
+  margin-bottom: 8rpx;
 }
 
-.equip-item.active {
+.general-title .name {
+  font-size: 32rpx;
+  color: #ffd700;
+  font-weight: bold;
+}
+
+.general-title .level {
+  font-size: 24rpx;
+  color: #7fff00;
+}
+
+.stat-row {
+  font-size: 22rpx;
+  color: #ccc;
+  margin-bottom: 8rpx;
+}
+
+.stat-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16rpx;
+}
+
+.stat-item {
+  display: flex;
+  align-items: center;
+  font-size: 22rpx;
+}
+
+.stat-label {
+  color: #ffd700;
+}
+
+.stat-key {
+  color: #aaa;
+  margin-left: 2rpx;
+}
+
+.stat-value {
+  color: #fff;
+  margin-left: 4rpx;
+}
+
+.dismiss-btn {
+  padding: 8rpx 20rpx;
+  background: linear-gradient(180deg, #8b2020 0%, #5a1010 100%);
+  border-radius: 8rpx;
+  color: #fff;
+  font-size: 22rpx;
+  border: 1rpx solid #aa3030;
+}
+
+/* 套装效果 */
+.set-effect {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+  padding: 12rpx 16rpx;
+  background: rgba(139,105,20,0.3);
+  border-radius: 8rpx;
+  margin: 12rpx 0;
+}
+
+.set-name {
+  font-size: 24rpx;
+  color: #ffd700;
+  font-weight: bold;
+}
+
+.set-bonus {
+  font-size: 22rpx;
+  color: #7fff00;
+}
+
+/* 装备网格 */
+.equipment-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12rpx;
+  flex: 1;
+}
+
+.equipment-slot {
+  background: rgba(0,0,0,0.4);
+  border: 2rpx solid #5a4a3a;
+  border-radius: 12rpx;
+  padding: 12rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  position: relative;
+}
+
+.equipment-slot.active {
   border-color: #ffd700;
-  background: rgba(255,215,0,0.2);
+  background: rgba(255,215,0,0.15);
+  box-shadow: 0 0 20rpx rgba(255,215,0,0.3);
+}
+
+.slot-icon {
+  width: 80rpx;
+  height: 80rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8rpx;
+  overflow: hidden;
+  background: rgba(0,0,0,0.3);
+}
+
+.slot-icon image {
+  width: 100%;
+  height: 100%;
+}
+
+.slot-icon .empty-icon {
+  font-size: 40rpx;
+}
+
+.slot-enhance {
+  position: absolute;
+  top: 8rpx;
+  right: 8rpx;
+  background: rgba(0,200,0,0.8);
+  color: #fff;
+  font-size: 18rpx;
+  padding: 2rpx 8rpx;
+  border-radius: 4rpx;
+}
+
+.slot-name {
+  font-size: 20rpx;
+  color: #ccc;
+  margin-top: 8rpx;
+  text-align: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100%;
+}
+
+/* 品质颜色 */
+.quality-1 { border-color: #888 !important; }
+.quality-2 { border-color: #00ff00 !important; }
+.quality-3 { border-color: #0088ff !important; }
+.quality-4 { border-color: #9900ff !important; }
+.quality-5 { border-color: #ff8800 !important; }
+.quality-6 { border-color: #ff0000 !important; }
+
+/* 右侧操作面板 */
+.right-panel {
+  width: 400rpx;
+  display: flex;
+  flex-direction: column;
+}
+
+.operation-panel {
+  flex: 1;
+  background: rgba(0,0,0,0.5);
+  border-radius: 12rpx;
+  border: 2rpx solid #5a4a3a;
+  padding: 16rpx;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* 装备预览 */
+.equip-preview {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+  padding-bottom: 16rpx;
+  border-bottom: 1rpx solid #5a4a3a;
+}
+
+.equip-icon {
+  width: 100rpx;
+  height: 100rpx;
+  border-radius: 12rpx;
+  border: 3rpx solid #5a4a3a;
+  overflow: hidden;
+  position: relative;
+  background: rgba(0,0,0,0.3);
+}
+
+.equip-icon image {
+  width: 100%;
+  height: 100%;
+}
+
+.enhance-badge {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(0,200,0,0.9);
+  color: #fff;
+  font-size: 20rpx;
+  text-align: center;
+  padding: 2rpx 0;
+}
+
+.equip-detail {
+  flex: 1;
 }
 
 .equip-name {
   font-size: 28rpx;
+  color: #ffd700;
   font-weight: bold;
-  flex: 1;
+  display: block;
+  margin-bottom: 8rpx;
 }
 
-.equip-level {
-  font-size: 28rpx;
-  color: #7fff00;
-  font-weight: bold;
-}
-
-.equip-attr {
+.enhance-level, .quality-desc {
   font-size: 22rpx;
   color: #aaa;
 }
 
-.empty-tip {
-  text-align: center;
-  color: #888;
-  padding: 40rpx;
+/* 强化预览 */
+.enhance-preview, .quality-bonus {
+  padding: 16rpx 0;
+  border-bottom: 1rpx solid #5a4a3a;
 }
 
-.enhance-info {
+.preview-title {
+  font-size: 24rpx;
+  color: #ffd700;
+  margin-bottom: 12rpx;
+}
+
+.attr-compare {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+}
+
+.current-attr, .next-attr {
+  flex: 1;
   background: rgba(0,0,0,0.3);
-  border-radius: 16rpx;
-  padding: 20rpx;
-  margin-bottom: 30rpx;
+  padding: 12rpx;
+  border-radius: 8rpx;
 }
 
-.info-card {
-  margin-bottom: 20rpx;
+.attr-label {
+  font-size: 20rpx;
+  color: #888;
+  display: block;
+  margin-bottom: 8rpx;
 }
 
-.info-row {
+.current-attr text, .next-attr text {
+  display: block;
+  font-size: 22rpx;
+  color: #ccc;
+  margin-top: 4rpx;
+}
+
+.next-attr .highlight {
+  color: #7fff00;
+}
+
+.arrow {
+  font-size: 28rpx;
+  color: #ffd700;
+}
+
+.attr-list text {
+  display: inline-block;
+  font-size: 22rpx;
+  color: #7fff00;
+  margin-right: 16rpx;
+}
+
+/* 消耗信息 */
+.cost-info {
+  padding: 16rpx 0;
+  border-bottom: 1rpx solid #5a4a3a;
+}
+
+.cost-row {
   display: flex;
   justify-content: space-between;
-  padding: 8rpx 0;
+  padding: 6rpx 0;
 }
 
-.info-label {
-  font-size: 26rpx;
+.cost-label {
+  font-size: 22rpx;
   color: #aaa;
 }
 
-.info-value {
-  font-size: 26rpx;
+.cost-value {
+  font-size: 22rpx;
   color: #fff;
 }
 
-.info-value.highlight {
-  color: #7fff00;
+.cost-value.rate {
+  color: #ffd700;
   font-weight: bold;
 }
 
-.info-value.cost {
-  color: #ff6b6b;
+/* 保护符选项 */
+.protect-option {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+  padding: 16rpx 0;
 }
 
-.enhance-btn {
-  text-align: center;
+.protect-option text {
+  font-size: 22rpx;
+  color: #ccc;
+}
+
+/* 品质进度条 */
+.quality-progress {
+  padding: 16rpx 0;
+  border-bottom: 1rpx solid #5a4a3a;
+}
+
+.progress-label {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8rpx;
+}
+
+.progress-label text {
+  font-size: 22rpx;
+  color: #aaa;
+}
+
+.progress-value {
+  color: #ffd700 !important;
+  font-weight: bold;
+}
+
+.progress-bar {
+  height: 20rpx;
+  background: rgba(0,0,0,0.5);
+  border-radius: 10rpx;
+  overflow: hidden;
+  border: 1rpx solid #5a4a3a;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #ff6b6b 0%, #ffd700 50%, #7fff00 100%);
+  transition: width 0.3s;
+}
+
+.quality-marks {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 8rpx;
+}
+
+.quality-marks text {
+  font-size: 18rpx;
+  color: #666;
+}
+
+/* 操作按钮 */
+.action-btn {
+  margin-top: auto;
   padding: 20rpx;
   background: linear-gradient(180deg, #8b6914 0%, #654321 100%);
   border-radius: 12rpx;
   color: #ffd700;
-  font-size: 30rpx;
+  font-size: 28rpx;
   font-weight: bold;
+  text-align: center;
+  border: 2rpx solid #aa8833;
 }
 
-.resource-bar {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
+.action-btn.disabled {
+  background: #333;
+  color: #666;
+  border-color: #444;
+}
+
+/* 融合面板 */
+.fuse-panel, .decompose-panel {
+  width: 100%;
+}
+
+.fuse-tip, .decompose-tip {
+  font-size: 22rpx;
+  color: #aaa;
+  margin-bottom: 16rpx;
+}
+
+.selected-equipments {
   display: flex;
-  justify-content: space-around;
-  padding: 20rpx;
-  background: rgba(0,0,0,0.8);
+  gap: 16rpx;
+  margin-bottom: 16rpx;
+}
+
+.selected-slot {
+  flex: 1;
+  aspect-ratio: 1;
+  background: rgba(0,0,0,0.4);
+  border: 2rpx dashed #5a4a3a;
+  border-radius: 12rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.slot-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.slot-content image {
+  width: 60rpx;
+  height: 60rpx;
+  border-radius: 8rpx;
+}
+
+.slot-label {
+  font-size: 18rpx;
+  color: #ccc;
+  margin-top: 4rpx;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100%;
+  padding: 0 4rpx;
+}
+
+.slot-empty text {
+  font-size: 48rpx;
+  color: #5a4a3a;
+}
+
+.fuse-list-title, .section-title {
+  font-size: 22rpx;
   color: #ffd700;
+  margin-bottom: 8rpx;
+}
+
+.fuse-equipment-list, .decompose-equipment-list {
+  flex: 1;
+  max-height: 300rpx;
+  background: rgba(0,0,0,0.3);
+  border-radius: 8rpx;
+  padding: 8rpx;
+}
+
+.fuse-equip-item, .decompose-equip-item {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+  padding: 12rpx;
+  border-radius: 8rpx;
+  margin-bottom: 8rpx;
+  background: rgba(255,255,255,0.05);
+  border: 2rpx solid transparent;
+}
+
+.fuse-equip-item.selected, .decompose-equip-item.selected {
+  background: rgba(255,215,0,0.15);
+  border-color: #ffd700;
+}
+
+.fuse-equip-item image, .decompose-equip-item image {
+  width: 50rpx;
+  height: 50rpx;
+  border-radius: 6rpx;
+}
+
+.fuse-equip-info, .decompose-equip-info {
+  flex: 1;
+}
+
+.fuse-equip-name, .decompose-equip-name {
+  font-size: 22rpx;
+  color: #fff;
+  display: block;
+}
+
+.fuse-equip-set, .decompose-equip-level {
+  font-size: 18rpx;
+  color: #888;
+}
+
+.check-mark {
+  color: #ffd700;
+  font-size: 28rpx;
+}
+
+.check-box {
+  width: 36rpx;
+  height: 36rpx;
+  border: 2rpx solid #5a4a3a;
+  border-radius: 6rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24rpx;
+  color: #ffd700;
+}
+
+.check-box.checked {
+  background: rgba(255,215,0,0.3);
+  border-color: #ffd700;
+}
+
+/* 目标槽位 */
+.target-slot-section {
+  margin: 16rpx 0;
+}
+
+.target-slots {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12rpx;
+}
+
+.target-slot {
+  flex: 0 0 calc(33.33% - 8rpx);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 12rpx;
+  background: rgba(0,0,0,0.3);
+  border-radius: 8rpx;
+  border: 2rpx solid #5a4a3a;
+}
+
+.target-slot.active {
+  border-color: #ffd700;
+  background: rgba(255,215,0,0.15);
+}
+
+.target-slot .slot-icon {
+  font-size: 32rpx;
+  width: auto;
+  height: auto;
+  background: none;
+}
+
+.target-slot .slot-name {
+  font-size: 20rpx;
+  color: #ccc;
+  margin-top: 4rpx;
+}
+
+/* 分解统计 */
+.decompose-summary {
+  padding: 12rpx;
+  background: rgba(255,215,0,0.1);
+  border-radius: 8rpx;
+  margin: 12rpx 0;
+  text-align: center;
+}
+
+.decompose-summary text {
+  font-size: 22rpx;
+  color: #ffd700;
+}
+
+/* 空提示 */
+.empty-tip {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #666;
   font-size: 26rpx;
+}
+
+/* 底部资源栏 */
+.resource-bar {
+  display: flex;
+  align-items: center;
+  padding: 12rpx 20rpx;
+  background: rgba(0,0,0,0.8);
+  border-top: 2rpx solid #5a4a3a;
+  flex-shrink: 0;
+  gap: 16rpx;
+  overflow-x: auto;
+}
+
+.resource-item {
+  display: flex;
+  align-items: center;
+  gap: 4rpx;
+  flex-shrink: 0;
+}
+
+.resource-icon {
+  font-size: 24rpx;
+}
+
+.resource-value {
+  font-size: 22rpx;
+  color: #ffd700;
+}
+
+.back-btn {
+  margin-left: auto;
+  padding: 8rpx 24rpx;
+  background: linear-gradient(180deg, #5a4a3a 0%, #3a2a1a 100%);
+  border-radius: 8rpx;
+  color: #ccc;
+  font-size: 24rpx;
+  border: 1rpx solid #6a5a4a;
+  flex-shrink: 0;
 }

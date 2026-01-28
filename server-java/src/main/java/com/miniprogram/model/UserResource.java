@@ -54,6 +54,9 @@ public class UserResource {
     // 合成符（用于合成高级强化石）
     private Integer mergeScroll;            // 合成符
     
+    // 品质石（用于提升装备品质）
+    private Integer qualityStone;           // 品质石
+    
     // 训练用粮食
     private Integer basicFood;              // 初级粮食
     private Integer advancedFood;           // 中级粮食
@@ -123,6 +126,7 @@ public class UserResource {
                 .enhanceScrollMedium(2)   // 初始2个中级强化符
                 .enhanceScrollAdvanced(0) // 初始0个高级强化符
                 .mergeScroll(10)          // 初始10个合成符
+                .qualityStone(0)          // 初始0个品质石
                 .basicFood(50)            // 初始50个初级粮食
                 .advancedFood(20)         // 初始20个中级粮食
                 .premiumFood(5)           // 初始5个高级粮食

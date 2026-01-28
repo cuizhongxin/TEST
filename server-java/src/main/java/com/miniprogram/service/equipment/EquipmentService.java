@@ -121,6 +121,51 @@ public class EquipmentService {
         return equipmentRepository.findById(equipmentId);
     }
     
+    /**
+     * 获取指定用户的装备（带权限检查）
+     */
+    public Equipment getEquipment(String userId, String equipmentId) {
+        Equipment equipment = equipmentRepository.findById(equipmentId);
+        if (equipment == null) {
+            return null;
+        }
+        if (!userId.equals(equipment.getUserId())) {
+            return null;
+        }
+        return equipment;
+    }
+    
+    /**
+     * 保存装备
+     */
+    public Equipment saveEquipment(String userId, Equipment equipment) {
+        if (equipment == null) {
+            throw new BusinessException(400, "装备不能为空");
+        }
+        if (!userId.equals(equipment.getUserId())) {
+            throw new BusinessException(403, "无权操作此装备");
+        }
+        equipment.setUpdateTime(System.currentTimeMillis());
+        return equipmentRepository.update(equipment);
+    }
+    
+    /**
+     * 删除装备
+     */
+    public void deleteEquipment(String userId, String equipmentId) {
+        Equipment equipment = equipmentRepository.findById(equipmentId);
+        if (equipment == null) {
+            return;
+        }
+        if (!userId.equals(equipment.getUserId())) {
+            throw new BusinessException(403, "无权操作此装备");
+        }
+        if (equipment.getEquipped() != null && equipment.getEquipped()) {
+            throw new BusinessException(400, "请先卸下装备");
+        }
+        equipmentRepository.delete(equipmentId);
+    }
+    
     // ==================== 装备穿戴 ====================
     
     /**

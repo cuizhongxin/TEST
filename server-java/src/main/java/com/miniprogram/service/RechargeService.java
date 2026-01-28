@@ -283,13 +283,10 @@ public class RechargeService {
     
     /**
      * 生成微信支付参数
-     * 实际项目中需要:
-     * 1. 调用微信统一下单API获取prepay_id
-     * 2. 使用API密钥生成签名
      * 
-     * 统一下单API需要的参数包括:
-     * - appid, mch_id, nonce_str, sign, body, out_trade_no
-     * - total_fee (订单金额，单位分), spbill_create_ip, notify_url, trade_type, openid
+     * 正式环境需要:
+     * 1. 调用微信统一下单API获取prepay_id
+     * 2. 使用商户API密钥生成签名
      */
     public Map<String, Object> generateWechatPayParams(RechargeOrder order) {
         Map<String, Object> params = new HashMap<>();
@@ -303,18 +300,29 @@ public class RechargeService {
         // 这里模拟返回
         String prepayId = "wx" + System.currentTimeMillis();
         
-        // 前端 wx.requestPayment 需要的参数
+        // ========== 前端 wx.requestPayment 需要的参数 ==========
         params.put("appId", appId);
         params.put("timeStamp", timeStamp);
         params.put("nonceStr", nonceStr);
         params.put("package", "prepay_id=" + prepayId);
-        params.put("signType", "RSA");  // 推荐使用RSA签名
+        params.put("signType", "RSA");
         params.put("paySign", generatePaySign(appId, timeStamp, nonceStr, "prepay_id=" + prepayId));
         
-        // 额外参数(某些SDK可能需要)
-        params.put("totalFee", order.getAmount());  // 金额(分)
+        // ========== 统一下单API需要的参数（兼容不同格式） ==========
+        // 驼峰格式
+        params.put("totalFee", order.getAmount());
+        params.put("outTradeNo", order.getId());
+        // 下划线格式（微信官方格式）
+        params.put("total_fee", order.getAmount());
+        params.put("out_trade_no", order.getId());
+        // 大写下划线格式（某些SDK使用）
+        params.put("TOTAL_FEE", order.getAmount());
+        params.put("OUT_TRADE_NO", order.getId());
+        
+        // 其他常用参数
         params.put("orderId", order.getId());
         params.put("body", order.getProductName());
+        params.put("amount", order.getAmount());
         
         return params;
     }
@@ -324,13 +332,13 @@ public class RechargeService {
      * 正式环境需要使用商户API密钥进行签名
      */
     private String generatePaySign(String appId, String timeStamp, String nonceStr, String packageVal) {
-        // 正式环境签名算法:
-        // 1. 将参数按字典序排序: appId, nonceStr, package, signType, timeStamp
-        // 2. 拼接成字符串: appId=xxx&nonceStr=xxx&package=xxx&signType=RSA&timeStamp=xxx
-        // 3. 使用商户私钥进行RSA-SHA256签名
-        // 4. 对签名结果进行Base64编码
+        // 正式环境签名算法 (RSA-SHA256):
+        // 1. 构造签名串: 
+        //    appId + "\n" + timeStamp + "\n" + nonceStr + "\n" + package + "\n"
+        // 2. 使用商户私钥进行RSA-SHA256签名
+        // 3. 对签名结果进行Base64编码
         
-        // 模拟签名
+        // 模拟签名（测试环境）
         return "MOCK_SIGN_" + System.currentTimeMillis();
     }
     

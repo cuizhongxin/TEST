@@ -98,7 +98,7 @@
               <text class="func-text">训练</text>
             </view>
             <view class="func-btn" bindtap="goToEnhance">
-              <text class="func-text">强化</text>
+              <text class="func-text">精炼</text>
             </view>
             <view class="func-btn" bindtap="goToSoldier">
               <text class="func-text">士兵</text>

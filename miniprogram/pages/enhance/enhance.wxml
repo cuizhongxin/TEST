@@ -1,2 +1,376 @@
-<!--pages/enhance/enhance.wxml-->
-<text>pages/enhance/enhance.wxml</text>
+<!--pages/enhance/enhance.wxml - 精炼系统-->
+<wxs module="utils">
+  // 检查装备是否被选中
+  function isSelected(list, itemId) {
+    if (!list || !list.length) return false;
+    for (var i = 0; i < list.length; i++) {
+      if (list[i] && list[i].id === itemId) return true;
+    }
+    return false;
+  }
+  module.exports = { isSelected: isSelected };
+</wxs>
+
+<view class="page-container">
+  <!-- 顶部选项卡 -->
+  <view class="tabs">
+    <view class="tab-item {{activeTab === 'enhance' ? 'active' : ''}}" bindtap="switchTab" data-tab="enhance">
+      <text class="tab-icon">⚔️</text>
+      <text class="tab-text">装备强化</text>
+    </view>
+    <view class="tab-item {{activeTab === 'quality' ? 'active' : ''}}" bindtap="switchTab" data-tab="quality">
+      <text class="tab-icon">💎</text>
+      <text class="tab-text">装备品质</text>
+    </view>
+    <view class="tab-item {{activeTab === 'fuse' ? 'active' : ''}}" bindtap="switchTab" data-tab="fuse">
+      <text class="tab-icon">🔮</text>
+      <text class="tab-text">套装融合</text>
+    </view>
+    <view class="tab-item {{activeTab === 'decompose' ? 'active' : ''}}" bindtap="switchTab" data-tab="decompose">
+      <text class="tab-icon">🔨</text>
+      <text class="tab-text">装备分解</text>
+    </view>
+  </view>
+
+  <!-- 主内容区 -->
+  <view class="main-content">
+    <!-- 左侧武将列表 -->
+    <view class="left-panel" wx:if="{{activeTab === 'enhance' || activeTab === 'quality'}}">
+      <view class="panel-title">选择武将</view>
+      <scroll-view scroll-y class="general-scroll">
+        <view class="general-item {{selectedGeneral && selectedGeneral.id === item.id ? 'active' : ''}}"
+              wx:for="{{generals}}" wx:key="id"
+              bindtap="selectGeneral" data-general="{{item}}">
+          <view class="general-avatar">
+            <image src="{{item.avatar || '/images/avatar-default.png'}}" mode="aspectFill"></image>
+          </view>
+          <view class="general-info">
+            <text class="general-name">{{item.name}}</text>
+            <text class="general-type">({{item.troopType || '步'}})</text>
+          </view>
+        </view>
+      </scroll-view>
+    </view>
+
+    <!-- 中间装备区 -->
+    <view class="center-panel" wx:if="{{activeTab === 'enhance' || activeTab === 'quality'}}">
+      <!-- 武将信息 -->
+      <view class="general-detail" wx:if="{{selectedGeneral}}">
+        <view class="general-header">
+          <image class="general-portrait" src="{{selectedGeneral.avatar || '/images/avatar-default.png'}}" mode="aspectFill"></image>
+          <view class="general-stats">
+            <view class="general-title">
+              <text class="name">{{selectedGeneral.name}}</text>
+              <text class="level">LV:{{selectedGeneral.level || 1}}</text>
+            </view>
+            <view class="stat-row">
+              <text>统领部队：{{selectedGeneral.troopName || '步兵'}}</text>
+            </view>
+            <view class="stat-grid">
+              <view class="stat-item">
+                <text class="stat-label">武</text>
+                <text class="stat-key">勇:</text>
+                <text class="stat-value">{{selectedGeneral.valor || 0}}</text>
+              </view>
+              <view class="stat-item">
+                <text class="stat-label">统</text>
+                <text class="stat-key">御:</text>
+                <text class="stat-value">{{selectedGeneral.command || 0}}</text>
+              </view>
+              <view class="stat-item">
+                <text class="stat-label">攻</text>
+                <text class="stat-key">击:</text>
+                <text class="stat-value">{{selectedGeneral.attack || 0}}</text>
+              </view>
+              <view class="stat-item">
+                <text class="stat-label">防</text>
+                <text class="stat-key">御:</text>
+                <text class="stat-value">{{selectedGeneral.defense || 0}}</text>
+              </view>
+            </view>
+          </view>
+          <view class="dismiss-btn">解雇</view>
+        </view>
+
+        <!-- 套装效果 -->
+        <view class="set-effect" wx:if="{{setEffect}}">
+          <text class="set-name">{{setEffect.name}} {{setEffect.count}}/6</text>
+          <text class="set-bonus">{{setEffect.bonus}}</text>
+        </view>
+
+        <!-- 装备槽位 -->
+        <view class="equipment-grid">
+          <view class="equipment-slot {{selectedEquipment && equipments[item.id] && selectedEquipment.id === equipments[item.id].id ? 'active' : ''}}"
+                wx:for="{{slotTypes}}" wx:key="id"
+                bindtap="selectSlot" data-slot-id="{{item.id}}">
+            <view class="slot-icon">
+              <image wx:if="{{equipments[item.id]}}" 
+                     src="{{equipments[item.id].icon || '/images/equip-default.png'}}" 
+                     mode="aspectFill"
+                     class="quality-{{equipments[item.id].quality.id || 1}}"></image>
+              <text wx:else class="empty-icon">{{item.icon}}</text>
+            </view>
+            <view class="slot-enhance" wx:if="{{equipments[item.id]}}">
+              +{{equipments[item.id].enhanceLevel || 0}}
+            </view>
+            <view class="slot-name">{{equipments[item.id] ? equipments[item.id].name : item.name}}</view>
+          </view>
+        </view>
+      </view>
+
+      <view class="empty-tip" wx:else>
+        <text>请选择一个武将</text>
+      </view>
+    </view>
+
+    <!-- 右侧操作区 -->
+    <view class="right-panel">
+      <!-- 装备强化 -->
+      <view class="operation-panel" wx:if="{{activeTab === 'enhance'}}">
+        <view class="panel-title">装备强化</view>
+        
+        <view class="enhance-content" wx:if="{{selectedEquipment && enhanceInfo}}">
+          <view class="equip-preview">
+            <view class="equip-icon quality-{{selectedEquipment.quality.id || 1}}">
+              <image src="{{selectedEquipment.icon || '/images/equip-default.png'}}" mode="aspectFill"></image>
+              <text class="enhance-badge">+{{enhanceInfo.currentLevel}}</text>
+            </view>
+            <view class="equip-detail">
+              <text class="equip-name">{{selectedEquipment.name}}</text>
+              <text class="enhance-level">强化等级: +{{enhanceInfo.currentLevel}} / +{{enhanceInfo.maxLevel}}</text>
+            </view>
+          </view>
+
+          <!-- 强化属性预览 -->
+          <view class="enhance-preview">
+            <view class="preview-title">强化加成:</view>
+            <view class="attr-compare">
+              <view class="current-attr">
+                <text class="attr-label">当前</text>
+                <text wx:if="{{enhanceInfo.currentBonus.attack}}">攻击+{{enhanceInfo.currentBonus.attack}}</text>
+                <text wx:if="{{enhanceInfo.currentBonus.defense}}">防御+{{enhanceInfo.currentBonus.defense}}</text>
+                <text wx:if="{{enhanceInfo.currentBonus.hp}}">生命+{{enhanceInfo.currentBonus.hp}}</text>
+              </view>
+              <view class="arrow" wx:if="{{enhanceInfo.canEnhance}}">→</view>
+              <view class="next-attr" wx:if="{{enhanceInfo.canEnhance}}">
+                <text class="attr-label">下一级</text>
+                <text class="highlight" wx:if="{{enhanceInfo.nextBonus.attack}}">攻击+{{enhanceInfo.nextBonus.attack}}</text>
+                <text class="highlight" wx:if="{{enhanceInfo.nextBonus.defense}}">防御+{{enhanceInfo.nextBonus.defense}}</text>
+                <text class="highlight" wx:if="{{enhanceInfo.nextBonus.hp}}">生命+{{enhanceInfo.nextBonus.hp}}</text>
+              </view>
+            </view>
+          </view>
+
+          <!-- 强化消耗 -->
+          <view class="cost-info" wx:if="{{enhanceInfo.canEnhance}}">
+            <view class="cost-row">
+              <text class="cost-label">成功率:</text>
+              <text class="cost-value rate">{{enhanceInfo.successRate}}%</text>
+            </view>
+            <view class="cost-row">
+              <text class="cost-label">消耗银币:</text>
+              <text class="cost-value">{{enhanceInfo.silverCost}}</text>
+            </view>
+            <view class="cost-row">
+              <text class="cost-label">消耗强化石:</text>
+              <text class="cost-value">{{enhanceInfo.stoneLevel}}级 x{{enhanceInfo.stoneCost}}</text>
+            </view>
+          </view>
+
+          <!-- 保护符选项 -->
+          <view class="protect-option" wx:if="{{enhanceInfo.canEnhance && enhanceInfo.currentLevel >= 5}}">
+            <switch checked="{{useProtect}}" bindchange="toggleProtect" color="#ffd700"/>
+            <text>使用保护符（失败不掉级）</text>
+          </view>
+
+          <!-- 强化按钮 -->
+          <view class="action-btn {{enhancing || !enhanceInfo.canEnhance ? 'disabled' : ''}}" 
+                bindtap="doEnhance">
+            {{enhancing ? '强化中...' : (enhanceInfo.canEnhance ? '开始强化' : enhanceInfo.message)}}
+          </view>
+        </view>
+
+        <view class="empty-tip" wx:else>
+          <text>请选择要强化的装备</text>
+        </view>
+      </view>
+
+      <!-- 装备品质 -->
+      <view class="operation-panel" wx:if="{{activeTab === 'quality'}}">
+        <view class="panel-title">品质提升</view>
+        
+        <view class="quality-content" wx:if="{{selectedEquipment && qualityInfo}}">
+          <view class="equip-preview">
+            <view class="equip-icon quality-{{selectedEquipment.quality.id || 1}}">
+              <image src="{{selectedEquipment.icon || '/images/equip-default.png'}}" mode="aspectFill"></image>
+            </view>
+            <view class="equip-detail">
+              <text class="equip-name">{{selectedEquipment.name}}</text>
+              <text class="quality-desc">品质: {{qualityInfo.qualityDesc}}</text>
+            </view>
+          </view>
+
+          <!-- 品质进度条 -->
+          <view class="quality-progress">
+            <view class="progress-label">
+              <text>品质值</text>
+              <text class="progress-value">{{qualityInfo.currentQuality}}%</text>
+            </view>
+            <view class="progress-bar">
+              <view class="progress-fill" style="width: {{qualityInfo.currentQuality}}%"></view>
+            </view>
+            <view class="quality-marks">
+              <text>粗糙</text>
+              <text>普通</text>
+              <text>良好</text>
+              <text>优秀</text>
+              <text>精良</text>
+              <text>完美</text>
+            </view>
+          </view>
+
+          <!-- 品质属性 -->
+          <view class="quality-bonus">
+            <view class="preview-title">品质加成:</view>
+            <view class="attr-list">
+              <text wx:if="{{qualityInfo.currentBonus.attack}}">攻击+{{qualityInfo.currentBonus.attack}}</text>
+              <text wx:if="{{qualityInfo.currentBonus.defense}}">防御+{{qualityInfo.currentBonus.defense}}</text>
+              <text wx:if="{{qualityInfo.currentBonus.hp}}">生命+{{qualityInfo.currentBonus.hp}}</text>
+            </view>
+          </view>
+
+          <!-- 消耗 -->
+          <view class="cost-info" wx:if="{{qualityInfo.canUpgrade}}">
+            <view class="cost-row">
+              <text class="cost-label">提升范围:</text>
+              <text class="cost-value">{{qualityInfo.upgradeRange}}</text>
+            </view>
+            <view class="cost-row">
+              <text class="cost-label">消耗品质石:</text>
+              <text class="cost-value">{{qualityInfo.qualityStoneCost}}</text>
+            </view>
+            <view class="cost-row">
+              <text class="cost-label">消耗银币:</text>
+              <text class="cost-value">{{qualityInfo.silverCost}}</text>
+            </view>
+          </view>
+
+          <view class="action-btn {{upgrading || !qualityInfo.canUpgrade ? 'disabled' : ''}}" 
+                bindtap="doUpgradeQuality">
+            {{upgrading ? '提升中...' : (qualityInfo.canUpgrade ? '提升品质' : qualityInfo.message)}}
+          </view>
+        </view>
+
+        <view class="empty-tip" wx:else>
+          <text>请选择要提升品质的装备</text>
+        </view>
+      </view>
+
+      <!-- 套装融合 -->
+      <view class="operation-panel fuse-panel" wx:if="{{activeTab === 'fuse'}}">
+        <view class="panel-title">套装融合</view>
+        <view class="fuse-tip">选择3件同套装装备，可融合成指定部位</view>
+
+        <!-- 已选装备 -->
+        <view class="selected-equipments">
+          <view class="selected-slot" wx:for="{{[0,1,2]}}" wx:key="*this">
+            <view class="slot-content" wx:if="{{fuseEquipments[item]}}">
+              <image src="{{fuseEquipments[item].icon || '/images/equip-default.png'}}" mode="aspectFill"></image>
+              <text class="slot-label">{{fuseEquipments[item].name}}</text>
+            </view>
+            <view class="slot-empty" wx:else>
+              <text>+</text>
+            </view>
+          </view>
+        </view>
+
+        <!-- 可选装备列表 -->
+        <view class="fuse-list-title">可融合装备</view>
+        <scroll-view scroll-y class="fuse-equipment-list">
+          <view class="fuse-equip-item {{utils.isSelected(fuseEquipments, item.id) ? 'selected' : ''}}"
+                wx:for="{{setEquipments}}" wx:key="id"
+                bindtap="selectFuseEquipment" data-equipment="{{item}}">
+            <image src="{{item.icon || '/images/equip-default.png'}}" mode="aspectFill"></image>
+            <view class="fuse-equip-info">
+              <text class="fuse-equip-name">{{item.name}}</text>
+              <text class="fuse-equip-set">{{item.setInfo.setName}}套装</text>
+            </view>
+            <view class="check-mark" wx:if="{{utils.isSelected(fuseEquipments, item.id)}}">✓</view>
+          </view>
+          <view class="empty-tip" wx:if="{{setEquipments.length === 0}}">
+            <text>没有可融合的装备</text>
+          </view>
+        </scroll-view>
+
+        <!-- 目标槽位选择 -->
+        <view class="target-slot-section" wx:if="{{fuseEquipments.length === 3}}">
+          <view class="section-title">选择目标部位</view>
+          <view class="target-slots">
+            <view class="target-slot {{targetSlotId === item.id ? 'active' : ''}}"
+                  wx:for="{{slotTypes}}" wx:key="id"
+                  bindtap="selectTargetSlot" data-slot-id="{{item.id}}">
+              <text class="slot-icon">{{item.icon}}</text>
+              <text class="slot-name">{{item.name}}</text>
+            </view>
+          </view>
+        </view>
+
+        <view class="action-btn {{fusing || fuseEquipments.length !== 3 || !targetSlotId ? 'disabled' : ''}}" 
+              bindtap="doFuse">
+          {{fusing ? '融合中...' : '开始融合'}}
+        </view>
+      </view>
+
+      <!-- 装备分解 -->
+      <view class="operation-panel decompose-panel" wx:if="{{activeTab === 'decompose'}}">
+        <view class="panel-title">装备分解</view>
+        <view class="decompose-tip">分解多余装备，获得品质石和银币</view>
+
+        <scroll-view scroll-y class="decompose-equipment-list">
+          <view class="decompose-equip-item {{utils.isSelected(decomposeEquipments, item.id) ? 'selected' : ''}}"
+                wx:for="{{setEquipments}}" wx:key="id"
+                bindtap="selectDecomposeEquipment" data-equipment="{{item}}">
+            <image src="{{item.icon || '/images/equip-default.png'}}" mode="aspectFill"
+                   class="quality-{{item.quality.id || 1}}"></image>
+            <view class="decompose-equip-info">
+              <text class="decompose-equip-name">{{item.name}}</text>
+              <text class="decompose-equip-level">Lv.{{item.level || 20}}</text>
+            </view>
+            <view class="check-box {{utils.isSelected(decomposeEquipments, item.id) ? 'checked' : ''}}">
+              <text wx:if="{{utils.isSelected(decomposeEquipments, item.id)}}">✓</text>
+            </view>
+          </view>
+          <view class="empty-tip" wx:if="{{setEquipments.length === 0}}">
+            <text>没有可分解的装备</text>
+          </view>
+        </scroll-view>
+
+        <view class="decompose-summary" wx:if="{{decomposeEquipments.length > 0}}">
+          <text>已选择 {{decomposeEquipments.length}} 件装备</text>
+        </view>
+
+        <view class="action-btn {{decomposing || decomposeEquipments.length === 0 ? 'disabled' : ''}}" 
+              bindtap="doDecompose">
+          {{decomposing ? '分解中...' : '开始分解'}}
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 底部资源栏 -->
+  <view class="resource-bar">
+    <view class="resource-item">
+      <text class="resource-icon">🪙</text>
+      <text class="resource-value">{{silver}}</text>
+    </view>
+    <view class="resource-item">
+      <text class="resource-icon">💎</text>
+      <text class="resource-value">{{qualityStone}}</text>
+    </view>
+    <view class="resource-item" wx:for="{{[1,2,3,4,5,6]}}" wx:key="*this">
+      <text class="resource-icon">🔷{{item}}</text>
+      <text class="resource-value">{{enhanceStones[item] || 0}}</text>
+    </view>
+    <view class="back-btn" bindtap="goBack">返回</view>
+  </view>
+</view>

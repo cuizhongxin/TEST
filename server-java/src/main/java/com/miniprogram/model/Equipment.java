@@ -99,6 +99,23 @@ public class Equipment {
     private Attributes enhanceAttributes;
     
     /**
+     * 品质值 (0-100，100为完美品质)
+     */
+    @Builder.Default
+    private Integer qualityValue = 0;
+    
+    /**
+     * 品质属性加成（基于品质值计算）
+     */
+    private Attributes qualityAttributes;
+    
+    /**
+     * 是否锁定（防止误分解）
+     */
+    @Builder.Default
+    private Boolean locked = false;
+    
+    /**
      * 创建时间
      */
     private Long createTime;
