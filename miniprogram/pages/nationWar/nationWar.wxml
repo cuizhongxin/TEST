@@ -1,0 +1,337 @@
+<wxs module="utils">
+  // 获取国家名称
+  function getNationName(nationId) {
+    if (nationId === 'WEI') return '魏';
+    if (nationId === 'SHU') return '蜀';
+    if (nationId === 'WU') return '吴';
+    return '未知';
+  }
+  
+  // 获取国家索引
+  function getNationIndex(nationId) {
+    if (nationId === 'WEI') return 0;
+    if (nationId === 'SHU') return 1;
+    if (nationId === 'WU') return 2;
+    return 0;
+  }
+  
+  // 获取国家颜色
+  function getNationColor(nations, nationId) {
+    if (!nations || !nations.length) return '#666';
+    var idx = getNationIndex(nationId);
+    return nations[idx] && nations[idx].color ? nations[idx].color : '#666';
+  }
+  
+  // 格式化加成百分比
+  function formatBonus(rate) {
+    if (!rate || rate <= 1) return '0';
+    return Math.floor((rate - 1) * 100);
+  }
+  
+  module.exports = {
+    getNationName: getNationName,
+    getNationIndex: getNationIndex,
+    getNationColor: getNationColor,
+    formatBonus: formatBonus
+  };
+</wxs>
+
+<view class="nation-war-page">
+  <!-- 顶部信息栏 -->
+  <view class="top-bar">
+    <view class="back-btn" bindtap="goBack">
+      <text>◀ 返回</text>
+    </view>
+    
+    <view class="time-info">
+      <view class="time-item">
+        <text class="time-label">报名时间</text>
+        <text class="time-value">{{signUpTime}}</text>
+      </view>
+      <view class="time-item">
+        <text class="time-label">战斗时间</text>
+        <text class="time-value">{{battleTime}}</text>
+      </view>
+      <view class="status-badge status-{{timeStatus}}">
+        <text wx:if="{{timeStatus === 'preparing'}}">准备中</text>
+        <text wx:elif="{{timeStatus === 'signup'}}">报名中</text>
+        <text wx:elif="{{timeStatus === 'fighting'}}">战斗中</text>
+        <text wx:else>已结束</text>
+      </view>
+    </view>
+    
+    <view class="player-info">
+      <view class="nation-badge" wx:if="{{playerNation}}" 
+            style="background: {{utils.getNationColor(nations, playerNation)}}">
+        <text>{{utils.getNationName(playerNation)}}</text>
+      </view>
+      <view class="merit-info" bindtap="openExchange">
+        <text class="merit-icon">🎖️</text>
+        <text class="merit-value">{{playerMerit}}</text>
+      </view>
+    </view>
+  </view>
+  
+  <!-- 地图区域 -->
+  <view class="map-container">
+    <!-- 背景 -->
+    <view class="map-bg"></view>
+    
+    <!-- 国家区域 -->
+    <view class="nation-area wei-area">
+      <text class="area-name">魏</text>
+    </view>
+    <view class="nation-area shu-area">
+      <text class="area-name">蜀</text>
+    </view>
+    <view class="nation-area wu-area">
+      <text class="area-name">吴</text>
+    </view>
+    
+    <!-- 城市 -->
+    <view class="city-node {{city.isCapital ? 'capital' : ''}} {{city.owner === playerNation ? 'own' : 'enemy'}}"
+          wx:for="{{cities}}" wx:key="id" wx:for-item="city"
+          style="left: {{city.x}}rpx; top: {{city.y}}rpx; background: {{utils.getNationColor(nations, city.owner)}}"
+          bindtap="onCityTap" data-city="{{city.id}}">
+      <view class="city-icon">{{city.isCapital ? '🏯' : '🏠'}}</view>
+      <view class="city-name">{{city.name}}</view>
+      <view class="attack-indicator" wx:if="{{attackableCities && attackableCities.length > 0}}">
+        <text wx:for="{{attackableCities}}" wx:key="id" wx:if="{{item.id === city.id}}">⚔️</text>
+      </view>
+    </view>
+  </view>
+  
+  <!-- 底部图例 -->
+  <view class="legend-bar">
+    <view class="legend-item" wx:for="{{nations}}" wx:key="id">
+      <view class="legend-color" style="background: {{item.color}}"></view>
+      <text>{{item.name}} ({{item.cities.length}}城)</text>
+    </view>
+    <view class="legend-item">
+      <text>🏯 国都</text>
+    </view>
+    <view class="legend-item">
+      <text>⚔️ 可进攻</text>
+    </view>
+  </view>
+  
+  <!-- 选择国家弹窗 -->
+  <view class="modal-overlay" wx:if="{{showSelectNation}}" catchtouchmove="true">
+    <view class="modal-content nation-select-modal">
+      <view class="modal-title">选择阵营</view>
+      <view class="modal-desc">请选择你要效忠的国家，一旦选择不可更改</view>
+      
+      <view class="nation-list">
+        <view class="nation-option" wx:for="{{nations}}" wx:key="id"
+              style="border-color: {{item.color}}"
+              bindtap="selectNation" data-nation="{{item.id}}">
+          <view class="nation-flag" style="background: {{item.color}}">
+            <text>{{item.name}}</text>
+          </view>
+          <view class="nation-info">
+            <text class="nation-name">{{item.name}}国</text>
+            <text class="nation-capital">国都：{{item.capitalName}}</text>
+            <text class="nation-cities">城市：{{item.cities.length}}座</text>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+  
+  <!-- 城市详情弹窗 -->
+  <view class="modal-overlay" wx:if="{{showCityDetail}}" bindtap="closeCityDetail">
+    <view class="modal-content city-detail-modal" catchtap="">
+      <view class="modal-close" bindtap="closeCityDetail">✕</view>
+      
+      <view class="city-header">
+        <view class="city-icon-large">{{selectedCity.isCapital ? '🏯' : '🏠'}}</view>
+        <view class="city-title">
+          <text class="city-name-large">{{selectedCity.name}}</text>
+          <view class="city-owner" 
+                style="background: {{utils.getNationColor(nations, selectedCity.owner)}}">
+            <text>{{utils.getNationName(selectedCity.owner)}}国领土</text>
+          </view>
+        </view>
+      </view>
+      
+      <view class="city-stats">
+        <view class="stat-item">
+          <text class="stat-label">防御加成</text>
+          <text class="stat-value">+{{selectedCity.defenseBonus || 0}}%</text>
+        </view>
+        <view class="stat-item" wx:if="{{selectedCity.isCapital}}">
+          <text class="stat-label">类型</text>
+          <text class="stat-value capital-tag">国都</text>
+        </view>
+      </view>
+      
+      <!-- 国战状态 -->
+      <view class="war-status-section" wx:if="{{cityWarStatus && cityWarStatus.hasWar}}">
+        <view class="section-title">今日国战</view>
+        <view class="war-info">
+          <view class="war-stat">
+            <text class="war-label">进攻方</text>
+            <text class="war-value">{{utils.getNationName(currentWar.attackNation)}} ({{currentWar.attackers.length}}人)</text>
+          </view>
+          <view class="war-stat">
+            <text class="war-label">防守方</text>
+            <text class="war-value">{{utils.getNationName(currentWar.defendNation)}} ({{currentWar.defenders.length}}人)</text>
+          </view>
+          <view class="war-stat" wx:if="{{currentWar.status === 'FIGHTING' || currentWar.status === 'FINISHED'}}">
+            <text class="war-label">积分</text>
+            <text class="war-value">{{currentWar.attackScore}} : {{currentWar.defendScore}}</text>
+          </view>
+          <view class="war-stat" wx:if="{{currentWar.status === 'FINISHED' && currentWar.winner}}">
+            <text class="war-label">胜利方</text>
+            <text class="war-value winner">{{utils.getNationName(currentWar.winner)}}</text>
+          </view>
+        </view>
+        
+        <view class="war-actions">
+          <button class="action-btn view-btn" bindtap="viewWarDetail" 
+                  wx:if="{{currentWar.status === 'FINISHED'}}">
+            查看战报
+          </button>
+          <button class="action-btn test-btn" bindtap="testStartWar"
+                  wx:if="{{currentWar.status === 'SIGN_UP'}}">
+            [测试]开始战斗
+          </button>
+        </view>
+      </view>
+      
+      <!-- 报名区域 -->
+      <view class="signup-section" wx:if="{{selectedCity.owner !== playerNation && timeStatus === 'signup'}}">
+        <button class="signup-btn" bindtap="openSignUp"
+                wx:if="{{attackableCities && attackableCities.length > 0}}"
+                disabled="{{!canAttackSelectedCity}}">
+          报名进攻
+        </button>
+        <view class="signup-hint" wx:if="{{!canAttackSelectedCity}}">
+          该城市与本国领土不接壤，无法进攻
+        </view>
+      </view>
+      
+      <view class="own-city-hint" wx:if="{{selectedCity.owner === playerNation}}">
+        <text>本国领土，无需进攻</text>
+      </view>
+    </view>
+  </view>
+  
+  <!-- 报名确认弹窗 -->
+  <view class="modal-overlay" wx:if="{{showSignUp}}" bindtap="closeSignUp">
+    <view class="modal-content signup-modal" catchtap="">
+      <view class="modal-close" bindtap="closeSignUp">✕</view>
+      <view class="modal-title">报名国战</view>
+      
+      <view class="signup-info">
+        <view class="info-row">
+          <text class="info-label">目标城市</text>
+          <text class="info-value">{{selectedCity.name}}</text>
+        </view>
+        <view class="info-row">
+          <text class="info-label">防守方</text>
+          <text class="info-value">{{utils.getNationName(selectedCity.owner)}}国</text>
+        </view>
+        <view class="info-row">
+          <text class="info-label">您的战力</text>
+          <text class="info-value">{{playerPower}}</text>
+        </view>
+      </view>
+      
+      <view class="signup-rules">
+        <view class="rule-item">⚔️ 报名人数达到10人即可获得进攻权</view>
+        <view class="rule-item">🎖️ 战斗中可获得军功奖励</view>
+        <view class="rule-item">🏆 胜利方将占领该城市</view>
+      </view>
+      
+      <button class="confirm-btn" bindtap="doSignUp">确认报名</button>
+    </view>
+  </view>
+  
+  <!-- 军功兑换弹窗 -->
+  <view class="modal-overlay" wx:if="{{showExchange}}" bindtap="closeExchange">
+    <view class="modal-content exchange-modal" catchtap="">
+      <view class="modal-close" bindtap="closeExchange">✕</view>
+      <view class="modal-title">军功兑换</view>
+      
+      <view class="merit-display">
+        <text class="merit-label">当前军功</text>
+        <view class="merit-amount">
+          <text class="merit-icon-lg">🎖️</text>
+          <text class="merit-num">{{playerMerit}}</text>
+        </view>
+      </view>
+      
+      <view class="exchange-rate-info">
+        <text>兑换比例：1军功 = {{silverPerMerit}}白银</text>
+        <text class="rate-tip" wx:if="{{exchangeRate > 1}}">
+          (本国占领{{playerNationCityCount}}城，+{{exchangeRateBonus}}%加成)
+        </text>
+      </view>
+      
+      <view class="exchange-input">
+        <text class="input-label">兑换数量</text>
+        <input type="number" class="amount-input" 
+               value="{{exchangeAmount}}" 
+               bindinput="onExchangeAmountChange"
+               placeholder="输入军功数量" />
+      </view>
+      
+      <view class="quick-select">
+        <button class="quick-btn" bindtap="quickSelectAmount" data-ratio="0.25">25%</button>
+        <button class="quick-btn" bindtap="quickSelectAmount" data-ratio="0.5">50%</button>
+        <button class="quick-btn" bindtap="quickSelectAmount" data-ratio="0.75">75%</button>
+        <button class="quick-btn" bindtap="quickSelectAmount" data-ratio="1">全部</button>
+      </view>
+      
+      <view class="exchange-preview">
+        <text>预计获得：</text>
+        <text class="silver-amount">{{expectedSilver}} 白银</text>
+      </view>
+      
+      <button class="confirm-btn" bindtap="doExchange" 
+              disabled="{{exchangeAmount <= 0 || exchangeAmount > playerMerit}}">
+        确认兑换
+      </button>
+    </view>
+  </view>
+  
+  <!-- 战斗结果弹窗 -->
+  <view class="modal-overlay" wx:if="{{showWarResult}}" bindtap="closeWarResult">
+    <view class="modal-content war-result-modal" catchtap="">
+      <view class="modal-close" bindtap="closeWarResult">✕</view>
+      <view class="modal-title">战报</view>
+      
+      <view class="result-header" wx:if="{{warResult}}">
+        <view class="result-side attack-side">
+          <text class="side-name">{{utils.getNationName(warResult.attackNation)}}</text>
+          <text class="side-score">{{warResult.attackScore}}</text>
+        </view>
+        <view class="result-vs">VS</view>
+        <view class="result-side defend-side">
+          <text class="side-name">{{utils.getNationName(warResult.defendNation)}}</text>
+          <text class="side-score">{{warResult.defendScore}}</text>
+        </view>
+      </view>
+      
+      <view class="result-winner" wx:if="{{warResult && warResult.winner}}">
+        <text>🏆 {{utils.getNationName(warResult.winner)}}国 获胜！</text>
+      </view>
+      
+      <view class="battle-list" wx:if="{{warResult && warResult.battles && warResult.battles.length > 0}}">
+        <view class="section-title">战斗记录</view>
+        <scroll-view scroll-y class="battle-scroll">
+          <view class="battle-item" wx:for="{{warResult.battles}}" wx:key="battleId">
+            <text class="battle-round">第{{item.round}}轮</text>
+            <view class="battle-detail">
+              <text class="fighter">{{item.attackerName}}</text>
+              <text class="vs-small">VS</text>
+              <text class="fighter">{{item.defenderName}}</text>
+            </view>
+            <text class="battle-result">胜者：{{item.winnerName}} (+{{item.scoreGained}}分)</text>
+          </view>
+        </scroll-view>
+      </view>
+    </view>
+  </view>
+</view>

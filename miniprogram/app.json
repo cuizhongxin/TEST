@@ -20,7 +20,8 @@
     "pages/allianceWar/allianceWar",
     "pages/production/production",
     "pages/campaign/campaign",
-    "pages/campaignBattle/campaignBattle"
+    "pages/campaignBattle/campaignBattle",
+    "pages/nationWar/nationWar"
   ],
   "window": {
     "backgroundTextStyle": "light",

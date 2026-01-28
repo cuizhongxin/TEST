@@ -30,7 +30,8 @@ Page({
       { id: 1, icon: '🏔️', label: '秘境', name: 'secretRealm' },
       { id: 2, icon: '🔨', label: '锻造', name: 'craft' },
       { id: 3, icon: '📜', label: '招募', name: 'recruit' },
-      { id: 4, icon: '🚪', label: '退出', name: 'logout' }
+      { id: 4, icon: '⚔️', label: '国战', name: 'nationWar' },
+      { id: 5, icon: '🚪', label: '退出', name: 'logout' }
     ],
     
     // 右侧悬浮图标
@@ -171,6 +172,9 @@ Page({
       case 'recruit':
         wx.navigateTo({ url: '/pages/recruit/recruit' })
         break
+      case 'nationWar':
+        wx.navigateTo({ url: '/pages/nationWar/nationWar' })
+        break
       case 'logout':
         this.handleLogout()
         break
@@ -284,6 +288,10 @@ Page({
 
   goToAlliance() {
     wx.navigateTo({ url: '/pages/alliance/alliance' })
+  },
+
+  goToNationWar() {
+    wx.navigateTo({ url: '/pages/nationWar/nationWar' })
   },
 
   goToCharacter() {
