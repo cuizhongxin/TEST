@@ -1,62 +1,71 @@
 /* pages/character/character.wxss - 将领详情页样式 */
+page {
+  background: #1a1208;
+}
+
 .page-container {
   width: 100vw;
   height: 100vh;
-  background: linear-gradient(135deg, #2c1810 0%, #4a2c17 50%, #2c1810 100%);
+  background: linear-gradient(180deg, #2a1a0a 0%, #1a1208 50%, #0d0a05 100%);
   display: flex;
   flex-direction: column;
   overflow: hidden;
 }
 
-/* 顶部标签 */
+/* ========== 顶部标签栏 ========== */
 .tabs {
   display: flex;
-  background: rgba(0,0,0,0.6);
+  align-items: center;
+  background: linear-gradient(180deg, #3d2a1a 0%, #2a1a0a 100%);
   border-bottom: 2rpx solid #8b6914;
+  padding: 0 10rpx;
   flex-shrink: 0;
+  height: 70rpx;
 }
 
 .tab-item {
-  flex: 1;
-  padding: 20rpx;
+  padding: 15rpx 20rpx;
   text-align: center;
-  color: #aaa;
-  font-size: 26rpx;
-  border-bottom: 4rpx solid transparent;
+  color: #a08060;
+  font-size: 24rpx;
+  border-bottom: 3rpx solid transparent;
+  white-space: nowrap;
 }
 
 .tab-item.active {
   color: #ffd700;
   border-bottom-color: #ffd700;
-  background: rgba(255,215,0,0.1);
+  background: linear-gradient(180deg, transparent 0%, rgba(255,215,0,0.15) 100%);
 }
 
-/* 主内容区 */
+.back-btn {
+  margin-left: auto;
+  padding: 10rpx 25rpx;
+  background: linear-gradient(180deg, #5a4020 0%, #3a2810 100%);
+  border: 1rpx solid #8b6914;
+  border-radius: 6rpx;
+  color: #ffd700;
+  font-size: 22rpx;
+}
+
+/* ========== 主内容区 ========== */
 .main-content {
   flex: 1;
   display: flex;
-  padding: 16rpx;
-  gap: 16rpx;
+  padding: 12rpx;
+  gap: 12rpx;
   overflow: hidden;
 }
 
-/* 左侧将领列表 */
+/* ========== 左侧将领列表 ========== */
 .left-panel {
-  width: 280rpx;
-  background: rgba(0,0,0,0.5);
-  border-radius: 12rpx;
-  border: 2rpx solid #5a4a3a;
+  width: 160rpx;
+  background: rgba(0,0,0,0.6);
+  border: 2rpx solid #5a4020;
+  border-radius: 8rpx;
   display: flex;
   flex-direction: column;
   overflow: hidden;
-}
-
-.panel-title {
-  font-size: 24rpx;
-  color: #ffd700;
-  padding: 12rpx 16rpx;
-  background: linear-gradient(90deg, rgba(139,105,20,0.8) 0%, transparent 100%);
-  border-bottom: 1rpx solid #5a4a3a;
 }
 
 .general-scroll {
@@ -66,24 +75,25 @@
 
 .general-item {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  padding: 12rpx;
-  border-bottom: 1rpx solid rgba(90,74,58,0.5);
-  gap: 12rpx;
+  padding: 10rpx 8rpx;
+  border-bottom: 1rpx solid rgba(90,64,32,0.5);
+  gap: 6rpx;
 }
 
 .general-item.active {
-  background: rgba(255,215,0,0.2);
+  background: linear-gradient(90deg, rgba(255,215,0,0.3) 0%, rgba(255,215,0,0.1) 100%);
   border-left: 4rpx solid #ffd700;
 }
 
 .general-avatar {
-  width: 60rpx;
-  height: 60rpx;
+  width: 70rpx;
+  height: 70rpx;
   border-radius: 8rpx;
   overflow: hidden;
-  border: 2rpx solid #5a4a3a;
-  flex-shrink: 0;
+  border: 2rpx solid #5a4020;
+  background: #2a1a0a;
 }
 
 .general-avatar image {
@@ -91,89 +101,55 @@
   height: 100%;
 }
 
-.general-info {
-  flex: 1;
-  overflow: hidden;
-}
-
-.general-name-row {
-  display: flex;
-  align-items: center;
-  gap: 4rpx;
-}
-
 .general-name {
-  font-size: 24rpx;
-  font-weight: bold;
-}
-
-.troop-type {
   font-size: 20rpx;
-  color: #888;
-}
-
-.general-level {
-  font-size: 20rpx;
-  color: #7fff00;
-}
-
-.general-power {
-  font-size: 22rpx;
-  color: #ffd700;
-  font-weight: bold;
+  text-align: center;
+  width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 /* 品质颜色 */
-.quality-1, .quality-border-1 { color: #888; border-color: #888 !important; }
-.quality-2, .quality-border-2 { color: #00ff00; border-color: #00ff00 !important; }
-.quality-3, .quality-border-3 { color: #0088ff; border-color: #0088ff !important; }
-.quality-4, .quality-border-4 { color: #9900ff; border-color: #9900ff !important; }
-.quality-5, .quality-border-5 { color: #ff8800; border-color: #ff8800 !important; }
-.quality-6, .quality-border-6 { color: #ff0000; border-color: #ff0000 !important; }
+.quality-1 { color: #888; }
+.quality-2 { color: #55ff55; }
+.quality-3 { color: #5599ff; }
+.quality-4 { color: #cc77ff; }
+.quality-5 { color: #ff9933; }
+.quality-6 { color: #ff4444; }
 
-.quality-bg-1 { background: #888; }
-.quality-bg-2 { background: #00aa00; }
-.quality-bg-3 { background: #0066cc; }
-.quality-bg-4 { background: #7700cc; }
-.quality-bg-5 { background: #cc6600; }
-.quality-bg-6 { background: #cc0000; }
+.quality-border-1 { border-color: #888 !important; }
+.quality-border-2 { border-color: #55ff55 !important; }
+.quality-border-3 { border-color: #5599ff !important; }
+.quality-border-4 { border-color: #cc77ff !important; }
+.quality-border-5 { border-color: #ff9933 !important; }
+.quality-border-6 { border-color: #ff4444 !important; }
 
-/* 右侧详情区 */
-.right-panel {
-  flex: 1;
+/* ========== 中间将领详情 ========== */
+.center-panel {
+  width: 320rpx;
   background: rgba(0,0,0,0.5);
-  border-radius: 12rpx;
-  border: 2rpx solid #5a4a3a;
-  overflow: hidden;
+  border: 2rpx solid #5a4020;
+  border-radius: 8rpx;
+  padding: 12rpx;
   display: flex;
   flex-direction: column;
-}
-
-.detail-content, .inherit-content, .drill-content {
-  flex: 1;
-  padding: 16rpx;
+  gap: 12rpx;
   overflow-y: auto;
 }
 
-/* 将领头部信息 */
-.general-header {
+.portrait-area {
   display: flex;
-  gap: 20rpx;
-  padding-bottom: 16rpx;
-  border-bottom: 1rpx solid #5a4a3a;
-  margin-bottom: 16rpx;
-}
-
-.portrait-section {
-  position: relative;
+  justify-content: center;
 }
 
 .portrait {
-  width: 120rpx;
-  height: 120rpx;
-  border-radius: 12rpx;
+  width: 140rpx;
+  height: 140rpx;
+  border-radius: 10rpx;
   overflow: hidden;
   border: 3rpx solid #ffd700;
+  background: linear-gradient(135deg, #3a2a1a 0%, #2a1a0a 100%);
 }
 
 .portrait image {
@@ -181,201 +157,151 @@
   height: 100%;
 }
 
-.level-badge {
-  position: absolute;
-  bottom: -8rpx;
-  left: 50%;
-  transform: translateX(-50%);
-  background: rgba(0,200,0,0.9);
-  color: #fff;
-  font-size: 18rpx;
-  padding: 2rpx 12rpx;
-  border-radius: 8rpx;
+.info-area {
+  background: rgba(0,0,0,0.3);
+  border-radius: 6rpx;
+  padding: 10rpx;
 }
 
-.info-section {
-  flex: 1;
+.info-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8rpx;
 }
 
 .name-row {
-  display: flex;
-  align-items: center;
-  gap: 12rpx;
+  justify-content: space-between;
+  padding-bottom: 8rpx;
+  border-bottom: 1rpx solid rgba(139,105,20,0.3);
   margin-bottom: 8rpx;
 }
 
-.name {
-  font-size: 32rpx;
+.general-name-big {
+  font-size: 28rpx;
   font-weight: bold;
 }
 
-.quality-tag {
-  font-size: 18rpx;
-  color: #fff;
-  padding: 2rpx 12rpx;
+.level-text {
+  font-size: 22rpx;
+  color: #7fff00;
+  background: rgba(0,100,0,0.3);
+  padding: 2rpx 10rpx;
   border-radius: 4rpx;
 }
 
-.type-row {
-  font-size: 22rpx;
-  color: #ccc;
-  margin-bottom: 8rpx;
+.troop-row {
+  flex-wrap: wrap;
 }
 
-.type-label {
-  color: #888;
-}
-
-.faction {
-  color: #ffd700;
-  margin-left: 12rpx;
-}
-
-.exp-row {
-  display: flex;
-  align-items: center;
-  gap: 8rpx;
-}
-
-.exp-label {
+.troop-label {
   font-size: 20rpx;
-  color: #888;
+  color: #a08060;
 }
 
-.exp-bar {
-  flex: 1;
-  height: 12rpx;
-  background: rgba(0,0,0,0.5);
-  border-radius: 6rpx;
-  overflow: hidden;
-  max-width: 200rpx;
+.troop-value {
+  font-size: 20rpx;
+  color: #ffd700;
 }
 
-.exp-fill {
-  height: 100%;
-  background: linear-gradient(90deg, #00aa00 0%, #7fff00 100%);
+.stats-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6rpx;
+  margin-top: 8rpx;
 }
 
-.exp-text {
-  font-size: 18rpx;
-  color: #7fff00;
-}
-
-.dismiss-btn {
-  padding: 12rpx 24rpx;
-  background: linear-gradient(180deg, #8b2020 0%, #5a1010 100%);
-  border-radius: 8rpx;
-  color: #fff;
-  font-size: 24rpx;
-  border: 1rpx solid #aa3030;
-  align-self: flex-start;
-}
-
-/* 兵种说明 */
-.troop-info {
+.stat-item {
   display: flex;
   align-items: center;
+  gap: 4rpx;
+}
+
+.stat-label {
+  font-size: 20rpx;
+  color: #a08060;
+}
+
+.stat-value {
+  font-size: 20rpx;
+  color: #fff;
+}
+
+.stat-value.attack { color: #ff6666; }
+.stat-value.defense { color: #66ff66; }
+
+/* 当前兵法展示 */
+.equipped-tactic {
+  display: flex;
   gap: 12rpx;
-  padding: 12rpx;
-  background: rgba(139,105,20,0.2);
+  background: rgba(0,0,0,0.4);
+  border: 1rpx solid #5a4020;
+  border-radius: 6rpx;
+  padding: 10rpx;
+}
+
+.tactic-icon-big {
+  width: 80rpx;
+  height: 80rpx;
   border-radius: 8rpx;
-  margin-bottom: 16rpx;
+  overflow: hidden;
+  border: 2rpx solid #cc77ff;
+  background: #2a1a3a;
 }
 
-.troop-icon {
-  font-size: 36rpx;
+.tactic-icon-big image {
+  width: 100%;
+  height: 100%;
 }
 
-.troop-desc {
+.tactic-info-detail {
   flex: 1;
-  font-size: 22rpx;
-  color: #ccc;
-  line-height: 1.5;
-}
-
-/* 属性面板 */
-.attributes-panel {
-  margin-bottom: 16rpx;
-}
-
-.attr-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 12rpx;
-}
-
-.attr-item {
-  background: rgba(0,0,0,0.3);
-  border-radius: 8rpx;
-  padding: 12rpx;
   display: flex;
   flex-direction: column;
-  align-items: center;
+  gap: 4rpx;
 }
 
-.attr-icon {
-  font-size: 28rpx;
-  margin-bottom: 4rpx;
-}
-
-.attr-detail {
+.tactic-name-row {
   display: flex;
   align-items: center;
-  gap: 8rpx;
+  gap: 6rpx;
 }
 
-.attr-name {
+.tactic-name {
   font-size: 22rpx;
-  color: #aaa;
-}
-
-.attr-value {
-  font-size: 26rpx;
-  color: #fff;
   font-weight: bold;
 }
 
-.attr-value.highlight {
-  color: #ffd700;
-}
-
-.attr-desc {
+.tactic-type, .tactic-apply, .tactic-level {
   font-size: 18rpx;
-  color: #666;
-  margin-top: 4rpx;
+  color: #a08060;
 }
 
-/* 装备面板 */
-.equipment-panel {
-  margin-bottom: 16rpx;
-}
-
-.equip-grid {
+/* 装备槽位 */
+.equip-slots {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 12rpx;
+  gap: 8rpx;
 }
 
 .equip-slot {
   background: rgba(0,0,0,0.4);
-  border: 2rpx solid #5a4a3a;
-  border-radius: 12rpx;
-  padding: 12rpx;
+  border: 1rpx solid #5a4020;
+  border-radius: 6rpx;
+  padding: 8rpx;
   display: flex;
   flex-direction: column;
   align-items: center;
-  position: relative;
+  gap: 4rpx;
 }
 
 .slot-icon {
-  width: 60rpx;
-  height: 60rpx;
+  width: 50rpx;
+  height: 50rpx;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(0,0,0,0.3);
-  border-radius: 8rpx;
-  overflow: hidden;
+  background: rgba(90,64,32,0.3);
+  border-radius: 6rpx;
 }
 
 .slot-icon image {
@@ -383,14 +309,13 @@
   height: 100%;
 }
 
-.empty-slot {
-  font-size: 32rpx;
+.empty-icon {
+  font-size: 24rpx;
 }
 
 .slot-name {
-  font-size: 20rpx;
-  color: #ccc;
-  margin-top: 8rpx;
+  font-size: 18rpx;
+  color: #a08060;
   text-align: center;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -398,308 +323,623 @@
   max-width: 100%;
 }
 
-.slot-enhance {
-  position: absolute;
-  top: 4rpx;
-  right: 4rpx;
-  background: rgba(0,200,0,0.8);
-  color: #fff;
-  font-size: 16rpx;
-  padding: 2rpx 6rpx;
-  border-radius: 4rpx;
-}
-
-/* 特性列表 */
-.traits-panel {
-  margin-bottom: 16rpx;
-}
-
-.traits-list {
+/* 操作按钮 */
+.action-buttons {
   display: flex;
-  flex-wrap: wrap;
-  gap: 8rpx;
+  gap: 10rpx;
+  margin-top: auto;
 }
 
-.trait-item {
-  background: rgba(255,215,0,0.2);
-  border: 1rpx solid #ffd700;
-  border-radius: 8rpx;
-  padding: 6rpx 12rpx;
-}
-
-.trait-text {
-  font-size: 20rpx;
-  color: #ffd700;
-}
-
-/* 传承界面 */
-.inherit-title, .drill-title {
-  font-size: 28rpx;
-  color: #ffd700;
-  font-weight: bold;
-  margin-bottom: 12rpx;
-}
-
-.inherit-desc, .drill-desc {
+.action-btn {
+  flex: 1;
+  padding: 12rpx;
+  text-align: center;
+  border-radius: 6rpx;
   font-size: 22rpx;
-  color: #aaa;
-  margin-bottom: 20rpx;
-  line-height: 1.5;
 }
 
-.inherit-section {
-  margin-bottom: 20rpx;
+.action-btn.dismiss {
+  background: linear-gradient(180deg, #5a2020 0%, #3a1010 100%);
+  border: 1rpx solid #8b3030;
+  color: #ff6666;
 }
 
-.inherit-label {
+.action-btn.upgrade {
+  background: linear-gradient(180deg, #205a20 0%, #103a10 100%);
+  border: 1rpx solid #308b30;
+  color: #66ff66;
+}
+
+/* ========== 右侧面板 ========== */
+.right-panel {
+  flex: 1;
+  background: rgba(0,0,0,0.5);
+  border: 2rpx solid #5a4020;
+  border-radius: 8rpx;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10rpx 15rpx;
+  background: linear-gradient(90deg, rgba(139,105,20,0.6) 0%, transparent 100%);
+  border-bottom: 1rpx solid #5a4020;
+}
+
+.panel-title {
   font-size: 24rpx;
   color: #ffd700;
+  font-weight: bold;
+}
+
+.upgrade-btn {
+  padding: 6rpx 16rpx;
+  background: linear-gradient(180deg, #4a6020 0%, #2a4010 100%);
+  border: 1rpx solid #6a8030;
+  border-radius: 4rpx;
+  font-size: 20rpx;
+  color: #bfff00;
+}
+
+/* ========== 兵法面板 ========== */
+.tactics-panel {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.tactics-slots {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10rpx;
+  padding: 12rpx;
+  background: rgba(0,0,0,0.3);
+}
+
+.tactic-slot {
+  aspect-ratio: 1;
+  border-radius: 8rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.tactic-slot.empty {
+  background: rgba(40,30,20,0.8);
+  border: 2rpx dashed #5a4020;
+}
+
+.tactic-slot.equipped {
+  background: linear-gradient(135deg, #3a2a1a 0%, #2a1a0a 100%);
+  border: 2rpx solid #8b6914;
+}
+
+.tactic-slot.selected {
+  border-color: #ffd700;
+  box-shadow: 0 0 10rpx rgba(255,215,0,0.5);
+}
+
+.tactic-slot image {
+  width: 100%;
+  height: 100%;
+}
+
+.slot-pattern {
+  position: relative;
+  width: 60%;
+  height: 60%;
+}
+
+.pattern-dot {
+  position: absolute;
+  width: 10rpx;
+  height: 10rpx;
+  background: #5a4020;
+  border-radius: 50%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.pattern-line {
+  position: absolute;
+  background: #5a4020;
+}
+
+.pattern-line.h {
+  width: 100%;
+  height: 2rpx;
+  top: 50%;
+  left: 0;
+  transform: translateY(-50%);
+}
+
+.pattern-line.v {
+  width: 2rpx;
+  height: 100%;
+  left: 50%;
+  top: 0;
+  transform: translateX(-50%);
+}
+
+.tactic-slot-level {
+  position: absolute;
+  bottom: 2rpx;
+  right: 4rpx;
+  font-size: 16rpx;
+  color: #7fff00;
+  text-shadow: 0 0 4rpx #000;
+}
+
+.tactic-effect {
+  padding: 10rpx 12rpx;
+  background: rgba(0,0,0,0.4);
+  margin: 0 12rpx;
+  border-radius: 6rpx;
+}
+
+.effect-title {
+  font-size: 20rpx;
+  color: #ffd700;
+  margin-bottom: 4rpx;
+}
+
+.effect-desc {
+  font-size: 18rpx;
+  color: #a08060;
+  line-height: 1.4;
+}
+
+.available-tactics {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 0 12rpx;
+  overflow: hidden;
+}
+
+.section-title {
+  font-size: 20rpx;
+  color: #a08060;
+  padding: 8rpx 0;
+  border-bottom: 1rpx solid rgba(90,64,32,0.5);
+}
+
+.tactics-scroll {
+  flex: 1;
+  overflow-y: auto;
+}
+
+.tactic-item {
+  display: flex;
+  align-items: center;
+  gap: 10rpx;
+  padding: 10rpx;
+  border-bottom: 1rpx solid rgba(90,64,32,0.3);
+}
+
+.tactic-item.selected {
+  background: rgba(255,215,0,0.15);
+}
+
+.tactic-icon {
+  width: 50rpx;
+  height: 50rpx;
+  border-radius: 6rpx;
+  overflow: hidden;
+  border: 2rpx solid #5a4020;
+  background: #2a1a0a;
+}
+
+.tactic-icon image {
+  width: 100%;
+  height: 100%;
+}
+
+.tactic-brief {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.tactic-lv {
+  font-size: 18rpx;
+  color: #7fff00;
+}
+
+.tactic-actions {
+  display: flex;
+  gap: 10rpx;
+  padding: 12rpx;
+}
+
+.tactic-btn {
+  flex: 1;
+  padding: 14rpx;
+  text-align: center;
+  border-radius: 6rpx;
+  font-size: 24rpx;
+  font-weight: bold;
+}
+
+.tactic-btn.equip {
+  background: linear-gradient(180deg, #4a6020 0%, #2a4010 100%);
+  border: 2rpx solid #6a8030;
+  color: #bfff00;
+}
+
+.tactic-btn.unequip {
+  background: linear-gradient(180deg, #5a4020 0%, #3a2810 100%);
+  border: 2rpx solid #8b6020;
+  color: #ffd700;
+}
+
+/* ========== 装备面板 ========== */
+.equipment-panel {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.equipment-scroll {
+  flex: 1;
+  padding: 10rpx;
+  overflow-y: auto;
+}
+
+.equip-item {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+  padding: 10rpx;
+  background: rgba(0,0,0,0.3);
+  border-radius: 6rpx;
+  margin-bottom: 8rpx;
+  border: 1rpx solid transparent;
+}
+
+.equip-item.selected {
+  border-color: #ffd700;
+  background: rgba(255,215,0,0.1);
+}
+
+.equip-icon {
+  width: 60rpx;
+  height: 60rpx;
+  border-radius: 6rpx;
+  overflow: hidden;
+  border: 2rpx solid #5a4020;
+  background: #2a1a0a;
+}
+
+.equip-icon image {
+  width: 100%;
+  height: 100%;
+}
+
+.equip-info {
+  flex: 1;
+}
+
+.equip-name {
+  font-size: 22rpx;
+  display: block;
+}
+
+.equip-type {
+  font-size: 18rpx;
+  color: #a08060;
+}
+
+.equip-enhance {
+  font-size: 20rpx;
+  color: #7fff00;
+}
+
+.equip-actions {
+  padding: 12rpx;
+}
+
+.equip-btn {
+  padding: 14rpx;
+  text-align: center;
+  background: linear-gradient(180deg, #4a6020 0%, #2a4010 100%);
+  border: 2rpx solid #6a8030;
+  border-radius: 6rpx;
+  color: #bfff00;
+  font-size: 24rpx;
+  font-weight: bold;
+}
+
+/* ========== 招募面板 ========== */
+.recruit-panel {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.recruit-options {
+  padding: 15rpx;
+  display: flex;
+  flex-direction: column;
+  gap: 12rpx;
+}
+
+.recruit-item {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+  padding: 15rpx;
+  background: linear-gradient(90deg, rgba(60,60,100,0.4) 0%, rgba(40,40,80,0.2) 100%);
+  border: 2rpx solid #5566aa;
+  border-radius: 8rpx;
+}
+
+.recruit-item.gold {
+  background: linear-gradient(90deg, rgba(100,80,40,0.4) 0%, rgba(80,60,20,0.2) 100%);
+  border-color: #aa8833;
+}
+
+.recruit-item.legend {
+  background: linear-gradient(90deg, rgba(100,40,60,0.4) 0%, rgba(80,20,40,0.2) 100%);
+  border-color: #cc5577;
+}
+
+.recruit-icon {
+  font-size: 40rpx;
+}
+
+.recruit-name {
+  flex: 1;
+  font-size: 24rpx;
+  color: #fff;
+}
+
+.recruit-count {
+  font-size: 22rpx;
+  color: #7fff00;
+  margin-right: 10rpx;
+}
+
+.recruit-desc {
+  font-size: 18rpx;
+  color: #a08060;
+}
+
+/* ========== 训练/传承面板 ========== */
+.train-panel {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 12rpx;
+}
+
+.train-desc {
+  font-size: 20rpx;
+  color: #a08060;
+  padding: 10rpx;
+  background: rgba(0,0,0,0.3);
+  border-radius: 6rpx;
   margin-bottom: 12rpx;
 }
 
 .scroll-list {
   display: flex;
-  flex-wrap: wrap;
-  gap: 12rpx;
+  flex-direction: column;
+  gap: 8rpx;
+  margin-bottom: 15rpx;
 }
 
 .scroll-item {
   display: flex;
   align-items: center;
-  gap: 12rpx;
-  padding: 12rpx 16rpx;
+  gap: 10rpx;
+  padding: 12rpx;
   background: rgba(0,0,0,0.3);
-  border: 2rpx solid #5a4a3a;
-  border-radius: 8rpx;
-  min-width: 200rpx;
+  border: 1rpx solid #5a4020;
+  border-radius: 6rpx;
 }
 
 .scroll-item.selected {
   border-color: #ffd700;
-  background: rgba(255,215,0,0.15);
+  background: rgba(255,215,0,0.1);
 }
 
 .scroll-icon {
-  font-size: 32rpx;
-}
-
-.scroll-info {
-  flex: 1;
+  font-size: 28rpx;
 }
 
 .scroll-name {
+  flex: 1;
   font-size: 22rpx;
   color: #fff;
-  display: block;
 }
 
 .scroll-rate {
-  font-size: 18rpx;
+  font-size: 20rpx;
   color: #7fff00;
 }
 
 .scroll-count {
-  font-size: 22rpx;
+  font-size: 20rpx;
   color: #ffd700;
 }
 
-.inherit-general-select {
+.inherit-select {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 20rpx;
+  padding: 15rpx;
+  background: rgba(0,0,0,0.3);
+  border-radius: 8rpx;
+  margin-bottom: 12rpx;
 }
 
-.general-slot {
-  width: 150rpx;
-  height: 180rpx;
-  background: rgba(0,0,0,0.4);
-  border: 2rpx dashed #5a4a3a;
-  border-radius: 12rpx;
+.inherit-source, .inherit-target {
+  width: 100rpx;
+  height: 100rpx;
+  border-radius: 10rpx;
+  border: 2rpx dashed #5a4020;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  color: #666;
-  font-size: 22rpx;
-}
-
-.general-slot.has-general {
-  border-style: solid;
-  border-color: #ffd700;
-}
-
-.general-slot image {
-  width: 80rpx;
-  height: 80rpx;
-  border-radius: 8rpx;
-}
-
-.general-slot-name {
-  font-size: 22rpx;
-  color: #fff;
-  margin-top: 8rpx;
-}
-
-.exp-info {
-  font-size: 18rpx;
-  color: #7fff00;
-}
-
-.inherit-arrow {
-  font-size: 40rpx;
-  color: #ffd700;
-}
-
-.inherit-preview, .drill-preview {
-  text-align: center;
-  padding: 16rpx;
-  background: rgba(0,200,0,0.15);
-  border-radius: 8rpx;
-  margin: 16rpx 0;
-}
-
-.inherit-preview text, .drill-preview text {
-  font-size: 24rpx;
-  color: #7fff00;
-}
-
-/* 军事演习 */
-.drill-general {
-  display: flex;
-  align-items: center;
-  gap: 16rpx;
-  padding: 16rpx;
-  background: rgba(0,0,0,0.3);
-  border-radius: 12rpx;
-  margin-bottom: 20rpx;
-}
-
-.drill-portrait {
-  width: 80rpx;
-  height: 80rpx;
-  border-radius: 8rpx;
+  background: rgba(0,0,0,0.4);
   overflow: hidden;
-  border: 2rpx solid #ffd700;
+  font-size: 18rpx;
+  color: #a08060;
 }
 
-.drill-portrait image {
+.inherit-source image, .inherit-target image {
   width: 100%;
   height: 100%;
 }
 
-.drill-info {
-  flex: 1;
+.source-name, .target-name {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(0,0,0,0.7);
+  font-size: 16rpx;
+  color: #fff;
+  text-align: center;
+  padding: 2rpx;
 }
 
-.drill-name {
-  font-size: 26rpx;
+.inherit-arrow {
+  font-size: 36rpx;
   color: #ffd700;
-  font-weight: bold;
-  display: block;
 }
 
-.drill-level {
-  font-size: 20rpx;
+.inherit-preview {
+  text-align: center;
+  font-size: 22rpx;
+  color: #a08060;
+  padding: 10rpx;
+  background: rgba(0,100,0,0.2);
+  border-radius: 6rpx;
+  margin-bottom: 12rpx;
+}
+
+.exp-value {
   color: #7fff00;
-  display: block;
-  margin: 4rpx 0;
+  font-weight: bold;
 }
 
-.drill-exp {
+.train-btn {
+  padding: 16rpx;
+  text-align: center;
+  background: linear-gradient(180deg, #4a6020 0%, #2a4010 100%);
+  border: 2rpx solid #6a8030;
+  border-radius: 6rpx;
+  color: #bfff00;
+  font-size: 26rpx;
+  font-weight: bold;
+}
+
+.train-btn.disabled {
+  background: #333;
+  border-color: #444;
+  color: #666;
+}
+
+/* ========== 经验药面板 ========== */
+.exp-panel {
+  flex: 1;
   display: flex;
-  align-items: center;
-  gap: 8rpx;
+  flex-direction: column;
+  padding: 12rpx;
 }
 
-.drill-exp .exp-bar {
-  width: 150rpx;
-}
-
-.drill-exp text {
-  font-size: 18rpx;
-  color: #aaa;
+.exp-desc {
+  font-size: 20rpx;
+  color: #a08060;
+  margin-bottom: 12rpx;
 }
 
 .drill-items {
   display: flex;
-  flex-wrap: wrap;
-  gap: 12rpx;
-  margin-bottom: 20rpx;
+  flex-direction: column;
+  gap: 8rpx;
+  margin-bottom: 15rpx;
 }
 
 .drill-item {
   display: flex;
   align-items: center;
-  gap: 12rpx;
-  padding: 12rpx 16rpx;
+  gap: 10rpx;
+  padding: 12rpx;
   background: rgba(0,0,0,0.3);
-  border: 2rpx solid #5a4a3a;
-  border-radius: 8rpx;
-  min-width: 200rpx;
+  border: 1rpx solid #5a4020;
+  border-radius: 6rpx;
 }
 
 .drill-item.selected {
   border-color: #ffd700;
-  background: rgba(255,215,0,0.15);
+  background: rgba(255,215,0,0.1);
 }
 
 .drill-icon {
-  font-size: 32rpx;
+  font-size: 28rpx;
 }
 
-.drill-item-info {
+.drill-name {
   flex: 1;
-}
-
-.drill-item-name {
   font-size: 22rpx;
   color: #fff;
-  display: block;
 }
 
-.drill-item-exp {
-  font-size: 18rpx;
+.drill-exp {
+  font-size: 20rpx;
   color: #7fff00;
 }
 
-.drill-item-count {
-  font-size: 22rpx;
+.drill-count {
+  font-size: 20rpx;
   color: #ffd700;
 }
 
-.drill-count-section {
+.drill-control {
   display: flex;
   align-items: center;
-  gap: 16rpx;
-  margin-bottom: 16rpx;
+  justify-content: center;
+  gap: 15rpx;
+  padding: 12rpx;
+  background: rgba(0,0,0,0.3);
+  border-radius: 6rpx;
+  margin-bottom: 12rpx;
 }
 
-.drill-count-section > text {
-  font-size: 24rpx;
-  color: #ccc;
-}
-
-.count-control {
+.count-btns {
   display: flex;
   align-items: center;
+  gap: 10rpx;
 }
 
 .count-btn {
   width: 50rpx;
   height: 50rpx;
-  background: rgba(139,105,20,0.5);
-  border: 1rpx solid #8b6914;
-  border-radius: 8rpx;
   display: flex;
   align-items: center;
   justify-content: center;
+  background: #5a4020;
+  border-radius: 6rpx;
   color: #ffd700;
   font-size: 28rpx;
 }
 
-.count-value {
-  width: 80rpx;
+.count-num {
+  width: 60rpx;
   text-align: center;
   font-size: 26rpx;
   color: #fff;
@@ -707,43 +947,99 @@
 
 .max-btn {
   padding: 8rpx 16rpx;
-  background: rgba(139,105,20,0.5);
-  border: 1rpx solid #8b6914;
-  border-radius: 8rpx;
-  color: #ffd700;
-  font-size: 22rpx;
+  background: #4a6020;
+  border-radius: 4rpx;
+  color: #bfff00;
+  font-size: 20rpx;
 }
 
-/* 操作按钮 */
-.action-btn {
-  padding: 20rpx;
-  background: linear-gradient(180deg, #8b6914 0%, #654321 100%);
-  border-radius: 12rpx;
-  color: #ffd700;
-  font-size: 28rpx;
-  font-weight: bold;
+.drill-preview {
   text-align: center;
-  border: 2rpx solid #aa8833;
+  font-size: 22rpx;
+  color: #a08060;
+  padding: 10rpx;
+  background: rgba(0,100,0,0.2);
+  border-radius: 6rpx;
+  margin-bottom: 12rpx;
+}
+
+.exp-btn {
+  padding: 16rpx;
+  text-align: center;
+  background: linear-gradient(180deg, #4a6020 0%, #2a4010 100%);
+  border: 2rpx solid #6a8030;
+  border-radius: 6rpx;
+  color: #bfff00;
+  font-size: 26rpx;
+  font-weight: bold;
   margin-top: auto;
 }
 
-.action-btn.disabled {
+.exp-btn.disabled {
   background: #333;
-  color: #666;
   border-color: #444;
+  color: #666;
 }
 
-/* 空状态 */
-.empty-state {
+/* ========== 士兵面板 ========== */
+.soldier-panel {
   flex: 1;
   display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #666;
-  font-size: 28rpx;
+  flex-direction: column;
+  padding: 12rpx;
 }
 
-/* 弹窗 */
+.soldier-info {
+  background: rgba(0,0,0,0.3);
+  border-radius: 6rpx;
+  padding: 15rpx;
+  margin-bottom: 15rpx;
+}
+
+.soldier-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 8rpx 0;
+  border-bottom: 1rpx solid rgba(90,64,32,0.3);
+}
+
+.soldier-row:last-child {
+  border-bottom: none;
+}
+
+.soldier-label {
+  font-size: 22rpx;
+  color: #a08060;
+}
+
+.soldier-value {
+  font-size: 22rpx;
+  color: #fff;
+}
+
+.soldier-actions {
+  display: flex;
+  gap: 12rpx;
+}
+
+.soldier-btn {
+  flex: 1;
+  padding: 14rpx;
+  text-align: center;
+  background: linear-gradient(180deg, #4a6020 0%, #2a4010 100%);
+  border: 2rpx solid #6a8030;
+  border-radius: 6rpx;
+  color: #bfff00;
+  font-size: 22rpx;
+}
+
+.soldier-btn.upgrade {
+  background: linear-gradient(180deg, #604a20 0%, #402a10 100%);
+  border-color: #806a30;
+  color: #ffd700;
+}
+
+/* ========== 弹窗样式 ========== */
 .modal-mask {
   position: fixed;
   top: 0;
@@ -759,10 +1055,10 @@
 
 .modal-content {
   width: 500rpx;
-  background: linear-gradient(180deg, #3a2a1a 0%, #2a1a10 100%);
-  border-radius: 16rpx;
+  background: linear-gradient(180deg, #3a2a1a 0%, #2a1a0a 100%);
   border: 2rpx solid #8b6914;
-  overflow: hidden;
+  border-radius: 12rpx;
+  padding: 20rpx;
 }
 
 .modal-content.large {
@@ -771,35 +1067,60 @@
 }
 
 .modal-title {
-  padding: 20rpx;
-  text-align: center;
   font-size: 28rpx;
   color: #ffd700;
-  font-weight: bold;
-  background: rgba(139,105,20,0.3);
-  border-bottom: 1rpx solid #5a4a3a;
+  text-align: center;
+  padding-bottom: 15rpx;
+  border-bottom: 1rpx solid #5a4020;
+  margin-bottom: 15rpx;
 }
 
 .modal-body {
-  padding: 30rpx;
   text-align: center;
+  padding: 20rpx 0;
 }
 
 .modal-body text {
   display: block;
-  font-size: 26rpx;
-  color: #ccc;
-  margin-bottom: 12rpx;
+  font-size: 24rpx;
+  color: #fff;
+  margin-bottom: 10rpx;
 }
 
 .modal-body .warning {
-  color: #ff6b6b;
+  color: #ff6666;
   font-size: 22rpx;
+}
+
+.modal-footer {
+  display: flex;
+  gap: 15rpx;
+  margin-top: 15rpx;
+}
+
+.modal-btn {
+  flex: 1;
+  padding: 16rpx;
+  text-align: center;
+  border-radius: 6rpx;
+  font-size: 24rpx;
+}
+
+.modal-btn.cancel {
+  background: #333;
+  border: 1rpx solid #555;
+  color: #999;
+}
+
+.modal-btn.confirm {
+  background: linear-gradient(180deg, #5a2020 0%, #3a1010 100%);
+  border: 1rpx solid #8b3030;
+  color: #ff6666;
 }
 
 .modal-list {
   max-height: 400rpx;
-  padding: 16rpx;
+  overflow-y: auto;
 }
 
 .modal-general-item {
@@ -808,67 +1129,78 @@
   gap: 12rpx;
   padding: 12rpx;
   background: rgba(0,0,0,0.3);
-  border-radius: 8rpx;
+  border-radius: 6rpx;
   margin-bottom: 8rpx;
 }
 
 .modal-general-item image {
   width: 60rpx;
   height: 60rpx;
-  border-radius: 8rpx;
-}
-
-.modal-general-info {
-  flex: 1;
+  border-radius: 6rpx;
 }
 
 .modal-general-name {
-  font-size: 24rpx;
+  flex: 1;
+  font-size: 22rpx;
   color: #fff;
-  display: block;
 }
 
-.modal-general-level {
+.modal-general-exp {
   font-size: 20rpx;
   color: #7fff00;
 }
 
-.modal-footer {
-  display: flex;
-  border-top: 1rpx solid #5a4a3a;
-}
-
-.modal-btn {
-  flex: 1;
-  padding: 24rpx;
+.modal-close {
+  padding: 12rpx;
   text-align: center;
-  font-size: 26rpx;
+  background: #333;
+  border-radius: 6rpx;
+  color: #999;
+  font-size: 22rpx;
+  margin-top: 15rpx;
 }
 
-.modal-btn.cancel {
-  color: #aaa;
-  border-right: 1rpx solid #5a4a3a;
+/* 招募结果弹窗 */
+.recruit-result {
+  text-align: center;
 }
 
-.modal-btn.confirm {
-  color: #ff6b6b;
+.recruit-general {
+  padding: 20rpx;
 }
 
-/* 底部栏 */
-.bottom-bar {
-  display: flex;
-  justify-content: flex-end;
-  padding: 12rpx 20rpx;
-  background: rgba(0,0,0,0.8);
-  border-top: 2rpx solid #5a4a3a;
-  flex-shrink: 0;
+.recruit-portrait {
+  width: 150rpx;
+  height: 150rpx;
+  margin: 0 auto 15rpx;
+  border-radius: 12rpx;
+  overflow: hidden;
+  border: 3rpx solid #ffd700;
+  background: #2a1a0a;
 }
 
-.back-btn {
-  padding: 12rpx 32rpx;
-  background: linear-gradient(180deg, #5a4a3a 0%, #3a2a1a 100%);
-  border-radius: 8rpx;
-  color: #ccc;
-  font-size: 24rpx;
-  border: 1rpx solid #6a5a4a;
+.recruit-portrait image {
+  width: 100%;
+  height: 100%;
+}
+
+.recruit-result .recruit-name {
+  display: block;
+  font-size: 28rpx;
+  font-weight: bold;
+  margin-bottom: 8rpx;
+}
+
+.recruit-quality {
+  font-size: 22rpx;
+  color: #ffd700;
+  background: rgba(255,215,0,0.2);
+  padding: 4rpx 16rpx;
+  border-radius: 4rpx;
+}
+
+.recruit-result .modal-btn.confirm {
+  background: linear-gradient(180deg, #4a6020 0%, #2a4010 100%);
+  border-color: #6a8030;
+  color: #bfff00;
 }

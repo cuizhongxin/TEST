@@ -2,24 +2,30 @@
 <view class="page-container">
   <!-- 顶部标签栏 -->
   <view class="tabs">
-    <view class="tab-item {{activeTab === 'list' ? 'active' : ''}}" bindtap="switchTab" data-tab="list">
-      <text>将领列表</text>
+    <view class="tab-item {{activeTab === 'recruit' ? 'active' : ''}}" bindtap="switchTab" data-tab="recruit">
+      <text>将领招募</text>
     </view>
-    <view class="tab-item {{activeTab === 'detail' ? 'active' : ''}}" bindtap="switchTab" data-tab="detail">
+    <view class="tab-item {{activeTab === 'equip' ? 'active' : ''}}" bindtap="switchTab" data-tab="equip">
       <text>将领装备</text>
     </view>
-    <view class="tab-item {{activeTab === 'inherit' ? 'active' : ''}}" bindtap="switchTab" data-tab="inherit">
-      <text>将领传承</text>
+    <view class="tab-item {{activeTab === 'tactics' ? 'active' : ''}}" bindtap="switchTab" data-tab="tactics">
+      <text>将领兵法</text>
     </view>
-    <view class="tab-item {{activeTab === 'drill' ? 'active' : ''}}" bindtap="switchTab" data-tab="drill">
-      <text>军事演习</text>
+    <view class="tab-item {{activeTab === 'train' ? 'active' : ''}}" bindtap="switchTab" data-tab="train">
+      <text>将领训练</text>
     </view>
+    <view class="tab-item {{activeTab === 'exp' ? 'active' : ''}}" bindtap="switchTab" data-tab="exp">
+      <text>经验药</text>
+    </view>
+    <view class="tab-item {{activeTab === 'soldier' ? 'active' : ''}}" bindtap="switchTab" data-tab="soldier">
+      <text>士兵</text>
+    </view>
+    <view class="back-btn" bindtap="goBack">返回</view>
   </view>
 
   <view class="main-content">
     <!-- 左侧将领列表 -->
     <view class="left-panel">
-      <view class="panel-title">我的将领 ({{generals.length}})</view>
       <scroll-view scroll-y class="general-scroll">
         <view class="general-item {{selectedGeneral && selectedGeneral.id === item.id ? 'active' : ''}}"
               wx:for="{{generals}}" wx:key="id"
@@ -27,260 +33,290 @@
           <view class="general-avatar quality-border-{{item.quality.id || 3}}">
             <image src="{{item.avatar || '/images/avatar-default.png'}}" mode="aspectFill"></image>
           </view>
-          <view class="general-info">
-            <view class="general-name-row">
-              <text class="general-name quality-{{item.quality.id || 3}}">{{item.name}}</text>
-              <text class="troop-type">({{item.troopType.name || '步'}})</text>
-            </view>
-            <view class="general-level">Lv.{{item.level || 1}}</view>
-          </view>
-          <view class="general-power">{{item.attributes.power || 0}}</view>
+          <text class="general-name quality-{{item.quality.id || 3}}">{{item.name}}</text>
         </view>
       </scroll-view>
     </view>
 
-    <!-- 右侧详情区 -->
-    <view class="right-panel">
-      <!-- 将领列表/装备 -->
-      <view class="detail-content" wx:if="{{(activeTab === 'list' || activeTab === 'detail') && selectedGeneral}}">
-        <!-- 将领基本信息 -->
-        <view class="general-header">
-          <view class="portrait-section">
-            <view class="portrait quality-border-{{selectedGeneral.quality.id || 3}}">
-              <image src="{{selectedGeneral.avatar || '/images/avatar-default.png'}}" mode="aspectFill"></image>
-            </view>
-            <view class="level-badge">Lv.{{selectedGeneral.level || 1}}</view>
-          </view>
-          
-          <view class="info-section">
-            <view class="name-row">
-              <text class="name quality-{{selectedGeneral.quality.id || 3}}">{{selectedGeneral.name}}</text>
-              <text class="quality-tag quality-bg-{{selectedGeneral.quality.id || 3}}">{{selectedGeneral.quality.name || '优秀'}}</text>
-            </view>
-            <view class="type-row">
-              <text class="type-label">兵种：</text>
-              <text class="type-value">{{selectedGeneral.troopType.name || '步兵'}}</text>
-              <text class="faction">【{{selectedGeneral.faction || '群雄'}}】</text>
-            </view>
-            <view class="exp-row">
-              <text class="exp-label">经验：</text>
-              <view class="exp-bar">
-                <view class="exp-fill" style="width: {{(selectedGeneral.exp / selectedGeneral.maxExp) * 100}}%"></view>
-              </view>
-              <text class="exp-text">{{selectedGeneral.exp || 0}}/{{selectedGeneral.maxExp || 100}}</text>
-            </view>
-          </view>
-          
-          <view class="dismiss-btn" bindtap="showDismissConfirm">解雇</view>
+    <!-- 中间将领详情 -->
+    <view class="center-panel" wx:if="{{selectedGeneral}}">
+      <!-- 头像区域 -->
+      <view class="portrait-area">
+        <view class="portrait quality-border-{{selectedGeneral.quality.id || 3}}">
+          <image src="{{selectedGeneral.avatar || '/images/avatar-default.png'}}" mode="aspectFill"></image>
         </view>
-
-        <!-- 兵种说明 -->
-        <view class="troop-info">
-          <view class="troop-icon">{{selectedGeneral.troopType.icon || '⚔️'}}</view>
-          <view class="troop-desc">
-            <text wx:if="{{selectedGeneral.troopType.id === 1}}">步兵将领：统领步兵兵种，擅长防御，属下步兵皮糙血厚。</text>
-            <text wx:elif="{{selectedGeneral.troopType.id === 2}}">骑兵将领：统领骑兵兵种，擅长捕捉战机，机动高，攻击力强。</text>
-            <text wx:elif="{{selectedGeneral.troopType.id === 3}}">弓兵将领：统领弓兵兵种，拥有最强大的杀伤力，是可靠的伤害输出者。</text>
-            <text wx:else>{{selectedGeneral.troopType.description || '统领精锐部队'}}</text>
-          </view>
+      </view>
+      
+      <!-- 基本信息 -->
+      <view class="info-area">
+        <view class="info-row name-row">
+          <text class="general-name-big quality-{{selectedGeneral.quality.id || 3}}">{{selectedGeneral.name}}</text>
+          <text class="level-text">LV:{{selectedGeneral.level || 1}}</text>
         </view>
-
-        <!-- 属性面板 -->
-        <view class="attributes-panel">
-          <view class="panel-title">将领属性</view>
-          <view class="attr-grid">
-            <view class="attr-item">
-              <view class="attr-icon">⚔️</view>
-              <view class="attr-detail">
-                <text class="attr-name">武勇</text>
-                <text class="attr-value">{{selectedGeneral.attributes.valor || 0}}</text>
-              </view>
-              <text class="attr-desc">增加攻击伤害</text>
-            </view>
-            <view class="attr-item">
-              <view class="attr-icon">🛡️</view>
-              <view class="attr-detail">
-                <text class="attr-name">统御</text>
-                <text class="attr-value">{{selectedGeneral.attributes.command || 0}}</text>
-              </view>
-              <text class="attr-desc">提升伤害减免</text>
-            </view>
-            <view class="attr-item">
-              <view class="attr-icon">💥</view>
-              <view class="attr-detail">
-                <text class="attr-name">攻击</text>
-                <text class="attr-value">{{selectedGeneral.attributes.attack || 0}}</text>
-              </view>
-              <text class="attr-desc">直接提升攻击力</text>
-            </view>
-            <view class="attr-item">
-              <view class="attr-icon">🏰</view>
-              <view class="attr-detail">
-                <text class="attr-name">防御</text>
-                <text class="attr-value">{{selectedGeneral.attributes.defense || 0}}</text>
-              </view>
-              <text class="attr-desc">直接提升防御力</text>
-            </view>
-            <view class="attr-item">
-              <view class="attr-icon">💨</view>
-              <view class="attr-detail">
-                <text class="attr-name">机动</text>
-                <text class="attr-value">{{selectedGeneral.attributes.mobility || 0}}</text>
-              </view>
-              <text class="attr-desc">决定行动顺序</text>
-            </view>
-            <view class="attr-item">
-              <view class="attr-icon">✨</view>
-              <view class="attr-detail">
-                <text class="attr-name">战力</text>
-                <text class="attr-value highlight">{{selectedGeneral.attributes.power || 0}}</text>
-              </view>
-              <text class="attr-desc">综合战斗力</text>
-            </view>
-          </view>
+        <view class="info-row troop-row">
+          <text class="troop-label">统领部队：</text>
+          <text class="troop-value">{{selectedGeneral.troopTypeName || '精锐部队'}}({{selectedGeneral.troopRank || 1}}阶{{selectedGeneral.troopType.name || '步'}}兵)</text>
         </view>
-
-        <!-- 装备槽位（detail模式显示） -->
-        <view class="equipment-panel" wx:if="{{activeTab === 'detail'}}">
-          <view class="panel-title">将领装备</view>
-          <view class="equip-grid">
-            <view class="equip-slot" wx:for="{{equipSlots}}" wx:key="id" 
-                  bindtap="onEquipSlotTap" data-slot="{{item}}">
-              <view class="slot-icon">
-                <image wx:if="{{generalEquipments[item.id]}}" 
-                       src="{{generalEquipments[item.id].icon || '/images/equip-default.png'}}" 
-                       mode="aspectFill"></image>
-                <text wx:else class="empty-slot">{{item.icon}}</text>
-              </view>
-              <view class="slot-name">{{generalEquipments[item.id] ? generalEquipments[item.id].name : item.name}}</view>
-              <view class="slot-enhance" wx:if="{{generalEquipments[item.id]}}">
-                +{{generalEquipments[item.id].enhanceLevel || 0}}
-              </view>
-            </view>
+        <view class="stats-grid">
+          <view class="stat-item">
+            <text class="stat-label">武勇：</text>
+            <text class="stat-value">{{selectedGeneral.attributes.valor || 0}}</text>
           </view>
-        </view>
-
-        <!-- 特性列表 -->
-        <view class="traits-panel" wx:if="{{selectedGeneral.traits && selectedGeneral.traits.length > 0}}">
-          <view class="panel-title">名将特性</view>
-          <view class="traits-list">
-            <view class="trait-item" wx:for="{{selectedGeneral.traits}}" wx:key="*this">
-              <text class="trait-text">{{item}}</text>
-            </view>
+          <view class="stat-item">
+            <text class="stat-label">统御：</text>
+            <text class="stat-value">{{selectedGeneral.attributes.command || 0}}</text>
+          </view>
+          <view class="stat-item">
+            <text class="stat-label">攻击：</text>
+            <text class="stat-value attack">{{selectedGeneral.attributes.attack || 0}}</text>
+          </view>
+          <view class="stat-item">
+            <text class="stat-label">防御：</text>
+            <text class="stat-value defense">{{selectedGeneral.attributes.defense || 0}}</text>
           </view>
         </view>
       </view>
 
-      <!-- 将领传承 -->
-      <view class="inherit-content" wx:if="{{activeTab === 'inherit'}}">
-        <view class="inherit-title">将领传承</view>
-        <view class="inherit-desc">
-          选择传承符，将一个将领的经验传承给另一个将领。被传承的将领将永远消失。
+      <!-- 当前兵法展示 -->
+      <view class="equipped-tactic" wx:if="{{activeTab === 'tactics' && selectedTactic}}">
+        <view class="tactic-icon-big">
+          <image src="{{selectedTactic.icon || '/images/tactic-default.png'}}" mode="aspectFill"></image>
+        </view>
+        <view class="tactic-info-detail">
+          <view class="tactic-name-row">
+            <text class="tactic-name quality-{{selectedTactic.quality || 3}}">{{selectedTactic.name}}</text>
+            <text class="tactic-type">({{selectedTactic.type || '绑定'}})</text>
+          </view>
+          <text class="tactic-apply">适用兵种:{{selectedTactic.troopType || '弓兵'}}</text>
+          <text class="tactic-level">当前等级:{{selectedTactic.level || 1}}级</text>
+        </view>
+      </view>
+
+      <!-- 装备槽位（装备Tab） -->
+      <view class="equip-slots" wx:if="{{activeTab === 'equip'}}">
+        <view class="equip-slot" wx:for="{{equipSlots}}" wx:key="id"
+              bindtap="onEquipSlotTap" data-slot="{{item}}">
+          <view class="slot-icon">
+            <image wx:if="{{generalEquipments[item.id]}}" 
+                   src="{{generalEquipments[item.id].icon || '/images/equip-default.png'}}" 
+                   mode="aspectFill"></image>
+            <text wx:else class="empty-icon">{{item.icon}}</text>
+          </view>
+          <text class="slot-name">{{generalEquipments[item.id] ? generalEquipments[item.id].name : item.name}}</text>
+        </view>
+      </view>
+
+      <!-- 操作按钮 -->
+      <view class="action-buttons">
+        <view class="action-btn dismiss" bindtap="showDismissConfirm">解雇</view>
+        <view class="action-btn upgrade" wx:if="{{activeTab === 'tactics'}}" bindtap="upgradeTactic">兵法升级</view>
+      </view>
+    </view>
+
+    <!-- 右侧面板 -->
+    <view class="right-panel">
+      <!-- 兵法面板 -->
+      <view class="tactics-panel" wx:if="{{activeTab === 'tactics'}}">
+        <view class="panel-header">
+          <text class="panel-title">兵法</text>
+          <view class="upgrade-btn" bindtap="upgradeTactic">兵法升级</view>
         </view>
         
-        <view class="inherit-section">
-          <view class="inherit-label">选择传承符</view>
-          <view class="scroll-list">
-            <view class="scroll-item {{selectedScroll === item.id ? 'selected' : ''}}"
-                  wx:for="{{inheritScrolls}}" wx:key="id"
-                  bindtap="selectInheritScroll" data-id="{{item.id}}">
-              <view class="scroll-icon">📜</view>
-              <view class="scroll-info">
-                <text class="scroll-name">{{item.name}}</text>
-                <text class="scroll-rate">传承率: {{item.rate}}%</text>
+        <!-- 已装备兵法槽 -->
+        <view class="tactics-slots">
+          <view class="tactic-slot {{item.equipped ? 'equipped' : 'empty'}} {{selectedTacticSlot === index ? 'selected' : ''}}"
+                wx:for="{{tacticSlots}}" wx:key="index" wx:for-index="index"
+                bindtap="selectTacticSlot" data-index="{{index}}">
+            <image wx:if="{{item.equipped}}" src="{{item.icon || '/images/tactic-default.png'}}" mode="aspectFill"></image>
+            <view wx:else class="slot-pattern">
+              <view class="pattern-dot"></view>
+              <view class="pattern-line h"></view>
+              <view class="pattern-line v"></view>
+            </view>
+            <text class="tactic-slot-level" wx:if="{{item.equipped}}">{{item.level}}级</text>
+          </view>
+        </view>
+
+        <!-- 兵法效果说明 -->
+        <view class="tactic-effect" wx:if="{{selectedTactic}}">
+          <view class="effect-title">兵法效果：</view>
+          <text class="effect-desc">{{selectedTactic.effect || '弓兵兵法，穿透性攻击，对同一行所有敌人造成85%伤害'}}</text>
+        </view>
+
+        <!-- 可用兵法列表 -->
+        <view class="available-tactics">
+          <view class="section-title">可装备兵法</view>
+          <scroll-view scroll-y class="tactics-scroll">
+            <view class="tactic-item {{selectedAvailableTactic === item.id ? 'selected' : ''}}"
+                  wx:for="{{availableTactics}}" wx:key="id"
+                  bindtap="selectAvailableTactic" data-tactic="{{item}}">
+              <view class="tactic-icon">
+                <image src="{{item.icon || '/images/tactic-default.png'}}" mode="aspectFill"></image>
               </view>
-              <text class="scroll-count">x{{item.count}}</text>
+              <view class="tactic-brief">
+                <text class="tactic-name quality-{{item.quality || 3}}">{{item.name}}</text>
+                <text class="tactic-lv">{{item.level}}级</text>
+              </view>
             </view>
-          </view>
+          </scroll-view>
         </view>
 
-        <view class="inherit-section">
-          <view class="inherit-label">选择被传承将领（将消失）</view>
-          <view class="inherit-general-select">
-            <view class="general-slot source {{sourceGeneral ? 'has-general' : ''}}"
-                  bindtap="selectSourceGeneral">
-              <image wx:if="{{sourceGeneral}}" src="{{sourceGeneral.avatar}}" mode="aspectFill"></image>
-              <text wx:else>点击选择</text>
-              <view class="general-slot-name" wx:if="{{sourceGeneral}}">{{sourceGeneral.name}}</view>
-              <view class="exp-info" wx:if="{{sourceGeneral}}">经验: {{sourceGeneral.exp}}</view>
-            </view>
-            <view class="inherit-arrow">→</view>
-            <view class="general-slot target {{selectedGeneral ? 'has-general' : ''}}">
-              <image wx:if="{{selectedGeneral}}" src="{{selectedGeneral.avatar}}" mode="aspectFill"></image>
-              <text wx:else>左侧选择</text>
-              <view class="general-slot-name" wx:if="{{selectedGeneral}}">{{selectedGeneral.name}}</view>
-              <view class="exp-info" wx:if="{{selectedGeneral}}">经验: {{selectedGeneral.exp}}</view>
-            </view>
-          </view>
-        </view>
-
-        <view class="inherit-preview" wx:if="{{sourceGeneral && selectedGeneral && selectedScroll}}">
-          <text>预计传承经验: {{inheritExpPreview}}</text>
-        </view>
-
-        <view class="action-btn {{!canInherit ? 'disabled' : ''}}" bindtap="doInherit">
-          开始传承
+        <!-- 装备/卸下按钮 -->
+        <view class="tactic-actions">
+          <view class="tactic-btn equip" bindtap="equipTactic" 
+                wx:if="{{selectedAvailableTactic && selectedTacticSlot !== null}}">装备兵法</view>
+          <view class="tactic-btn unequip" bindtap="unequipTactic"
+                wx:if="{{selectedTacticSlot !== null && tacticSlots[selectedTacticSlot] && tacticSlots[selectedTacticSlot].equipped}}">卸下</view>
         </view>
       </view>
 
-      <!-- 军事演习 -->
-      <view class="drill-content" wx:if="{{activeTab === 'drill'}}">
-        <view class="drill-title">军事演习</view>
-        <view class="drill-desc">
-          使用演习令，让将领通过军事演习快速获得经验，提升等级。
+      <!-- 装备面板 -->
+      <view class="equipment-panel" wx:if="{{activeTab === 'equip'}}">
+        <view class="panel-header">
+          <text class="panel-title">装备列表</text>
         </view>
-
-        <view class="drill-general" wx:if="{{selectedGeneral}}">
-          <view class="drill-portrait">
-            <image src="{{selectedGeneral.avatar}}" mode="aspectFill"></image>
-          </view>
-          <view class="drill-info">
-            <text class="drill-name">{{selectedGeneral.name}}</text>
-            <text class="drill-level">Lv.{{selectedGeneral.level}}</text>
-            <view class="drill-exp">
-              <view class="exp-bar">
-                <view class="exp-fill" style="width: {{(selectedGeneral.exp / selectedGeneral.maxExp) * 100}}%"></view>
-              </view>
-              <text>{{selectedGeneral.exp}}/{{selectedGeneral.maxExp}}</text>
+        <scroll-view scroll-y class="equipment-scroll">
+          <view class="equip-item {{selectedEquip === item.id ? 'selected' : ''}}"
+                wx:for="{{warehouseEquipments}}" wx:key="id"
+                bindtap="selectEquipment" data-equip="{{item}}">
+            <view class="equip-icon quality-border-{{item.quality || 3}}">
+              <image src="{{item.icon || '/images/equip-default.png'}}" mode="aspectFill"></image>
             </view>
+            <view class="equip-info">
+              <text class="equip-name quality-{{item.quality || 3}}">{{item.name}}</text>
+              <text class="equip-type">{{item.slotType.name || '装备'}}</text>
+            </view>
+            <text class="equip-enhance" wx:if="{{item.enhanceLevel}}">+{{item.enhanceLevel}}</text>
+          </view>
+        </scroll-view>
+        <view class="equip-actions">
+          <view class="equip-btn" bindtap="equipItem" wx:if="{{selectedEquip}}">装备</view>
+        </view>
+      </view>
+
+      <!-- 招募面板 -->
+      <view class="recruit-panel" wx:if="{{activeTab === 'recruit'}}">
+        <view class="panel-header">
+          <text class="panel-title">将领招募</text>
+        </view>
+        <view class="recruit-options">
+          <view class="recruit-item" bindtap="doRecruit" data-type="basic">
+            <view class="recruit-icon">📜</view>
+            <text class="recruit-name">普通招贤令</text>
+            <text class="recruit-count">x{{recruitItems.basic || 0}}</text>
+            <text class="recruit-desc">必得优秀及以上将领</text>
+          </view>
+          <view class="recruit-item gold" bindtap="doRecruit" data-type="advanced">
+            <view class="recruit-icon">📯</view>
+            <text class="recruit-name">高级招贤令</text>
+            <text class="recruit-count">x{{recruitItems.advanced || 0}}</text>
+            <text class="recruit-desc">必得史诗及以上将领</text>
+          </view>
+          <view class="recruit-item legend" bindtap="doRecruit" data-type="legend">
+            <view class="recruit-icon">🎺</view>
+            <text class="recruit-name">传说招贤令</text>
+            <text class="recruit-count">x{{recruitItems.legend || 0}}</text>
+            <text class="recruit-desc">必得传说将领</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- 训练面板（传承） -->
+      <view class="train-panel" wx:if="{{activeTab === 'train'}}">
+        <view class="panel-header">
+          <text class="panel-title">将领传承</text>
+        </view>
+        <view class="train-desc">选择传承符，将一个将领的经验传承给当前将领。被传承的将领将消失。</view>
+        
+        <view class="scroll-list">
+          <view class="scroll-item {{selectedScroll === item.id ? 'selected' : ''}}"
+                wx:for="{{inheritScrolls}}" wx:key="id"
+                bindtap="selectInheritScroll" data-id="{{item.id}}">
+            <view class="scroll-icon">📜</view>
+            <text class="scroll-name">{{item.name}}</text>
+            <text class="scroll-rate">{{item.rate}}%</text>
+            <text class="scroll-count">x{{item.count}}</text>
           </view>
         </view>
 
+        <view class="inherit-select">
+          <view class="inherit-source" bindtap="selectSourceGeneral">
+            <image wx:if="{{sourceGeneral}}" src="{{sourceGeneral.avatar}}" mode="aspectFill"></image>
+            <text wx:else>选择源将领</text>
+            <text class="source-name" wx:if="{{sourceGeneral}}">{{sourceGeneral.name}}</text>
+          </view>
+          <text class="inherit-arrow">→</text>
+          <view class="inherit-target">
+            <image wx:if="{{selectedGeneral}}" src="{{selectedGeneral.avatar}}" mode="aspectFill"></image>
+            <text class="target-name" wx:if="{{selectedGeneral}}">{{selectedGeneral.name}}</text>
+          </view>
+        </view>
+
+        <view class="inherit-preview" wx:if="{{inheritExpPreview > 0}}">
+          预计传承经验: <text class="exp-value">{{inheritExpPreview}}</text>
+        </view>
+
+        <view class="train-btn {{!canInherit ? 'disabled' : ''}}" bindtap="doInherit">开始传承</view>
+      </view>
+
+      <!-- 经验药面板 -->
+      <view class="exp-panel" wx:if="{{activeTab === 'exp'}}">
+        <view class="panel-header">
+          <text class="panel-title">军事演习</text>
+        </view>
+        <view class="exp-desc">使用演习令快速提升将领等级</view>
+        
         <view class="drill-items">
           <view class="drill-item {{selectedDrill === item.id ? 'selected' : ''}}"
                 wx:for="{{drillItems}}" wx:key="id"
                 bindtap="selectDrillItem" data-id="{{item.id}}">
             <view class="drill-icon">{{item.icon}}</view>
-            <view class="drill-item-info">
-              <text class="drill-item-name">{{item.name}}</text>
-              <text class="drill-item-exp">经验 +{{item.exp}}</text>
-            </view>
-            <text class="drill-item-count">x{{item.count}}</text>
+            <text class="drill-name">{{item.name}}</text>
+            <text class="drill-exp">+{{item.exp}}经验</text>
+            <text class="drill-count">x{{item.count}}</text>
           </view>
         </view>
 
-        <view class="drill-count-section">
+        <view class="drill-control" wx:if="{{selectedDrill}}">
           <text>使用数量：</text>
-          <view class="count-control">
+          <view class="count-btns">
             <view class="count-btn" bindtap="decreaseDrillCount">-</view>
-            <text class="count-value">{{drillCount}}</text>
+            <text class="count-num">{{drillCount}}</text>
             <view class="count-btn" bindtap="increaseDrillCount">+</view>
           </view>
           <view class="max-btn" bindtap="maxDrillCount">最大</view>
         </view>
 
-        <view class="drill-preview" wx:if="{{selectedDrill && drillCount > 0}}">
-          <text>预计获得经验: {{drillExpPreview}}</text>
+        <view class="drill-preview" wx:if="{{drillExpPreview > 0}}">
+          预计获得经验: <text class="exp-value">{{drillExpPreview}}</text>
         </view>
 
-        <view class="action-btn {{!canDrill ? 'disabled' : ''}}" bindtap="doDrill">
-          开始演习
-        </view>
+        <view class="exp-btn {{!canDrill ? 'disabled' : ''}}" bindtap="doDrill">开始演习</view>
       </view>
 
-      <!-- 空状态 -->
-      <view class="empty-state" wx:if="{{!selectedGeneral}}">
-        <text>请选择一位将领</text>
+      <!-- 士兵面板 -->
+      <view class="soldier-panel" wx:if="{{activeTab === 'soldier'}}">
+        <view class="panel-header">
+          <text class="panel-title">士兵管理</text>
+        </view>
+        <view class="soldier-info" wx:if="{{selectedGeneral}}">
+          <view class="soldier-row">
+            <text class="soldier-label">当前兵种：</text>
+            <text class="soldier-value">{{selectedGeneral.troopType.name || '步兵'}}</text>
+          </view>
+          <view class="soldier-row">
+            <text class="soldier-label">士兵数量：</text>
+            <text class="soldier-value">{{selectedGeneral.soldiers.count || 0}}/{{selectedGeneral.soldiers.max || 100}}</text>
+          </view>
+          <view class="soldier-row">
+            <text class="soldier-label">兵种阶级：</text>
+            <text class="soldier-value">{{selectedGeneral.troopRank || 1}}阶</text>
+          </view>
+        </view>
+        <view class="soldier-actions">
+          <view class="soldier-btn" bindtap="recruitSoldiers">补充士兵</view>
+          <view class="soldier-btn upgrade" bindtap="upgradeTroop">升阶兵种</view>
+        </view>
       </view>
     </view>
   </view>
@@ -291,11 +327,11 @@
       <view class="modal-title">解雇将领</view>
       <view class="modal-body">
         <text>确定要解雇【{{selectedGeneral.name}}】吗？</text>
-        <text class="warning">解雇后将领将永久消失，无法恢复！</text>
+        <text class="warning">解雇后将领将永久消失！</text>
       </view>
       <view class="modal-footer">
         <view class="modal-btn cancel" bindtap="closeDismissModal">取消</view>
-        <view class="modal-btn confirm" bindtap="doDismiss">确认解雇</view>
+        <view class="modal-btn confirm" bindtap="doDismiss">确认</view>
       </view>
     </view>
   </view>
@@ -303,27 +339,33 @@
   <!-- 选择源将领弹窗 -->
   <view class="modal-mask" wx:if="{{showSourceModal}}" bindtap="closeSourceModal">
     <view class="modal-content large" catchtap="">
-      <view class="modal-title">选择被传承将领</view>
+      <view class="modal-title">选择源将领</view>
       <scroll-view scroll-y class="modal-list">
         <view class="modal-general-item" 
               wx:for="{{generals}}" wx:key="id"
               wx:if="{{!selectedGeneral || item.id !== selectedGeneral.id}}"
               bindtap="confirmSourceGeneral" data-general="{{item}}">
           <image src="{{item.avatar}}" mode="aspectFill"></image>
-          <view class="modal-general-info">
-            <text class="modal-general-name">{{item.name}}</text>
-            <text class="modal-general-level">Lv.{{item.level}} | 经验: {{item.exp}}</text>
-          </view>
+          <text class="modal-general-name">{{item.name}}</text>
+          <text class="modal-general-exp">经验:{{item.exp}}</text>
         </view>
       </scroll-view>
-      <view class="modal-footer">
-        <view class="modal-btn cancel" bindtap="closeSourceModal">取消</view>
-      </view>
+      <view class="modal-close" bindtap="closeSourceModal">关闭</view>
     </view>
   </view>
 
-  <!-- 底部栏 -->
-  <view class="bottom-bar">
-    <view class="back-btn" bindtap="goBack">返回</view>
+  <!-- 招募结果弹窗 -->
+  <view class="modal-mask" wx:if="{{showRecruitResult}}" bindtap="closeRecruitResult">
+    <view class="modal-content recruit-result" catchtap="">
+      <view class="modal-title">招募成功</view>
+      <view class="recruit-general" wx:if="{{recruitedGeneral}}">
+        <view class="recruit-portrait quality-border-{{recruitedGeneral.quality.id || 3}}">
+          <image src="{{recruitedGeneral.avatar}}" mode="aspectFill"></image>
+        </view>
+        <text class="recruit-name quality-{{recruitedGeneral.quality.id || 3}}">{{recruitedGeneral.name}}</text>
+        <text class="recruit-quality">{{recruitedGeneral.quality.name || '优秀'}}</text>
+      </view>
+      <view class="modal-btn confirm" bindtap="closeRecruitResult">确定</view>
+    </view>
   </view>
 </view>
